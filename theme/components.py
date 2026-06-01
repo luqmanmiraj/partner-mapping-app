@@ -11,19 +11,10 @@ from theme.html_utils import render_html
 from theme.tokens import STATUS_COLORS, TEXT_MUTED
 
 
-def render_page_header(display_name: str, *, subtitle: str = "") -> None:
-    """Page header with welcome text, notification bell, and profile chip."""
-    from widgets.notifications_panel import render_notification_bell
-
-    title_col, bell_col, profile_col = st.columns([8.5, 0.75, 0.75])
-    with title_col:
-        st.markdown(f"# Welcome {html.escape(display_name)},")
-        if subtitle:
-            st.caption(subtitle)
-    with bell_col:
-        render_notification_bell()
-    with profile_col:
-        st.markdown("👤 ▾")
+def render_page_header(display_name: str = "", *, subtitle: str = "") -> None:
+    """Optional page subtitle below the global top header (see theme.top_header)."""
+    if subtitle:
+        st.caption(subtitle)
 
 
 def render_section_header(title: str, *, subtitle: str = "") -> None:

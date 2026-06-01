@@ -1,114 +1,33 @@
-"""Sidebar layout and dev controls."""
+"""Sidebar layout helpers — dev controls and persona switcher."""
 
 from __future__ import annotations
 
-import html
-
 import streamlit as st
 
-from auth.session import get_session, is_admin, is_partner, is_reviewer
-from theme.html_utils import render_html
-
-
-HUB_PORTAL_NAV = [
-    ("Dashboard", "hub_dashboard", "▦"),
-    ("Member Directory", "member_directory", "👥"),
-    ("My Company", "my_company", "🏢"),
-]
-
-HUB_PORTAL_SECONDARY = [
-    ("About", "about", ""),
-    ("Services", "services", ""),
-    ("News & Insights", "news", ""),
-    ("Help & Support Center", "help", ""),
-]
-
-PARTNER_MAPPING_NAV = [
-    ("Upload", "upload", "📤"),
-    ("Deposit History", "history", "📋"),
-    ("Financial Dashboard", "mapping_dashboard", "📊"),
-    ("Corrective Deposit", "corrective", "✏️"),
-]
-
-REVIEWER_NAV = [
-    ("Review Queue", "review_queue", "📝"),
-    ("Granular Review", "review_detail", "🔍"),
-    ("Bulk Review", "bulk_review", "📦"),
-    ("Overlap Investigation", "overlap", "🔗"),
-    ("Discrepancy Screen", "discrepancy", "⚖️"),
-]
-
-ADMIN_NAV = [
-    ("Calibration", "admin_calibration", "⚙️"),
-    ("Onboarding", "admin_onboarding", "➕"),
-    ("Decommission", "admin_decommission", "⛔"),
-    ("Closure", "admin_closure", "🔒"),
-    ("System Config", "admin_config", "🎛"),
-    ("Post-Closure Audit", "admin_audit", "📋"),
-]
+# Re-export nav registries for callers that import from layout.
+from theme.sidenav import (  # noqa: F401
+    ADMIN_NAV,
+    HUB_PORTAL_NAV,
+    HUB_PORTAL_SECONDARY,
+    PARTNER_MAPPING_NAV,
+    REVIEWER_NAV,
+)
 
 
 def render_sidebar_branding() -> None:
-    render_html(
-        """
-        <div class="nexus-logo">
-            <span class="mark">N!</span> NEXUS
-        </div>
-        """
-    )
-
-
-def _nav_button(label: str, page_id: str, icon: str, active_page: str, accessible: set[str]) -> None:
-    if page_id not in accessible:
-        return
-    prefix = f"{icon} " if icon else ""
-    is_active = page_id == active_page
-    if st.button(
-        f"{prefix}{label}",
-        key=f"nav_{page_id}",
-        use_container_width=True,
-        type="primary" if is_active else "secondary",
-    ):
-        if not is_active:
-            st.session_state.active_page = page_id
-            st.rerun()
-
-
-def _nav_section(title: str) -> None:
-    render_html(f'<div class="nav-section">{html.escape(title)}</div>')
+    """Branding is rendered inside :func:`theme.sidenav.render_sidenav`."""
 
 
 def render_sidebar_nav(active_page: str, accessible_pages: set[str] | None = None) -> None:
-    session = get_session()
-    accessible = accessible_pages or set()
+    """Navigation is rendered inside :func:`theme.sidenav.render_sidenav`."""
 
-    if is_partner():
-        for label, page_id, icon in HUB_PORTAL_NAV:
-            _nav_button(label, page_id, icon, active_page, accessible)
-        _nav_section("Nexus Automotive")
-        for label, page_id, icon in HUB_PORTAL_SECONDARY:
-            _nav_button(label, page_id, icon, active_page, accessible)
-        _nav_section("Partner Mapping")
-        for label, page_id, icon in PARTNER_MAPPING_NAV:
-            _nav_button(label, page_id, icon, active_page, accessible)
-    elif is_reviewer() and not is_partner():
-        _nav_section("Internal Cockpit")
-        for label, page_id, icon in REVIEWER_NAV:
-            _nav_button(label, page_id, icon, active_page, accessible)
 
-    if is_admin():
-        _nav_section("Admin")
-        for label, page_id, icon in ADMIN_NAV:
-            _nav_button(label, page_id, icon, active_page, accessible)
+def render_app_top_header(display_name: str) -> None:
+    """Top bar is rendered in :func:`streamlit_app.main` via :func:`theme.top_header.render_top_header`."""
 
-    render_html(
-        f"""
-        <div class="account-row">
-            <span>👤 {html.escape(session.display_name)}</span>
-            <span>⌃</span>
-        </div>
-        """
-    )
+
+def render_app_page_content(render_fn, *args, **kwargs) -> None:
+    """Page body is wrapped in :func:`theme.page_content.render_page_content` from ``streamlit_app.main``."""
 
 
 def render_dev_controls() -> tuple[bool, str]:

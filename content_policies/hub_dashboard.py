@@ -37,8 +37,8 @@ class HubDashboardPolicy:
 
     # Feature blurb
     upcoming_blurb: str = (
-        "Soon you will be able to discover supplier books, key performances, "
-        "and data analysis — all in one place to help you make smarter decisions."
+        "Discover our supplier's books, key performances and data analysis on your "
+        "business, and infos partners (our newest partners incoming in our community)"
     )
 
     # Toolbar filters shown on overview
@@ -67,8 +67,8 @@ def _supplier_policy() -> HubDashboardPolicy:
         chart_left_title="Sales by Country",
         chart_right_title="Sales by Product Group",
         upcoming_blurb=(
-            "Soon you will be able to discover supplier books, key performances, "
-            "and data analysis — all in one place to help you make smarter decisions."
+            "Discover our supplier's books, key performances and data analysis on your "
+            "business, and infos partners (our newest partners incoming in our community)"
         ),
         filter_labels=("Date", "Product group"),
     )

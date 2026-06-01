@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bosch Automotive Profile Header</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* --- Reset & Global Configuration --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #ededed;
+      padding: 30px 15px;
+      color: #111111;
+    }
+
+    /* --- Core Layout Wrapper --- */
+    .profile-card {
+      max-width: 1140px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+      position: relative;
+    }
+
+    /* ==========================================
+       SECTION 1: Hero Banner Component
+       ========================================== */
+    .hero-banner {
+      position: relative;
+      height: 220px;
+      /* Background representing the futuristic vehicle binary graphic overlay */
+      background: #0f233c url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+      display: flex;
+      justify-content: flex-end;
+      padding: 20px 30px;
+    }
+
+    .banner-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to right, rgba(15, 35, 60, 0.4), rgba(15, 35, 60, 0.1));
+    }
+
+    /* Top Utility Actions Row */
+    .banner-actions {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      height: fit-content;
+    }
+
+    .banner-actions a,
+    .edit-banner-btn {
+      color: #ffffff;
+      font-size: 1rem;
+      text-decoration: none;
+      opacity: 0.85;
+      transition: opacity 0.2s ease;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .banner-actions a:hover,
+    .edit-banner-btn:hover {
+      opacity: 1;
+    }
+
+    .edit-banner-btn {
+      background-color: rgba(255, 255, 255, 0.25);
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+
+    /* ==========================================
+       SECTION 2: Info Grid & Branding Structure
+       ========================================== */
+    .info-container {
+      position: relative;
+      padding: 30px 40px 40px 240px; /* Offset spacing to clear hanging brand logo */
+      min-height: 240px;
+    }
+
+    /* Floating Brand Square Box */
+    .logo-frame {
+      position: absolute;
+      top: -110px; /* Positions frame halfway inside upper banner boundary */
+      left: 30px;
+      width: 180px;
+      height: 180px;
+      background-color: #ffffff;
+      border-radius: 6px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    /* Accurate programmatic styling of the Bosch Identity typography layout */
+    .bosch-logo-mock {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bosch-circle {
+      width: 34px;
+      height: 34px;
+      border: 3px solid #111111;
+      border-radius: 50%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bosch-circle::before {
+      content: '';
+      position: absolute;
+      width: 3px;
+      height: 20px;
+      background-color: #111111;
+      transform: rotate(15deg);
+    }
+
+    .bosch-circle::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 3px;
+      background-color: #111111;
+    }
+
+    .bosch-text {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: #e31b23; /* Classic Bosch Red */
+      letter-spacing: -0.5px;
+    }
+
+    /* Floating Right Workspace Inline Edit Option */
+    .edit-profile-btn {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      background-color: #f2f2f2;
+      border: none;
+      color: #777777;
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.15s ease;
+    }
+
+    .edit-profile-btn:hover {
+      background-color: #e5e5e5;
+      color: #111111;
+    }
+
+    /* Profile Primary Business Identity Name */
+    .profile-title {
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: #111111;
+      margin-bottom: 30px;
+      letter-spacing: -0.5px;
+    }
+
+    /* Core Matrix Meta Fields Block */
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 50px;
+      row-gap: 24px;
+    }
+
+    .meta-cell {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    /* Icon polygon wrapper design */
+    .icon-badge {
+      color: #f39c12; /* Unique amber accent stroke */
+      border: 1.5px solid #f39c12;
+      background-color: #fffdf9;
+      border-radius: 35%; 
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .meta-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .meta-content label {
+      font-size: 0.85rem;
+      color: #666666;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    .meta-content span,
+    .meta-content a {
+      font-size: 0.95rem;
+      color: #111111;
+      text-decoration: none;
+    }
+
+    .meta-content a:hover {
+      text-decoration: underline;
+      color: #f39c12;
+    }
+
+    /* Tag List Array for Products */
+    .tag-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .product-tag {
+      background-color: #fdeed6; /* Soft amber highlight pill */
+      color: #4a3319;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 6px;
+    }
+
+    /* ==========================================
+       SECTION 3: Fluid Mobile Breakdown Rules
+       ========================================== */
+    @media (max-width: 850px) {
+      .info-container {
+        padding: 100px 20px 30px 20px;
+        text-align: center;
+      }
+
+      .logo-frame {
+        left: 50%;
+        transform: translateX(-50%);
+        top: -90px;
+      }
+
+      .profile-title {
+        margin-bottom: 25px;
+      }
+
+      .meta-grid {
+        grid-template-columns: 1fr;
+        row-gap: 20px;
+      }
+
+      .meta-cell {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .tag-container {
+        justify-content: center;
+      }
+
+      .edit-profile-btn {
+        top: 15px;
+        right: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="profile-card">
+    
+    <div class="hero-banner">
+      <div class="banner-overlay"></div>
+      <div class="banner-actions">
+        <button class="edit-banner-btn" aria-label="Edit cover photo"><i class="fa-solid fa-pen"></i></button>
+        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" aria-label="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
+      </div>
+    </div>
+
+    <div class="info-container">
+      
+      <div class="logo-frame">
+        <div class="bosch-logo-mock">
+          <div class="bosch-circle"></div>
+          <span class="bosch-text">BOSCH</span>
+        </div>
+      </div>
+
+      <button class="edit-profile-btn" aria-label="Edit Profile Details"><i class="fa-solid fa-pen"></i></button>
+
+      <h1 class="profile-title">Bosch Automotive</h1>
+
+      <div class="meta-grid">
+        
+        <div class="meta-cell">
+          <div class="icon-badge"><i class="fa-solid fa-wrench"></i></div>
+          <div class="meta-content">
+            <label>Activity</label>
+            <span>Manufacturer</span>
+          </div>
+        </div>
+
+        <div class="meta-cell">
+          <div class="icon-badge"><i class="fa-regular fa-star"></i></div>
+          <div class="meta-content">
+            <label>Products</label>
+            <div class="tag-container">
+              <span class="product-tag">Injection</span>
+              <span class="product-tag">Batteries</span>
+              <span class="product-tag">Wipers</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="meta-cell">
+          <div class="icon-badge"><i class="fa-regular fa-envelope"></i></div>
+          <div class="meta-content">
+            <label>General Email</label>
+            <a href="mailto:contact@bosch.com">contact@bosch.com</a>
+          </div>
+        </div>
+
+        <div class="meta-cell">
+          <div class="icon-badge"><i class="fa-solid fa-map-marker-alt"></i></div>
+          <div class="meta-content">
+            <label>Headquarters</label>
+            <span>164 Av. Jean Jaurès, 69007 Lyon</span>
+          </div>
+        </div>
+
+        <div class="meta-cell">
+          <div class="icon-badge"><i class="fa-solid fa-globe"></i></div>
+          <div class="meta-content">
+            <label>Website</label>
+            <a href="https://www.bosch-automotive.com" target="_blank">www.bosch-automotive.com</a>
+          </div>
+        </div>
+
+        <div class="meta-cell">
+          <div class="icon-badge"><i class="fa-solid fa-phone"></i></div>
+          <div class="meta-content">
+            <label>Contact Number</label>
+            <a href="tel:+3301020304">+ 33 01 02 03 04</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

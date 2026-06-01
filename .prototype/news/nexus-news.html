@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS Network Insights</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* --- Base Variables & Core Resets --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #eeeeee;
+      color: #111111;
+      padding: 24px;
+    }
+
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ==========================================
+       SECTION 1: Global Page Header & Action
+       ========================================== */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .top-bar h1 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #000000;
+    }
+
+    .btn-primary-black {
+      background-color: #141619;
+      color: #ffffff;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* ==========================================
+       SECTION 2: Main Navigation Tabs Component
+       ========================================== */
+    .nav-tabs-container {
+      border-bottom: 1px solid #cccccc;
+      display: flex;
+      gap: 24px;
+      margin-bottom: 4px;
+    }
+
+    .nav-tab {
+      padding-bottom: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #777777;
+      text-decoration: none;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .nav-tab.active {
+      color: #000000;
+    }
+
+    .nav-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: #f39c12; /* Signature orange underline marker template */
+    }
+
+    /* ==========================================
+       SECTION 3: Dynamic Filters Area Block
+       ========================================== */
+    .filter-row-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .dropdown-select-control {
+      padding: 8px 32px 8px 12px;
+      font-size: 0.84rem;
+      border: 1px solid #cccccc;
+      border-radius: 4px;
+      background-color: #ffffff;
+      color: #333333;
+      outline: none;
+      cursor: pointer;
+      min-width: 170px;
+    }
+
+    .clear-filters-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #000000;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* ==========================================
+       SECTION 4: Layout Main Two Column System
+       ========================================== */
+    .dashboard-split-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* Left side layout stream stream packaging */
+    .left-feed-stream {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Right sidebar section card wrapper panel */
+    .right-sidebar-panel {
+      background-color: #ffffff;
+      border-radius: 4px;
+      padding: 24px 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    /* ==========================================
+       LEFT COLUMN components: Featured Banner & Cards Grid
+       ========================================== */
+    /* Spotlight Hero Feature Layout component banner */
+    .hero-spotlight-banner {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      border-radius: 4px;
+      overflow: hidden;
+      background-color: #141619;
+    }
+
+    .hero-bg-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.35; /* Blended over dark canvas layout background matching image_5193bc.jpg */
+    }
+
+    .hero-content-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      color: #ffffff;
+    }
+
+    .hero-badge-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #dddddd;
+      margin-bottom: 12px;
+    }
+
+    .hero-content-overlay h2 {
+      font-size: 1.65rem;
+      font-weight: 700;
+      max-width: 650px;
+      line-height: 1.3;
+      margin-bottom: 12px;
+    }
+
+    .hero-content-overlay p {
+      font-size: 0.88rem;
+      max-width: 620px;
+      line-height: 1.45;
+      color: #dddddd;
+      margin-bottom: auto; /* Pushes content down or holds top positioning safely */
+    }
+
+    .btn-read-action {
+      align-self: flex-start;
+      background-color: #ffffff;
+      color: #141619;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 8px 24px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* Grid layout structure for regular standard posts */
+    .articles-post-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .article-thumbnail-card {
+      background-color: #ffffff;
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.01);
+    }
+
+    .card-photo-box {
+      width: 100%;
+      height: 140px;
+      background-color: #e0e0e0;
+    }
+
+    .card-photo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-body-details {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .card-timeline-stamp {
+      font-size: 0.7rem;
+      color: #777777;
+      margin-bottom: 6px;
+    }
+
+    .card-body-details h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #000000;
+      margin-bottom: 8px;
+    }
+
+    .card-body-details p {
+      font-size: 0.8rem;
+      color: #555555;
+      line-height: 1.45;
+      margin-bottom: 16px;
+    }
+
+    .card-link-trigger {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #000000;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-top: auto;
+    }
+
+    /* Pagination control footers elements structure styling */
+    .pagination-footer-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin-top: 12px;
+      font-size: 0.82rem;
+      color: #555555;
+    }
+
+    .pagination-footer-nav i {
+      cursor: pointer;
+    }
+
+    .pagination-footer-nav span.active {
+      font-weight: 700;
+      color: #000000;
+    }
+
+    /* ==========================================
+       RIGHT COLUMN components: Sidebar / Widget elements
+       ========================================== */
+    .widget-header-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #000000;
+      margin-bottom: 16px;
+    }
+
+    .widget-header-title i {
+      color: #f39c12; /* Golden orange icon accents color mapping */
+      font-size: 0.95rem;
+    }
+
+    .sidebar-filters-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .sidebar-filters-stack select {
+      width: 100%;
+    }
+
+    .widget-sub-label {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #333333;
+      margin-bottom: 12px;
+    }
+
+    /* Vertical Feed listing profiles segments rows stacking */
+    .entrants-vertical-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .entrant-item-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .company-logo-avatar-stub {
+      width: 36px;
+      height: 36px;
+      background-color: #dddddd;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #555555;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .company-logo-avatar-stub.branded {
+      background-color: #ffffff;
+      border: 1px solid #eeeeee;
+      color: #00a859; /* Custom internal typography color values */
+    }
+
+    .company-logo-avatar-stub img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 2px;
+    }
+
+    .entrant-meta-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .entrant-meta-info h4 {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #111111;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .entrant-meta-info span {
+      font-size: 0.78rem;
+      color: #666666;
+      margin-top: 1px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ==========================================
+       SECTION 5: Adaptive Breakpoints Responsive Engine
+       ========================================== */
+    @media (max-width: 992px) {
+      .dashboard-split-layout {
+        grid-template-columns: 1fr;
+      }
+      .articles-post-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 650px) {
+      .articles-post-grid {
+        grid-template-columns: 1fr;
+      }
+      .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .filter-row-bar {
+        flex-wrap: wrap;
+      }
+      .dropdown-select-control {
+        flex: 1;
+        min-width: 140px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-container">
+    
+    <header class="top-bar">
+      <h1>NEXUS Network Insights</h1>
+      <button class="btn-primary-black">
+        <i class="fa-regular fa-pen-to-square"></i>
+        Request publication
+      </button>
+    </header>
+
+    <nav class="nav-tabs-container">
+      <div class="nav-tab active">NEXUS News</div>
+      <div class="nav-tab">Member News</div>
+      <div class="nav-tab">Monthly digest</div>
+    </nav>
+
+    <div class="filter-row-bar">
+      <select class="dropdown-select-control">
+        <option>Select a category</option>
+      </select>
+      <button class="clear-filters-btn">
+        <i class="fa-solid fa-xmark"></i> Delete filters
+      </button>
+    </div>
+
+    <div class="dashboard-split-layout">
+      
+      <div class="left-feed-stream">
+        
+        <article class="hero-spotlight-banner">
+          <img class="hero-bg-img" src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1000&q=80" alt="Global networking overlay backdrop image">
+          <div class="hero-content-overlay">
+            <span class="hero-badge-tag">Yesterday</span>
+            <h2>Nexus Automotive expands its footprint in South-East Asia</h2>
+            <p>A strategic agreement has been signed with 3 major distributors in Vietnam and Thailand, opening new doors for our global suppliers.</p>
+            <button class="btn-read-action">Read</button>
+          </div>
+        </article>
+
+        <div class="articles-post-grid">
+          
+          <div class="article-thumbnail-card">
+            <div class="card-photo-box">
+              <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=350&q=80" alt="Tech graphics asset view">
+            </div>
+            <div class="card-body-details">
+              <span class="card-timeline-stamp">Last Month</span>
+              <h3>Title</h3>
+              <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+              <span class="card-link-trigger">Read</span>
+            </div>
+          </div>
+
+          <div class="article-thumbnail-card">
+            <div class="card-photo-box">
+              <img src="https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=350&q=80" alt="Automotive maintenance workshop snapshot">
+            </div>
+            <div class="card-body-details">
+              <span class="card-timeline-stamp">Last Month</span>
+              <h3>Title</h3>
+              <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+              <span class="card-link-trigger">Read</span>
+            </div>
+          </div>
+
+          <div class="article-thumbnail-card">
+            <div class="card-photo-box">
+              <img src="https://images.unsplash.com/photo-1558441719-ff34b0524a24?auto=format&fit=crop&w=350&q=80" alt="Modern clean vehicle concept profile layout view">
+            </div>
+            <div class="card-body-details">
+              <span class="card-timeline-stamp">Last Month</span>
+              <h3>Title</h3>
+              <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+              <span class="card-link-trigger">Read</span>
+            </div>
+          </div>
+
+          <div class="article-thumbnail-card">
+            <div class="card-photo-box">
+              <img src="https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=350&q=80" alt="Automotive batteries display alignment">
+            </div>
+            <div class="card-body-details">
+              <span class="card-timeline-stamp">Last Month</span>
+              <h3>Title</h3>
+              <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+              <span class="card-link-trigger">Read</span>
+            </div>
+          </div>
+
+          <div class="article-thumbnail-card">
+            <div class="card-photo-box">
+              <img src="https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=350&q=80" alt="Car components close-up alignment">
+            </div>
+            <div class="card-body-details">
+              <span class="card-timeline-stamp">Last Month</span>
+              <h3>Title</h3>
+              <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+              <span class="card-link-trigger">Read</span>
+            </div>
+          </div>
+
+          <div class="article-thumbnail-card">
+            <div class="card-photo-box">
+              <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=350&q=80" alt="Premium auto hardware items alignment">
+            </div>
+            <div class="card-body-details">
+              <span class="card-timeline-stamp">Last Month</span>
+              <h3>Title</h3>
+              <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+              <span class="card-link-trigger">Read</span>
+            </div>
+          </div>
+
+        </div>
+
+        <footer class="pagination-footer-nav">
+          <i class="fa-solid fa-chevron-left"></i>
+          <span class="active">1</span>
+          <span>2</span>
+          <span>3</span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </footer>
+
+      </div>
+
+      <aside class="right-sidebar-panel">
+        
+        <h2 class="widget-header-title">
+          <i class="fa-solid fa-users"></i> New entrants
+        </h2>
+
+        <div class="sidebar-filters-stack">
+          <select class="dropdown-select-control">
+            <option>Month</option>
+          </select>
+          <select class="dropdown-select-control">
+            <option>Year</option>
+          </select>
+        </div>
+
+        <h3 class="widget-sub-label">This month</h3>
+
+        <div class="entrants-vertical-list">
+          
+          <div class="entrant-item-row">
+            <div class="company-logo-avatar-stub branded" style="font-size: 0.55rem; line-height: 1.1; font-weight: 800;">
+              <span style="color:#056133;">Feu</span><span style="color:#9e0b0f;">Vert</span>
+            </div>
+            <div class="entrant-meta-info">
+              <h4>Feu Vert</h4>
+              <span><i class="fa-solid fa-map-marker-alt"></i> France</span>
+            </div>
+          </div>
+
+          <div class="entrant-item-row">
+            <div class="company-logo-avatar-stub"></div>
+            <div class="entrant-meta-info">
+              <h4>{Company Name}</h4>
+              <span><i class="fa-solid fa-map-marker-alt"></i> {Position}</span>
+            </div>
+          </div>
+
+          <div class="entrant-item-row">
+            <div class="company-logo-avatar-stub"></div>
+            <div class="entrant-meta-info">
+              <h4>{Company Name}</h4>
+              <span><i class="fa-solid fa-map-marker-alt"></i> {Position}</span>
+            </div>
+          </div>
+
+          <div class="entrant-item-row">
+            <div class="company-logo-avatar-stub"></div>
+            <div class="entrant-meta-info">
+              <h4>{Company Name}</h4>
+              <span><i class="fa-solid fa-map-marker-alt"></i> {Position}</span>
+            </div>
+          </div>
+
+          <div class="entrant-item-row">
+            <div class="company-logo-avatar-stub"></div>
+            <div class="entrant-meta-info">
+              <h4>{Company Name}</h4>
+              <span><i class="fa-solid fa-map-marker-alt"></i> {Position}</span>
+            </div>
+          </div>
+
+          <div class="entrant-item-row">
+            <div class="company-logo-avatar-stub"></div>
+            <div class="entrant-meta-info">
+              <h4>{Company Name}</h4>
+              <span><i class="fa-solid fa-map-marker-alt"></i> {Position}</span>
+            </div>
+          </div>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  </div>
+
+</body>
+</html>

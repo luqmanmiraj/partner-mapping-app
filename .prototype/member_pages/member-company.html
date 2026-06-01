@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feu Vert Company Profile</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* RESET & BASE STYLES */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body.member-company-body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f3f4f6;
+      color: #374151;
+      padding: 20px 0;
+      line-height: 1.5;
+    }
+
+    .member-company-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: transparent;
+      padding: 0 16px;
+    }
+
+    /* HEADER & HERO BANNER */
+    .member-company-header {
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+    }
+
+    .member-company-banner {
+      position: relative;
+      height: 160px;
+      background-color: #e5e7eb;
+    }
+
+    .member-company-banner-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .member-company-social-actions {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      display: flex;
+      gap: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 6px 12px;
+      border-radius: 20px;
+    }
+
+    .member-company-social-actions a {
+      color: #ffffff;
+      font-size: 14px;
+      text-decoration: none;
+      opacity: 0.9;
+      transition: opacity 0.2s;
+    }
+
+    .member-company-social-actions a:hover {
+      opacity: 1;
+    }
+
+    /* PROFILE SUMMARY */
+    .member-company-profile-summary {
+      position: relative;
+      padding: 24px;
+      padding-top: 50px;
+    }
+
+    .member-company-logo-container {
+      position: absolute;
+      top: -60px;
+      left: 24px;
+      background: #ffffff;
+      padding: 8px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .member-company-logo-box {
+      width: 130px;
+      height: 100px;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 24px;
+      letter-spacing: -0.5px;
+    }
+
+    .member-company-logo-text-green {
+      color: #008a4b;
+    }
+
+    .member-company-logo-text-dark {
+      color: #1f2937;
+      margin-left: 2px;
+    }
+
+    .member-company-title-block {
+      margin-bottom: 24px;
+    }
+
+    .member-company-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .member-company-title-row h1 {
+      font-size: 26px;
+      color: #111827;
+      font-weight: 700;
+    }
+
+    .member-company-edit-btn {
+      background: transparent;
+      border: none;
+      color: #9ca3af;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px;
+      border-radius: 4px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .member-company-edit-btn:hover {
+      background-color: #f3f4f6;
+      color: #4b5563;
+    }
+
+    .member-company-subtitle {
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    /* INFO GRID */
+    .member-company-info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      border-top: 1px solid #f3f4f6;
+      padding-top: 20px;
+    }
+
+    .member-company-info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .member-company-icon-box {
+      width: 32px;
+      height: 32px;
+      background-color: #fef3c7;
+      color: #d97706;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .member-company-icon-star {
+      background-color: #fef3c7;
+      color: #d97706;
+    }
+
+    .member-company-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #9ca3af;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+
+    .member-company-value {
+      font-size: 13px;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    /* TAGS */
+    .member-company-tag-container {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .member-company-tag {
+      background-color: #ffedd5;
+      color: #ea580c;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    /* NAVIGATION TABS */
+    .member-company-tabs-nav {
+      border-bottom: 2px solid #e5e7eb;
+      margin-bottom: 20px;
+    }
+
+    .member-company-tabs-list {
+      display: flex;
+      list-style: none;
+      gap: 24px;
+    }
+
+    .member-company-tab-item {
+      padding-bottom: 10px;
+      position: relative;
+    }
+
+    .member-company-tab-item a {
+      text-decoration: none;
+      color: #6b7280;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .member-company-tab-active a {
+      color: #111827;
+    }
+
+    .member-company-tab-active::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: #ea580c;
+    }
+
+    /* CONTENT CARDS */
+    .member-company-card {
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      margin-bottom: 16px;
+    }
+
+    .member-company-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .member-company-card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .member-company-title-icon {
+      color: #f97316;
+    }
+
+    .member-company-title-icon-star {
+      color: #eab308;
+    }
+
+    .member-company-card-body-text {
+      font-size: 14px;
+      color: #4b5563;
+      line-height: 1.6;
+    }
+
+    .member-company-tags-large .member-company-tag {
+      padding: 4px 12px;
+      font-size: 13px;
+    }
+
+    /* SUB-MEMBERS SECTION */
+    .member-company-submembers-section {
+      margin-top: 32px;
+    }
+
+    .member-company-submembers-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .member-company-submembers-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .member-company-filter-btn {
+      background: none;
+      border: none;
+      font-size: 16px;
+      color: #4b5563;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .member-company-submembers-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .member-company-submember-row {
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .member-company-submember-row:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .member-company-submember-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .member-company-submember-thumb {
+      width: 40px;
+      height: 40px;
+      background-color: #e5e7eb;
+      border-radius: 6px;
+    }
+
+    .member-company-submember-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .member-company-submember-position {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .member-company-row-arrow {
+      color: #9ca3af;
+      font-size: 14px;
+    }
+
+    /* PAGINATION */
+    .member-company-pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 24px;
+      margin-bottom: 40px;
+    }
+
+    .member-company-pagination a {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #4b5563;
+      transition: background-color 0.2s;
+    }
+
+    .member-company-pagination a:hover:not(.member-company-pag-active) {
+      background-color: #e5e7eb;
+    }
+
+    .member-company-pag-active {
+      background-color: transparent;
+      color: #111827 !important;
+      font-weight: 700 !important;
+    }
+
+    .member-company-pag-arrow {
+      color: #9ca3af !important;
+      font-size: 11px;
+    }
+
+    /* RESPONSIVE LAYOUT BREAKPOINTS */
+    @media (max-width: 768px) {
+      .member-company-info-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      
+      .member-company-profile-summary {
+        padding-top: 70px;
+      }
+      
+      .member-company-logo-container {
+        top: -50px;
+        left: 16px;
+      }
+      
+      .member-company-logo-box {
+        width: 100px;
+        height: 75px;
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body class="member-company-body">
+
+  <div class="member-company-container">
+    
+    <header class="member-company-header">
+      <div class="member-company-banner">
+        <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=1200&auto=format&fit=crop" alt="Feu Vert Banner" class="member-company-banner-img">
+        <div class="member-company-social-actions">
+          <a href="#"><i class="fa-solid fa-pen"></i></a>
+          <a href="#"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+          <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+      </div>
+      
+      <div class="member-company-profile-summary">
+        <div class="member-company-logo-container">
+          <div class="member-company-logo-box">
+            <span class="member-company-logo-text-green">Feu</span>
+            <span class="member-company-logo-text-dark">Vert</span>
+          </div>
+        </div>
+        
+        <div class="member-company-title-block">
+          <div class="member-company-title-row">
+            <h1>Feu Vert</h1>
+            <button class="member-company-edit-btn"><i class="fa-solid fa-pen"></i></button>
+          </div>
+          <p class="member-company-subtitle">Original Equipment Manufacturer / Aftermarket</p>
+        </div>
+
+        <div class="member-company-info-grid">
+          <div class="member-company-info-item">
+            <div class="member-company-icon-box"><i class="fa-solid fa-gear"></i></div>
+            <div>
+              <span class="member-company-label">Activity</span>
+              <span class="member-company-value">Manufacturer</span>
+            </div>
+          </div>
+          <div class="member-company-info-item">
+            <div class="member-company-icon-box member-company-icon-star"><i class="fa-solid fa-star"></i></div>
+            <div>
+              <span class="member-company-label">Products</span>
+              <div class="member-company-tag-container">
+                <span class="member-company-tag">Injection</span>
+                <span class="member-company-tag">Batteries</span>
+                <span class="member-company-tag">Wipers</span>
+              </div>
+            </div>
+          </div>
+          <div class="member-company-info-item">
+            <div class="member-company-icon-box"><i class="fa-solid fa-at"></i></div>
+            <div>
+              <span class="member-company-label">General Email</span>
+              <span class="member-company-value">contact@bosch.com</span>
+            </div>
+          </div>
+          <div class="member-company-info-item">
+            <div class="member-company-icon-box"><i class="fa-solid fa-location-dot"></i></div>
+            <div>
+              <span class="member-company-label">Headquarters</span>
+              <span class="member-company-value">164 Av. Jean Jaurès, 69007 Lyon</span>
+            </div>
+          </div>
+          <div class="member-company-info-item">
+            <div class="member-company-icon-box"><i class="fa-solid fa-globe"></i></div>
+            <div>
+              <span class="member-company-label">Website</span>
+              <span class="member-company-value">www.bosch-automotive.com</span>
+            </div>
+          </div>
+          <div class="member-company-info-item">
+            <div class="member-company-icon-box"><i class="fa-solid fa-phone"></i></div>
+            <div>
+              <span class="member-company-label">Contact Number</span>
+              <span class="member-company-value">+ 33 01 02 03 04</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="member-company-tabs-nav">
+      <ul class="member-company-tabs-list">
+        <li class="member-company-tab-item member-company-tab-active"><a href="#">About</a></li>
+        <li class="member-company-tab-item"><a href="#">Contacts</a></li>
+        <li class="member-company-tab-item"><a href="#">Medias</a></li>
+        <li class="member-company-tab-item"><a href="#">ID Card</a></li>
+      </ul>
+    </nav>
+
+    <main class="member-company-content">
+      
+      <section class="member-company-card">
+        <div class="member-company-card-header">
+          <h2 class="member-company-card-title">
+            <i class="fa-solid fa-building member-company-title-icon"></i> About
+          </h2>
+          <button class="member-company-edit-btn"><i class="fa-solid fa-pen"></i></button>
+        </div>
+        <p class="member-company-card-body-text">
+          Global leader in automotive technology and services. We provide innovative solutions for connected, automated, and electrified mobility. Our expertise covers braking systems, steering, and engine management solutions.
+        </p>
+      </section>
+
+      <section class="member-company-card">
+        <div class="member-company-card-header">
+          <h2 class="member-company-card-title">
+            <i class="fa-solid fa-star member-company-title-icon-star"></i> Expertise & Product Ranges
+          </h2>
+          <button class="member-company-edit-btn"><i class="fa-solid fa-pen"></i></button>
+        </div>
+        <div class="member-company-tag-container member-company-tags-large">
+          <span class="member-company-tag">Injection</span>
+          <span class="member-company-tag">Batteries</span>
+          <span class="member-company-tag">Wipers</span>
+        </div>
+      </section>
+
+      <section class="member-company-submembers-section">
+        <div class="member-company-submembers-header">
+          <h2>My Sub-members</h2>
+          <button class="member-company-filter-btn"><i class="fa-solid fa-sliders"></i></button>
+        </div>
+
+        <div class="member-company-submembers-list">
+          <div class="member-company-submember-row">
+            <div class="member-company-submember-meta">
+              <div class="member-company-submember-thumb"></div>
+              <div>
+                <div class="member-company-submember-name">{Company Name}</div>
+                <div class="member-company-submember-position"><i class="fa-solid fa-location-dot"></i> {Position}</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-arrow-right member-company-row-arrow"></i>
+          </div>
+
+          <div class="member-company-submember-row">
+            <div class="member-company-submember-meta">
+              <div class="member-company-submember-thumb"></div>
+              <div>
+                <div class="member-company-submember-name">{Company Name}</div>
+                <div class="member-company-submember-position"><i class="fa-solid fa-location-dot"></i> {Position}</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-arrow-right member-company-row-arrow"></i>
+          </div>
+
+          <div class="member-company-submember-row">
+            <div class="member-company-submember-meta">
+              <div class="member-company-submember-thumb"></div>
+              <div>
+                <div class="member-company-submember-name">{Company Name}</div>
+                <div class="member-company-submember-position"><i class="fa-solid fa-location-dot"></i> {Position}</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-arrow-right member-company-row-arrow"></i>
+          </div>
+
+          <div class="member-company-submember-row">
+            <div class="member-company-submember-meta">
+              <div class="member-company-submember-thumb"></div>
+              <div>
+                <div class="member-company-submember-name">{Company Name}</div>
+                <div class="member-company-submember-position"><i class="fa-solid fa-location-dot"></i> {Position}</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-arrow-right member-company-row-arrow"></i>
+          </div>
+        </div>
+
+        <div class="member-company-pagination">
+          <a href="#" class="member-company-pag-arrow"><i class="fa-solid fa-chevron-left"></i></a>
+          <a href="#" class="member-company-pag-num member-company-pag-active">1</a>
+          <a href="#" class="member-company-pag-num">2</a>
+          <a href="#" class="member-company-pag-num">3</a>
+          <a href="#" class="member-company-pag-arrow"><i class="fa-solid fa-chevron-right"></i></a>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+</body>
+</html>

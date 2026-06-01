@@ -15,18 +15,20 @@ from auth.hubspot_bridge import init_hubspot_auth
 from auth.session import init_session, is_partner, is_reviewer, is_admin
 from pages.auth.connection import handle_sso_sign_in, render as render_connection
 from theme.html_utils import render_html
-from theme.layout import render_dev_controls, render_role_switcher, render_sidebar_branding, render_sidebar_nav
+from theme.layout import render_dev_controls, render_role_switcher
+from theme.page_content import render_page_content
+from theme.sidenav import handle_sidenav_query, render_sidenav
 from theme.styles import inject_styles
-from theme.tokens import PAGE_BG
+from theme.top_header import render_top_header
 
 HUB_PAGES = {
     "hub_dashboard": ("pages.portal.hub_dashboard", "render"),
-    "member_directory": ("pages.portal.stubs", "render_member_directory"),
-    "my_company": ("pages.portal.stubs", "render_my_company"),
-    "about": ("pages.portal.stubs", "render_about"),
-    "services": ("pages.portal.stubs", "render_services"),
-    "news": ("pages.portal.stubs", "render_news"),
-    "help": ("pages.portal.stubs", "render_help"),
+    "member_directory": ("pages.portal.member_directory", "render"),
+    "my_company": ("pages.portal.my_company", "render"),
+    "about": ("pages.portal.about", "render"),
+    "services": ("pages.portal.services", "render"),
+    "news": ("pages.portal.news", "render"),
+    "help": ("pages.portal.help", "render"),
 }
 
 PARTNER_MAPPING_PAGES = {
@@ -106,10 +108,7 @@ def main() -> None:
         st.session_state.authenticated = True
 
     if not handle_sso_sign_in():
-        render_html(f"<style>.stApp {{ background-color: {PAGE_BG}; }}</style>")
-        _left, center, _right = st.columns([1, 1.1, 1])
-        with center:
-            render_connection()
+        render_connection()
         return
 
     session = init_session()
@@ -135,15 +134,19 @@ def main() -> None:
         if target in pages:
             st.session_state.active_page = target
 
+    accessible = set(pages.keys())
+    handle_sidenav_query(accessible)
+
     with st.sidebar:
-        render_sidebar_branding()
-        render_sidebar_nav(st.session_state.active_page, set(pages.keys()))
+        render_sidenav(st.session_state.active_page, accessible)
         render_dev_controls()
         render_role_switcher()
 
+    render_top_header(session.display_name)
+
     module_path, attr = pages[st.session_state.active_page]
     render_fn = _import_callable(module_path, attr)
-    render_fn(st.session_state.active_page)
+    render_page_content(render_fn, st.session_state.active_page)
 
 
 if __name__ == "__main__":

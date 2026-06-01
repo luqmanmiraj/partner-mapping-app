@@ -20,6 +20,14 @@ from theme.tokens import (
 
 def inject_styles() -> None:
     from theme.html_utils import render_html
+    from theme.sidenav import inject_sidenav_styles
+    from theme.top_header import inject_top_header_styles
+
+    inject_sidenav_styles()
+    inject_top_header_styles()
+    from widgets.overview_section import inject_overview_section_styles
+
+    inject_overview_section_styles()
 
     render_html(
         f"""
@@ -39,9 +47,24 @@ def inject_styles() -> None:
             background: transparent;
         }}
 
-        button[data-testid="stSidebarCollapsedControl"],
-        button[data-testid="baseButton-headerNoPadding"] {{
+        /* Expand control when sidebar is collapsed (main canvas, not in-sidebar header) */
+        button[data-testid="stSidebarCollapsedControl"] {{
             visibility: visible !important;
+        }}
+
+        /* Remove Streamlit default sidebar header (logo spacer + collapse button) */
+        section[data-testid="stSidebar"] [data-testid="stSidebarHeader"],
+        section[data-testid="stSidebar"] [data-testid="stLogoSpacer"],
+        section[data-testid="stSidebar"] [data-testid="stSidebarCollapseButton"] {{
+            display: none !important;
+            height: 0 !important;
+            min-height: 0 !important;
+            max-height: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            overflow: hidden !important;
+            visibility: hidden !important;
         }}
 
         .stApp {{
@@ -49,159 +72,63 @@ def inject_styles() -> None:
         }}
 
         section[data-testid="stSidebar"] {{
-            background-color: {SIDEBAR_BG};
+            background-color: #111111 !important;
             border-right: none;
-            min-width: 240px !important;
-            max-width: 240px !important;
+            min-width: 280px !important;
+            max-width: 280px !important;
             display: block !important;
             visibility: visible !important;
         }}
 
-        section[data-testid="stSidebar"] div[data-testid="stButton"] > button {{
-            width: 100%;
-            justify-content: flex-start;
-            background: transparent;
-            color: #D1D5DB;
-            border: none;
-            font-weight: 500;
-            font-size: 0.9rem;
-            padding: 0.55rem 0.85rem;
-            margin-bottom: 0.15rem;
-        }}
-
-        section[data-testid="stSidebar"] div[data-testid="stButton"] > button:hover {{
-            background: #333333;
-            color: #FFFFFF;
-        }}
-
-        section[data-testid="stSidebar"] div[data-testid="stButton"] > button[kind="primary"] {{
-            background: {ORANGE} !important;
-            color: #FFFFFF !important;
-        }}
-
-        section[data-testid="stSidebar"] div[data-testid="stButton"] > button[kind="primary"]:hover {{
-            background: {ORANGE} !important;
-        }}
-
         section[data-testid="stSidebar"] > div {{
-            background-color: {SIDEBAR_BG};
+            background-color: #111111;
             padding-top: 0;
         }}
 
-        section[data-testid="stSidebar"] .stMarkdown,
-        section[data-testid="stSidebar"] p,
-        section[data-testid="stSidebar"] span,
-        section[data-testid="stSidebar"] label {{
-            color: #FFFFFF;
+        section[data-testid="stSidebar"]
+        div[data-testid="stVerticalBlockBorderWrapper"]:not([class*="st-key-nav_"]):not(
+            [class*="st-key-sidenav_"]
+        )
+        div[data-testid="stButton"]
+        > button {{
+            width: 100%;
+            justify-content: flex-start;
+            background: #1a1a1a;
+            color: #e5e5e5;
+            border: 1px solid #333333;
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 0.45rem 0.75rem;
+            margin-bottom: 0.35rem;
+        }}
+
+        section[data-testid="stSidebar"]
+        div[data-testid="stVerticalBlockBorderWrapper"]:not([class*="st-key-nav_"]):not(
+            [class*="st-key-sidenav_"]
+        )
+        div[data-testid="stButton"]
+        > button:hover {{
+            background: #262626;
+            color: #ffffff;
+            border-color: #444444;
+        }}
+
+        section[data-testid="stSidebar"] .stCaption,
+        section[data-testid="stSidebar"] label,
+        section[data-testid="stSidebar"] .stSelectbox label {{
+            color: #b0b0b0 !important;
         }}
 
         section[data-testid="stSidebar"] hr {{
-            border-color: #333;
+            border-color: #333333;
             margin: 1rem 0;
         }}
 
         .block-container {{
-            padding-top: 1.5rem;
+            padding-top: 0;
             padding-left: 2rem;
             padding-right: 2rem;
             max-width: 100%;
-        }}
-
-        .nexus-logo {{
-            font-size: 1.35rem;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-            margin-bottom: 1.75rem;
-            padding-top: 0.5rem;
-        }}
-
-        .nexus-logo .mark {{ color: {ORANGE}; }}
-
-        .nav-item {{
-            display: flex;
-            align-items: center;
-            gap: 0.65rem;
-            padding: 0.55rem 0.85rem;
-            border-radius: 8px;
-            color: #D1D5DB;
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin-bottom: 0.15rem;
-            cursor: pointer;
-        }}
-
-        .nav-item.active {{
-            background: {ORANGE};
-            color: #FFFFFF;
-        }}
-
-        .nav-section {{
-            color: #9CA3AF;
-            font-size: 0.72rem;
-            font-weight: 600;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            margin: 1.25rem 0 0.5rem 0.85rem;
-        }}
-
-        .account-row {{
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.75rem 0.85rem;
-            border-top: 1px solid #333;
-            margin-top: 2rem;
-            color: #FFFFFF;
-            font-size: 0.9rem;
-        }}
-
-        .page-header {{
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.25rem;
-        }}
-
-        .page-header h1 {{
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: {TEXT_PRIMARY};
-            margin: 0;
-        }}
-
-        .header-actions {{
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }}
-
-        .icon-btn {{
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: {CARD_BG};
-            border: 1px solid {BORDER};
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-        }}
-
-        .profile-chip {{
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-            background: {CARD_BG};
-            border: 1px solid {BORDER};
-            border-radius: 999px;
-            padding: 0.25rem 0.5rem 0.25rem 0.25rem;
-        }}
-
-        .profile-avatar {{
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #FCD34D, {ORANGE});
         }}
 
         .card {{
@@ -325,60 +252,6 @@ def inject_styles() -> None:
             padding: 0.75rem;
         }}
 
-        .hero-card {{
-            background: linear-gradient(135deg, {ORANGE_LIGHT} 0%, #FFFFFF 55%, #FFFFFF 100%);
-            border: 1px solid #FDEAD7;
-            border-radius: 12px;
-            padding: 2rem 2rem 2rem 2.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 2rem;
-            margin-bottom: 1rem;
-            overflow: hidden;
-            min-height: 210px;
-        }}
-
-        .hero-card h2 {{
-            font-size: 1.65rem;
-            font-weight: 700;
-            color: {TEXT_PRIMARY};
-            margin: 0 0 1rem 0;
-        }}
-
-        .hero-list {{ list-style: none; padding: 0; margin: 0; }}
-        .hero-list li {{
-            display: flex; align-items: center; gap: 0.5rem;
-            color: {TEXT_MUTED}; font-size: 0.95rem; margin-bottom: 0.45rem;
-        }}
-        .hero-list li::before {{ content: "→"; color: {ORANGE}; font-weight: 700; }}
-
-        .hero-devices {{ position: relative; width: 280px; height: 170px; flex-shrink: 0; }}
-        .device-laptop {{
-            position: absolute; right: 0; top: 10px; width: 210px; height: 130px;
-            background: #FFF; border-radius: 8px; border: 2px solid #E5E7EB;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08); padding: 8px;
-        }}
-        .device-phone {{
-            position: absolute; left: 0; bottom: 0; width: 72px; height: 120px;
-            background: #FFF; border-radius: 12px; border: 2px solid #E5E7EB;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.1); padding: 6px;
-        }}
-        .device-screen {{
-            width: 100%; height: 100%;
-            background: linear-gradient(180deg, {ORANGE_LIGHT}, #FFFFFF);
-            border-radius: 4px;
-        }}
-
-        .feature-card {{ display: flex; gap: 1rem; align-items: flex-start; }}
-        .feature-icon {{
-            width: 40px; height: 40px; border-radius: 8px; background: {PAGE_BG};
-            border: 1px solid {BORDER}; display: flex; align-items: center;
-            justify-content: center; font-size: 1.1rem; flex-shrink: 0;
-        }}
-        .feature-card h3 {{ margin: 0 0 0.35rem 0; font-size: 1rem; font-weight: 600; }}
-        .feature-card p {{ margin: 0; color: {TEXT_MUTED}; font-size: 0.88rem; line-height: 1.5; }}
-
         .toolbar {{ display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }}
         .select-pill, .btn-outline {{
             background: {CARD_BG}; border: 1px solid {BORDER}; border-radius: 8px;
@@ -400,7 +273,6 @@ def inject_styles() -> None:
 
         @media (max-width: 1100px) {{
             .metric-grid {{ grid-template-columns: repeat(2, 1fr); }}
-            .hero-card {{ flex-direction: column; align-items: flex-start; }}
         }}
         </style>
         """

@@ -10,7 +10,22 @@ import pandas as pd
 import snowflake.connector
 from snowflake.connector.errors import DatabaseError
 
-MIGRATE_DIR = Path(__file__).resolve().parent.parent / "scripts" / "snowflake_migrate"
+APP_ROOT = Path(__file__).resolve().parent
+
+
+def _resolve_migrate_dir() -> Path:
+    """Prefer app-local scripts/, then parent monorepo layout."""
+    candidates = (
+        APP_ROOT / "scripts" / "snowflake_migrate",
+        APP_ROOT.parent / "scripts" / "snowflake_migrate",
+    )
+    for path in candidates:
+        if (path / "migrate_ref.py").exists():
+            return path
+    return candidates[0]
+
+
+MIGRATE_DIR = _resolve_migrate_dir()
 if str(MIGRATE_DIR) not in sys.path:
     sys.path.insert(0, str(MIGRATE_DIR))
 
@@ -18,12 +33,15 @@ from migrate_ref import (  # noqa: E402
     DATABASE,
     SCHEMA,
     activate_session,
-    load_config,
     normalize_account,
 )
 from dotenv import load_dotenv
 
-ENV_PATH = MIGRATE_DIR / ".env.migrate"
+_ENV_CANDIDATES = (
+    MIGRATE_DIR / ".env.migrate",
+    APP_ROOT / ".env.migrate",
+)
+ENV_PATH = next((p for p in _ENV_CANDIDATES if p.exists()), _ENV_CANDIDATES[0])
 
 
 class SnowflakeConnectionError(Exception):

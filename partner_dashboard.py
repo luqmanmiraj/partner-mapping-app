@@ -807,8 +807,10 @@ def main() -> None:
     render_hero()
     render_upcoming_features()
 
-    render_section_toolbar("Overview", data.last_updated, show_controls=True)
-    render_metric_cards(data.overview_cards)
+    from content_policies.hub_dashboard import HubDashboardPolicy
+    from widgets.overview_section import render_overview_section
+
+    render_overview_section(HubDashboardPolicy(), data.last_updated, data.overview_cards)
 
     render_section_toolbar("Sales", data.last_updated)
     render_sales_charts(data)

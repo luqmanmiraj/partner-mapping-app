@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Section</title>
+  <style>
+    /* --- Global Resets & Typography --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #ededed;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* --- Card Container --- */
+    .about-card {
+      width: 100%;
+      max-width: 1100px;
+      background-color: #ffffff;
+      padding: 40px 45px;
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    /* --- Section Heading --- */
+    .about-card h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #111111;
+      margin-bottom: 24px;
+    }
+
+    /* --- Content Paragraphs --- */
+    .about-card p {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: #555555;
+      margin-bottom: 24px;
+    }
+
+    /* Eliminates bottom margin for the last paragraph inside the card */
+    .about-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* --- Styled Highlights --- */
+    .highlight {
+      color: #f39c12; /* Golden/orange brand accent color */
+      font-weight: 700;
+    }
+
+    /* --- Responsive Behavior --- */
+    @media (max-width: 768px) {
+      .about-card {
+        padding: 25px 20px;
+      }
+      
+      .about-card h2 {
+        font-size: 1.5rem;
+        margin-bottom: 18px;
+      }
+
+      .about-card p {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="about-card">
+    <h2>About</h2>
+    <p>
+      NEXUS is the leading global automotive aftermarket community. With more than 
+      <span class="highlight">637 distributor</span> members, 
+      <span class="highlight">4,103 WDs</span> and 
+      <span class="highlight">9,953 retail stores</span> affiliated in 
+      <span class="highlight">146 countries</span>, allied with 90+ global manufacturers suppliers, NEXUS is a growth accelerator for its community.
+    </p>
+    <p>
+      Established in 2014 by CEO Gaël Escribe, NEXUS Automotive International, the leading automotive aftermarket (AA) global community, is shaping the future of the AA.
+    </p>
+  </section>
+
+</body>
+</html>

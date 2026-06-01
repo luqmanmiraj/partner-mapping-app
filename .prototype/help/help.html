@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help Center Dashboard</title>
+  
+  <style>
+    /* --- Core Resets & Variables --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f5f6;
+      color: #000000;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* --- Primary Main Layout Split Grid --- */
+    .split-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 40px;
+      align-items: start;
+    }
+
+    /* --- Left Workspace Stream Elements --- */
+    .left-content-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+
+    /* Search Component Input Wrapper Bar */
+    .search-wrapper {
+      position: relative;
+      width: 100%;
+      margin-bottom: 32px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 14px 48px 14px 16px;
+      font-size: 0.95rem;
+      border: 1px solid #b3b3b3;
+      border-radius: 4px;
+      background-color: #ffffff;
+      outline: none;
+      color: #333333;
+    }
+
+    .search-icon-svg {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: #000000;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      pointer-events: none;
+    }
+
+    /* Subheading instructions label */
+    .selection-heading {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #444444;
+      margin-bottom: 16px;
+    }
+
+    /* Horizontal Category Card Rows System */
+    .category-cards-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 56px;
+    }
+
+    .category-card {
+      background-color: #ffffff;
+      border-radius: 8px;
+      width: 140px;
+      height: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+    }
+
+    .category-icon-svg {
+      width: 26px;
+      height: 26px;
+      fill: none;
+      stroke: #f39c12; /* Golden signature accent color matching theme components */
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .category-card span {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #000000;
+    }
+
+    /* --- Accordion Frequently Asked Questions Section --- */
+    .faq-section-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+
+    .faq-accordion-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .faq-item-row {
+      border-bottom: 1px solid #dcdcdc;
+      padding: 20px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .faq-question-text {
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.4;
+      color: #000000;
+      padding-right: 24px;
+    }
+
+    .faq-toggle-svg {
+      width: 12px;
+      height: 12px;
+      fill: none;
+      stroke: #000000;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    /* --- RIGHT SIDEBAR: Sidebar Prompt Widget Card --- */
+    .sidebar-callout-widget {
+      background-color: #fff9f2; /* Cream light background style block tint */
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+
+    .widget-icon-svg {
+      width: 28px;
+      height: 28px;
+      fill: none;
+      stroke: #000000;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      margin-bottom: 16px;
+    }
+
+    .sidebar-callout-widget h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #000000;
+      margin-bottom: 12px;
+    }
+
+    .sidebar-callout-widget p {
+      font-size: 0.92rem;
+      color: #333333;
+      line-height: 1.45;
+      margin-bottom: 24px;
+    }
+
+    .btn-chat-trigger {
+      display: inline-block;
+      background-color: #0f1115;
+      color: #ffffff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    /* --- Responsive Viewport Mechanics Adjuster --- */
+    @media (max-width: 900px) {
+      .split-layout {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      
+      .category-cards-row {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="split-layout">
+      
+      <main class="left-content-panel">
+        
+        <h1>How can we help?</h1>
+        
+        <div class="search-wrapper">
+          <input type="text" class="search-input" placeholder="Search for a topic...">
+          <svg class="search-icon-svg" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </div>
+
+        <span class="selection-heading">Or choose a category</span>
+        
+        <div class="category-cards-row">
+          
+          <div class="category-card">
+            <svg class="category-icon-svg" viewBox="0 0 24 24">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <path d="M12 14c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3z"></path>
+              <path d="M12 2v2"></path>
+              <path d="M12 20v2"></path>
+              <path d="M20 12h2"></path>
+              <path d="M2 12h2"></path>
+            </svg>
+            <span>IT</span>
+          </div>
+
+          <div class="category-card">
+            <svg class="category-icon-svg" viewBox="0 0 24 24">
+              <path d="M11 5h1a7 7 0 0 1 7 7v0a7 7 0 0 1-7 7h-1H3V5h8z"></path>
+              <path d="M3 10h4"></path>
+              <path d="M3 14h4"></path>
+              <path d="M19 12h3"></path>
+            </svg>
+            <span>Marketing</span>
+          </div>
+
+          <div class="category-card">
+            <svg class="category-icon-svg" viewBox="0 0 24 24">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            <span>Sales</span>
+          </div>
+
+        </div>
+
+        <section>
+          <h2 class="faq-section-title">Frequently asked questions</h2>
+          
+          <div class="faq-accordion-container">
+            
+            <div class="faq-item-row">
+              <span class="faq-question-text">Morbi finibus lacus ac dolor pulvinar pharetra sed varius velit. Vivamus id molestie neque ?</span>
+              <svg class="faq-toggle-svg" viewBox="0 0 24 24">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+
+            <div class="faq-item-row">
+              <span class="faq-question-text">Morbi finibus lacus ac dolor pulvinar pharetra sed varius velit. Vivamus id molestie neque ?</span>
+              <svg class="faq-toggle-svg" viewBox="0 0 24 24">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+
+            <div class="faq-item-row">
+              <span class="faq-question-text">Morbi finibus lacus ac dolor pulvinar pharetra sed varius velit. Vivamus id molestie neque ?</span>
+              <svg class="faq-toggle-svg" viewBox="0 0 24 24">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+
+            <div class="faq-item-row">
+              <span class="faq-question-text">Morbi finibus lacus ac dolor pulvinar pharetra sed varius velit. Vivamus id molestie neque ?</span>
+              <svg class="faq-toggle-svg" viewBox="0 0 24 24">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+
+          </div>
+        </section>
+
+      </main>
+
+      <aside class="sidebar-wrapper">
+        <div class="sidebar-callout-widget">
+          <svg class="widget-icon-svg" viewBox="0 0 24 24">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <h3>Need a quick answer</h3>
+          <p>Ask our Nexus AI assistant for immediate help on platform usage.</p>
+          <button class="btn-chat-trigger">Chat now</button>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+</body>
+</html>

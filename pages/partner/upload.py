@@ -8,7 +8,7 @@ from auth.session import get_session
 from auth.snowflake_session import scoped_connection
 from services.upload_client import upload_declaration
 from theme.components import render_page_header, render_section_header, render_warning_banner
-from constants import MAX_UPLOAD_BYTES, MAX_UPLOAD_MB, upload_size_error, upload_size_help
+from constants import MAX_UPLOAD_BYTES, upload_size_error, upload_size_help
 from theme.tokens import CURRENCIES
 
 
@@ -38,7 +38,6 @@ def render(active_page: str = "upload") -> None:
         "Drag & drop your file here",
         type=["csv", "xlsx", "xls"],
         help=upload_size_help(),
-        max_upload_size=MAX_UPLOAD_MB,
     )
 
     comment = st.text_area("Comment (optional)", max_chars=500, placeholder="Max 500 characters")

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partners Directory</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --body-bg: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #000000;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --accent-orange: #f2994a;
+            --btn-dark: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-main);
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        /* --- Filters Toolbar Bar --- */
+        .filter-bar {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 6px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-wrapper svg {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 36px 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .dropdown-filter {
+            padding: 10px 32px 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background-color: var(--card-bg);
+            font-size: 13px;
+            color: #374151;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 14px;
+        }
+
+        /* --- Premium Promo Banner --- */
+        .promo-banner {
+            background: linear-gradient(90deg, #e0ebf6 0%, #f7ebe1 100%);
+            border-radius: 6px;
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .promo-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-placeholder {
+            width: 64px;
+            height: 64px;
+            background: var(--card-bg);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .logo-text-mock {
+            font-weight: 800;
+            color: #e11d48;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .promo-text h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .promo-text p {
+            font-size: 13px;
+            color: #374151;
+            max-width: 600px;
+            line-height: 1.4;
+        }
+
+        /* --- Tabs Navigation --- */
+        .tabs-nav {
+            display: flex;
+            gap: 24px;
+            border-bottom: 1px solid #d1d5db;
+            padding-left: 4px;
+            margin-top: 8px;
+        }
+
+        .tab-item {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            padding-bottom: 12px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .tab-item.active {
+            color: var(--text-main);
+        }
+
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: var(--accent-orange);
+        }
+
+        /* --- Partner List Cards --- */
+        .partner-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .partner-card {
+            background: var(--card-bg);
+            border-radius: 6px;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        .partner-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .partner-logo-mini {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .partner-details h3 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .partner-location {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* --- Shared Action Buttons --- */
+        .actions-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-profile {
+            background: var(--card-bg);
+            border: 1px solid #000000;
+            color: var(--text-main);
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-profile:hover {
+            background: #f9fafb;
+        }
+
+        .btn-rebates {
+            background: var(--btn-dark);
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-rebates:hover {
+            opacity: 0.9;
+        }
+
+        /* --- Pagination System --- */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .page-link {
+            min-width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .page-link.active {
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        .page-link.arrow {
+            color: var(--text-main);
+        }
+
+        /* Responsive UI Adjustments */
+        @media (max-width: 768px) {
+            .promo-banner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            .partner-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            .actions-group {
+                width: 100%;
+                justify-content: flex-end;
+            }
+            .filter-bar > * {
+                flex: 1 1 calc(50% - 12px);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Identify your partners and contact decision-makers directly</h1>
+
+        <div class="filter-bar">
+            <div class="search-wrapper">
+                <input type="text" class="search-input" placeholder="Search for a member">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </div>
+            <select class="dropdown-filter"><option>Company size</option></select>
+            <select class="dropdown-filter"><option>Region</option></select>
+            <select class="dropdown-filter"><option>Country</option></select>
+            <select class="dropdown-filter"><option>Market segment</option></select>
+            <select class="dropdown-filter"><option>Product type</option></select>
+        </div>
+
+        <div class="promo-banner">
+            <div class="promo-content">
+                <div class="logo-placeholder">
+                    <span class="logo-text-mock">BOSCH</span>
+                </div>
+                <div class="promo-text">
+                    <h2>Bosch Automotive</h2>
+                    <p>Discover our new ceramic braking ranges and benefit from exclusive logistics conditions throughout the month of February</p>
+                </div>
+            </div>
+            <button class="btn-profile">See profile</button>
+        </div>
+
+        <div class="tabs-nav">
+            <div class="tab-item active">Strategic</div>
+            <div class="tab-item">Preferred</div>
+            <div class="tab-item">Listed</div>
+        </div>
+
+        <div class="partner-list">
+            <script>
+                // JavaScript loop structure injected here cleanly just to output the identical stacked component row items efficiently.
+                for (let i = 0; i < 10; i++) {
+                    document.write(`
+                        <div class="partner-card">
+                            <div class="partner-info">
+                                <div class="partner-logo-mini">
+                                    <span style="font-weight:800; color:#e11d48; font-size:10px;">BOSCH</span>
+                                </div>
+                                <div class="partner-details">
+                                    <h3>Bosch Automotive</h3>
+                                    <div class="partner-location">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
+                                        </svg> 
+                                        France
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="actions-group">
+                                <button class="btn-profile">See profile</button>
+                                <button class="btn-rebates">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;">
+                                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                    </svg>
+                                    See Rebates
+                                </button>
+                            </div>
+                        </div>
+                    `);
+                }
+            </script>
+        </div>
+
+        <div class="pagination">
+            <span class="page-link arrow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </span>
+            <span class="page-link active">1</span>
+            <span class="page-link">2</span>
+            <span class="page-link">3</span>
+            <span class="page-link arrow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </span>
+        </div>
+    </div>
+
+</body>
+</html>

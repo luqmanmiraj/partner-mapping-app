@@ -8,7 +8,7 @@ from auth.session import get_session
 from data.partner_declarations import check_period_closed
 from services.upload_client import upload_declaration
 from theme.components import render_page_header, render_section_header, render_warning_banner
-from constants import MAX_UPLOAD_MB, upload_size_help
+from constants import upload_size_help
 from theme.tokens import CURRENCIES
 
 
@@ -41,7 +41,6 @@ def render(active_page: str = "corrective") -> None:
         "Corrected file",
         type=["csv", "xlsx", "xls"],
         help=upload_size_help(),
-        max_upload_size=MAX_UPLOAD_MB,
     )
     comment = st.text_area("Reason for correction", max_chars=500)
 

@@ -9,7 +9,7 @@ from auth.snowflake_session import scoped_connection
 from data.hub_dashboard_loader import load_hub_dashboard
 from theme.components import render_page_header
 from widgets.hero_banner import render_hero_banner
-from widgets.kpi_overview import render_kpi_overview
+from widgets.overview_section import render_overview_section
 from widgets.ranking_table import render_ranking_table
 from widgets.sales_charts import render_sales_charts
 from widgets.section_toolbar import render_section_toolbar
@@ -34,13 +34,7 @@ def render(active_page: str = "hub_dashboard") -> None:
         render_upcoming_features(policy)
 
     if "overview" in policy.visible_sections:
-        render_section_toolbar(
-            policy.overview_title,
-            vm.last_updated,
-            policy=policy,
-            show_controls=True,
-        )
-        render_kpi_overview(vm.overview_cards)
+        render_overview_section(policy, vm.last_updated, vm.overview_cards)
 
     if "sales" in policy.visible_sections:
         render_section_toolbar(policy.sales_title, vm.last_updated, policy=policy)

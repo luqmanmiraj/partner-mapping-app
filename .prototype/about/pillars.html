@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strategic Pillars & Lorem Ipsum Info</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* --- Reset & Global Configuration --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      color: #111111;
+      padding: 40px 20px;
+    }
+
+    .main-container {
+      max-width: 1140px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    /* ==========================================
+       SECTION 1: Our Strategic Pillars (Grid)
+       ========================================== */
+    .pillars-title {
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: #111111;
+      margin-bottom: 25px;
+      letter-spacing: -0.5px;
+    }
+
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .pillar-card {
+      background-color: #ffffff;
+      border-radius: 6px;
+      padding: 30px 25px 40px 25px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.015);
+    }
+
+    .pillar-icon {
+      color: #f39c12; /* Brand amber accent color */
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+
+    .pillar-card h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #111111;
+      margin-bottom: 14px;
+    }
+
+    .pillar-card p {
+      font-size: 0.95rem;
+      line-height: 1.55;
+      color: #555555;
+    }
+
+    /* ==========================================
+       SECTION 2: Content Feature Layout Card
+       ========================================== */
+    .feature-card {
+      background-color: #ffffff;
+      border-radius: 6px;
+      padding: 45px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.015);
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 45px;
+      align-items: start;
+    }
+
+    /* --- Text side --- */
+    .feature-content h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #111111;
+      margin-bottom: 24px;
+    }
+
+    .feature-description {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: #555555;
+      margin-bottom: 30px;
+    }
+
+    .highlight {
+      color: #f39c12;
+      font-weight: 700;
+    }
+
+    /* --- Feature List Blocks --- */
+    .feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .list-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .list-icon {
+      color: #f39c12;
+      font-size: 1.2rem;
+      margin-top: 4px;
+      flex-shrink: 0;
+    }
+
+    .list-text h4 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #111111;
+      margin-bottom: 6px;
+    }
+
+    .list-text p {
+      font-size: 0.95rem;
+      line-height: 1.55;
+      color: #555555;
+    }
+
+    /* --- Image Media Side --- */
+    .feature-media {
+      width: 100%;
+      height: 100%;
+      min-height: 350px;
+      /* Configured generic placeholder representing the original dark global data networking graphics */
+      background: #07111e url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80') center/cover no-repeat;
+      border-radius: 6px;
+    }
+
+    /* ==========================================
+       Responsive Media Viewports
+       ========================================== */
+    @media (max-width: 992px) {
+      .pillars-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .feature-card {
+        grid-template-columns: 1fr;
+        gap: 35px;
+        padding: 30px;
+      }
+
+      .feature-media {
+        min-height: 300px;
+        grid-row: 1; /* Pushes graphic above text context items in single columns */
+      }
+    }
+
+    @media (max-width: 650px) {
+      body {
+        padding: 20px 10px;
+      }
+
+      .pillars-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .pillars-title {
+        font-size: 1.6rem;
+      }
+
+      .feature-content h2 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-container">
+    
+    <section>
+      <h2 class="pillars-title">Our Strategic Pillars</h2>
+      <div class="pillars-grid">
+        <div class="pillar-card">
+          <div class="pillar-icon"><i class="fa-solid fa-user-group"></i></div>
+          <h3>Intermediation</h3>
+          <p>Connect directly with the world's leading OEMs. We manage framework agreements to streamline your business.</p>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-icon"><i class="fa-solid fa-user-group"></i></div>
+          <h3>Intermediation</h3>
+          <p>Connect directly with the world's leading OEMs. We manage framework agreements to streamline your business.</p>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-icon"><i class="fa-solid fa-user-group"></i></div>
+          <h3>Intermediation</h3>
+          <p>Connect directly with the world's leading OEMs. We manage framework agreements to streamline your business.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="feature-card">
+      <div class="feature-content">
+        <h2>Lorem ipsum</h2>
+        <p class="feature-description">
+          Thanks to an entrepreneurial, innovative and agile mindset, N! disrupts the industry bringing innovative solutions for a more sustainable, digital and connected mobility. At the same time, it supports its community of more than <span class="highlight">637 members</span> in <span class="highlight">146 countries</span>, allied with more than <span class="highlight">90 global suppliers</span>, by providing services to accelerate their growth.
+        </p>
+        
+        <div class="feature-list">
+          <div class="list-item">
+            <div class="list-icon"><i class="fa-solid fa-user-group"></i></div>
+            <div class="list-text">
+              <h4>Lorem ipsum</h4>
+              <p>N! is offering new approaches and new ideas for a connected, global and consolidated world of tomorrow to accelerate the success of car and heavy duty spare parts and services distributors and manufacturers, through 16 regional structures that connect them.</p>
+            </div>
+          </div>
+          
+          <div class="list-item">
+            <div class="list-icon"><i class="fa-solid fa-user-group"></i></div>
+            <div class="list-text">
+              <h4>Lorem ipsum</h4>
+              <p>NEXUS' consolidated turnover was more than 54 billion euros in 2025.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-media"></div>
+    </section>
+
+  </div>
+
+</body>
+</html>

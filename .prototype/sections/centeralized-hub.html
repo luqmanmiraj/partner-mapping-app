@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Welcome Hub</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f7f9fb;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* --- Main Hero Container --- */
+        .hero-banner {
+            width: 100%;
+            max-width: 1200px;
+            background: linear-gradient(105deg, #fff5eb 0%, #fbf4ee 50%, #f6e6d9 100%);
+            border-radius: 16px;
+            padding: 48px 64px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(242, 169, 108, 0.08);
+            gap: 40px;
+        }
+
+        /* --- Left Text Column --- */
+        .hero-left {
+            flex: 1;
+            min-width: 320px;
+        }
+
+        .hero-left h1 {
+            font-size: 36px;
+            font-weight: 600;
+            color: #111111;
+            margin-bottom: 28px;
+            letter-spacing: -0.5px;
+        }
+
+        .features-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .features-list li {
+            font-size: 18px;
+            font-weight: 700;
+            color: #111111;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        /* Replicating the distinct orange arrows */
+        .features-list li::before {
+            content: "➔";
+            color: #f2a96c;
+            font-size: 18px;
+            display: inline-block;
+        }
+
+        /* --- Right Showcase Column --- */
+        .hero-right {
+            display: flex;
+            align-items: flex-end;
+            gap: 20px;
+            height: 100%;
+            position: relative;
+        }
+
+        /* --- Laptop Mockup --- */
+        .laptop-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 320px;
+        }
+
+        .laptop-screen {
+            width: 100%;
+            height: 190px;
+            background: #ffffff;
+            border: 8px solid #222222;
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+            display: flex;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+        }
+
+        /* Laptop UI Mock Mini-Elements */
+        .laptop-sidebar {
+            width: 25%;
+            background-color: #1a1a1a;
+            padding: 10px 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .sidebar-brand { height: 8px; width: 70%; background: #f2a96c; margin-bottom: 8px; border-radius: 2px;}
+        .sidebar-item { height: 6px; width: 85%; background: #333; border-radius: 2px; }
+        .sidebar-item.active { background: #f2a96c; }
+
+        .laptop-body-content {
+            width: 75%;
+            background: #f7f9fb;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .ui-header { height: 10px; width: 100%; background: #fff; border-bottom: 1px solid #eee; }
+        .ui-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+        .ui-card { height: 28px; background: #fff; border-radius: 3px; border: 1px solid #eaeaea; }
+        .ui-main-chart { height: 75px; background: #fff; border-radius: 4px; border: 1px solid #eaeaea; }
+
+        .laptop-base {
+            width: 370px;
+            height: 8px;
+            background: #cccccc;
+            border-radius: 0 0 8px 8px;
+            border-bottom: 3px solid #b3b3b3;
+            position: relative;
+        }
+        .laptop-base::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 4px;
+            background: #999;
+            border-radius: 0 0 4px 4px;
+        }
+
+        /* --- Phone Mockup --- */
+        .phone-container {
+            width: 90px;
+            height: 185px;
+            background: #ffffff;
+            border: 6px solid #1a1a1a;
+            border-radius: 18px;
+            position: relative;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 12px 6px;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        /* Dynamic Island / Speaker notch */
+        .phone-notch {
+            position: absolute;
+            top: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 5px;
+            background: #1a1a1a;
+            border-radius: 10px;
+        }
+
+        /* Phone UI Mock Mini-Elements */
+        .phone-ui-header { height: 12px; width: 100%; background: #f2a96c; border-radius: 2px; }
+        .phone-ui-card { height: 45px; width: 100%; background: #fff; border: 1px solid #eee; border-radius: 4px; }
+        .phone-ui-chart { height: 60px; width: 100%; background: #fdf8f4; border: 1px solid #f6e6d9; border-radius: 4px; }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 960px) {
+            .hero-banner {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 40px;
+            }
+            .hero-right {
+                width: 100%;
+                justify-content: center;
+                margin-top: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-left h1 { font-size: 28px; }
+            .features-list li { font-size: 15px; }
+            .hero-right { display: none; } /* Hide devices on extremely narrow screens */
+        }
+    </style>
+</head>
+<body>
+
+    <section class="hero-banner">
+        <div class="hero-left">
+            <h1>Welcome to your centralized hub.</h1>
+            <ul class="features-list">
+                <li>Drive your performance</li>
+                <li>Access exclusive deals</li>
+                <li>And stay connected with the global Nexus ecosystem</li>
+            </ul>
+        </div>
+
+        <div class="hero-right">
+            <div class="laptop-container">
+                <div class="laptop-screen">
+                    <div class="laptop-sidebar">
+                        <div class="sidebar-brand"></div>
+                        <div class="sidebar-item active"></div>
+                        <div class="sidebar-item"></div>
+                        <div class="sidebar-item"></div>
+                    </div>
+                    <div class="laptop-body-content">
+                        <div class="ui-header"></div>
+                        <div class="ui-grid">
+                            <div class="ui-card"></div>
+                            <div class="ui-card"></div>
+                            <div class="ui-card"></div>
+                            <div class="ui-card"></div>
+                        </div>
+                        <div class="ui-main-chart"></div>
+                    </div>
+                </div>
+                <div class="laptop-base"></div>
+            </div>
+
+            <div class="phone-container">
+                <div class="phone-notch"></div>
+                <div class="phone-ui-header"></div>
+                <div class="phone-ui-card"></div>
+                <div class="phone-ui-chart"></div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="family">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #fbf7f4 0%, #f4eade 100%);
+            --card-bg: #ffffff;
+            --text-main: #000000;
+            --text-muted: #71717a;
+            --primary-orange: #f2994a;
+            --orange-light: #fef08a;
+            --green-trend-bg: #dcfce7;
+            --green-trend-text: #166534;
+            --red-trend-bg: #fee2e2;
+            --red-trend-text: #991b1b;
+            --border-color: #e4e4e7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* --- Global Typography & Headers --- */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .title-group h2 {
+            font-size: 22px;
+            font-weight: 700;
+            display: inline-block;
+            margin-right: 12px;
+        }
+
+        .last-updated {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* --- Header Actions / Controls --- */
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-dropdown, .btn-action {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #27272a;
+            transition: all 0.2s ease;
+        }
+
+        .btn-dropdown {
+            min-width: 120px;
+            justify-content: space-between;
+        }
+
+        .btn-dropdown::after {
+            content: '\f107';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .btn-action:hover, .btn-dropdown:hover {
+            background: #fafafa;
+            border-color: #d4d4d8;
+        }
+
+        /* --- Overview Cards Layout --- */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .card-kpi {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .card-kpi .kpi-label {
+            color: var(--primary-orange);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .card-kpi .kpi-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        /* --- Trend Badges --- */
+        .trend-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .trend-badge.positive {
+            background-color: var(--green-trend-bg);
+            color: var(--green-trend-text);
+        }
+
+        .trend-badge.negative {
+            background-color: var(--red-trend-bg);
+            color: var(--red-trend-text);
+        }
+
+        /* --- Sales Section Layout --- */
+        .sales-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        .chart-card, .list-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .chart-card h3, .list-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        /* --- Chart Mockup (CSS SVG Styling) --- */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            margin-top: 20px;
+        }
+
+        /* --- Horizontal Bar Chart (Product Groups) --- */
+        .bar-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .bar-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .bar-track {
+            position: relative;
+            background: #f4f4f5;
+            height: 32px;
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+        }
+
+        .bar-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, #ffedd5 0%, #fed7aa 100%);
+            z-index: 1;
+        }
+
+        .bar-label {
+            position: relative;
+            z-index: 2;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .bar-value {
+            position: absolute;
+            right: 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+            z-index: 2;
+        }
+
+        /* --- Partners Table Section --- */
+        .table-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 12px 0 24px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            overflow: hidden;
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .custom-table th {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .custom-table td {
+            padding: 20px 24px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .custom-table tr td:first-child, 
+        .custom-table tr th:first-child {
+            font-weight: 700;
+        }
+
+        /* Responsive Breakdowns */
+        @media (max-width: 1024px) {
+            .overview-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .sales-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            body {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        
+        <section>
+            <div class="section-header">
+                <div class="title-group">
+                    <h2>Overview</h2>
+                    <span class="last-updated">Last updated: Today, 04:00 AM</span>
+                </div>
+                <div class="controls">
+                    <button class="btn-dropdown">Date</button>
+                    <button class="btn-dropdown">Lorem ipsum</button>
+                    <button class="btn-action"><i class="fa-solid fa-download"></i> Import</button>
+                    <button class="btn-action"><i class="fa-solid fa-upload"></i> Export</button>
+                </div>
+            </div>
+
+            <div class="overview-grid">
+                <div class="card-kpi">
+                    <div class="kpi-label">Net Sales</div>
+                    <div class="kpi-value">€3.2M</div>
+                    <span class="trend-badge positive"><i class="fa-solid fa-arrow-trend-up"></i> +10%</span>
+                </div>
+                <div class="card-kpi">
+                    <div class="kpi-label">Net Sales</div>
+                    <div class="kpi-value">€3.2M</div>
+                    <span class="trend-badge negative"><i class="fa-solid fa-arrow-trend-down"></i> -5%</span>
+                </div>
+                <div class="card-kpi">
+                    <div class="kpi-label">Net Sales</div>
+                    <div class="kpi-value">€3.2M</div>
+                    <span class="trend-badge positive"><i class="fa-solid fa-arrow-trend-up"></i> +10%</span>
+                </div>
+                <div class="card-kpi">
+                    <div class="kpi-label">Net Sales</div>
+                    <div class="kpi-value">€3.2M</div>
+                    <span class="trend-badge positive"><i class="fa-solid fa-arrow-trend-up"></i> +10%</span>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-header">
+                <div class="title-group">
+                    <h2>Sales</h2>
+                    <span class="last-updated">Last updated: Today, 04:00 AM</span>
+                </div>
+            </div>
+
+            <div class="sales-grid">
+                <div class="chart-card">
+                    <h3>Sales by Country</h3>
+                    <div class="chart-container">
+                        <svg viewBox="0 0 700 220" width="100%" height="100%" preserveAspectRatio="none">
+                            <defs>
+                                <pattern id="grid" width="100" height="40" patternUnits="userSpaceOnUse">
+                                    <line x1="0" y1="0" x2="700" y2="0" stroke="#f4f4f5" stroke-width="1"/>
+                                </pattern>
+                                <linearGradient id="chart-grad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#f2994a" stop-opacity="0.6"/>
+                                    <stop offset="100%" stop-color="#f2994a" stop-opacity="0.0"/>
+                                </linearGradient>
+                            </defs>
+                            
+                            <rect width="100%" height="200" fill="url(#grid)" />
+                            
+                            <path d="M 50,170 L 140,160 L 230,100 L 320,70 L 410,170 L 500,150 L 590,80 L 680,50 L 680,200 L 50,200 Z" fill="url(#chart-grad)" />
+                            
+                            <path d="M 50,170 L 140,160 L 230,100 L 320,70 L 410,170 L 500,150 L 590,80 L 680,50" fill="none" stroke="#e08526" stroke-width="2.5" stroke-dasharray="3,3" />
+                            
+                            <text x="50" y="218" fill="#a1a1aa" font-size="12" text-anchor="middle">2016</text>
+                            <text x="140" y="218" fill="#a1a1aa" font-size="12" text-anchor="middle">2017</text>
+                            <text x="230" y="218" fill="#a1a1aa" font-size="12" text-anchor="middle">2018</text>
+                            <text x="320" y="218" fill="#a1a1aa" font-size="12" text-anchor="middle">2019</text>
+                            <text x="410" y="218" fill="#a1a1aa" font-size="12" text-anchor="middle">2020</text>
+                            <text x="500" y="218" fill="#a1a1aa" font-size="12" text-anchor="middle">2021</text>
+                            <text x="590" y="218" fill="#a1a1aa" font-size="12" text-anchor="middle">2022</text>
+                            <text x="680" y="218" fill="#a1a1aa" font-size="12" text-anchor="middle">2023</text>
+
+                            <text x="35" y="173" fill="#a1a1aa" font-size="12" text-anchor="end">10k</text>
+                            <text x="35" y="133" fill="#a1a1aa" font-size="12" text-anchor="end">20k</text>
+                            <text x="35" y="93" fill="#a1a1aa" font-size="12" text-anchor="end">50k</text>
+                            <text x="35" y="53" fill="#a1a1aa" font-size="12" text-anchor="end">100k</text>
+                            <text x="35" y="202" fill="#a1a1aa" font-size="12" text-anchor="end">0</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="list-card">
+                    <h3>Sales by Product Group</h3>
+                    <div class="bar-list">
+                        <div class="bar-item">
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 95%;"></div>
+                                <span class="bar-label">NY</span>
+                                <span class="bar-value">120K</span>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 75%;"></div>
+                                <span class="bar-label">MA</span>
+                                <span class="bar-value">80K</span>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 65%;"></div>
+                                <span class="bar-label">NH</span>
+                                <span class="bar-value">70K</span>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 45%;"></div>
+                                <span class="bar-label">OR</span>
+                                <span class="bar-value">50K</span>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 45%;"></div>
+                                <span class="bar-label">OR</span>
+                                <span class="bar-value">50K</span>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 45%;"></div>
+                                <span class="bar-label">OR</span>
+                                <span class="bar-value">50K</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-header">
+                <div class="title-group">
+                    <h2>Top Performing Partners</h2>
+                    <span class="last-updated">Last updated: Today, 04:00 AM</span>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Member</th>
+                            <th>Country</th>
+                            <th>Volume</th>
+                            <th>Growth</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Digitalisim</td>
+                            <td>France</td>
+                            <td><strong>€100K</strong></td>
+                            <td><span class="trend-badge positive"><i class="fa-solid fa-arrow-trend-up"></i> +10%</span></td>
+                        </tr>
+                        <tr>
+                            <td>Digitalisim</td>
+                            <td>France</td>
+                            <td><strong>€100K</strong></td>
+                            <td><span class="trend-badge negative"><i class="fa-solid fa-arrow-trend-up"></i> +10%</span></td>
+                        </tr>
+                        <tr>
+                            <td>Digitalisim</td>
+                            <td>France</td>
+                            <td><strong>€100K</strong></td>
+                            <td><span class="trend-badge positive"><i class="fa-solid fa-arrow-trend-up"></i> +10%</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+</body>
+</html>
