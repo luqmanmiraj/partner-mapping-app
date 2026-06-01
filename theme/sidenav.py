@@ -459,4 +459,3 @@ def render_sidenav(active_page: str, accessible_pages: set[str]) -> None:
         </div>
         """
     )
-    render_html(account_widget_html)
