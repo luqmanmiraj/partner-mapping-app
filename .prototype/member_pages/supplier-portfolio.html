@@ -9,46 +9,46 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        :root {
-            --body-bg: #f3f4f6;
-            --card-bg: #ffffff;
-            --text-main: #000000;
-            --text-muted: #6b7280;
-            --border-color: #e5e7eb;
-            --accent-orange: #f2994a;
-            --btn-dark: #000000;
-        }
+        .supplier-portfolio {
 
-        * {
+            --supplier-portfolio-body-bg: #f3f4f6;
+            --supplier-portfolio-card-bg: #ffffff;
+            --supplier-portfolio-text-main: #000000;
+            --supplier-portfolio-text-muted: #6b7280;
+            --supplier-portfolio-border-color: #e5e7eb;
+            --supplier-portfolio-accent-orange: #f2994a;
+            --supplier-portfolio-btn-dark: #000000;
+        
+}
+        .supplier-portfolio,
+        .supplier-portfolio * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-
-        body {
+        .supplier-portfolio {
             font-family: 'Inter', sans-serif;
-            background-color: var(--body-bg);
-            color: var(--text-main);
+            background-color: var(--supplier-portfolio-body-bg);
+            color: var(--supplier-portfolio-text-main);
             padding: 40px 20px;
         }
 
-        .container {
+        .supplier-portfolio-container {
             max-width: 1100px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
             gap: 24px;
         }
-
-        h1 {
+        .supplier-portfolio-container > h1 {
             font-size: 20px;
             font-weight: 700;
             margin-bottom: 8px;
         }
 
         /* --- Filters Toolbar Bar --- */
-        .filter-bar {
-            background: var(--card-bg);
+        .supplier-portfolio-filter-bar {
+            background: var(--supplier-portfolio-card-bg);
             padding: 16px;
             border-radius: 6px;
             display: flex;
@@ -57,13 +57,13 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
-        .search-wrapper {
+        .supplier-portfolio-search-wrapper {
             position: relative;
             flex: 1;
             min-width: 200px;
         }
 
-        .search-wrapper svg {
+        .supplier-portfolio-search-wrapper svg {
             position: absolute;
             right: 14px;
             top: 50%;
@@ -71,7 +71,7 @@
             color: #9ca3af;
         }
 
-        .search-input {
+        .supplier-portfolio-search-input {
             width: 100%;
             padding: 10px 36px 10px 14px;
             border: 1px solid #d1d5db;
@@ -80,11 +80,11 @@
             outline: none;
         }
 
-        .dropdown-filter {
+        .supplier-portfolio-dropdown-filter {
             padding: 10px 32px 10px 14px;
             border: 1px solid #d1d5db;
             border-radius: 4px;
-            background-color: var(--card-bg);
+            background-color: var(--supplier-portfolio-card-bg);
             font-size: 13px;
             color: #374151;
             cursor: pointer;
@@ -97,7 +97,7 @@
         }
 
         /* --- Premium Promo Banner --- */
-        .promo-banner {
+        .supplier-portfolio-promo-banner {
             background: linear-gradient(90deg, #e0ebf6 0%, #f7ebe1 100%);
             border-radius: 6px;
             padding: 24px;
@@ -107,37 +107,37 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
-        .promo-content {
+        .supplier-portfolio-promo-content {
             display: flex;
             align-items: center;
             gap: 20px;
         }
 
-        .logo-placeholder {
+        .supplier-portfolio-logo-placeholder {
             width: 64px;
             height: 64px;
-            background: var(--card-bg);
+            background: var(--supplier-portfolio-card-bg);
             border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--supplier-portfolio-border-color);
         }
 
-        .logo-text-mock {
+        .supplier-portfolio-logo-text-mock {
             font-weight: 800;
             color: #e11d48;
             font-size: 12px;
             letter-spacing: 0.5px;
         }
 
-        .promo-text h2 {
+        .supplier-portfolio-promo-text h2 {
             font-size: 18px;
             font-weight: 700;
             margin-bottom: 4px;
         }
 
-        .promo-text p {
+        .supplier-portfolio-promo-text p {
             font-size: 13px;
             color: #374151;
             max-width: 600px;
@@ -145,7 +145,7 @@
         }
 
         /* --- Tabs Navigation --- */
-        .tabs-nav {
+        .supplier-portfolio-tabs-nav {
             display: flex;
             gap: 24px;
             border-bottom: 1px solid #d1d5db;
@@ -153,38 +153,38 @@
             margin-top: 8px;
         }
 
-        .tab-item {
+        .supplier-portfolio-tab-item {
             font-size: 14px;
             font-weight: 600;
-            color: var(--text-muted);
+            color: var(--supplier-portfolio-text-muted);
             padding-bottom: 12px;
             cursor: pointer;
             position: relative;
         }
 
-        .tab-item.active {
-            color: var(--text-main);
+        .supplier-portfolio-tab-item.supplier-portfolio-active {
+            color: var(--supplier-portfolio-text-main);
         }
 
-        .tab-item.active::after {
+        .supplier-portfolio-tab-item.supplier-portfolio-active::after {
             content: '';
             position: absolute;
             bottom: -1px;
             left: 0;
             right: 0;
             height: 3px;
-            background-color: var(--accent-orange);
+            background-color: var(--supplier-portfolio-accent-orange);
         }
 
         /* --- Partner List Cards --- */
-        .partner-list {
+        .supplier-portfolio-partner-list {
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
 
-        .partner-card {
-            background: var(--card-bg);
+        .supplier-portfolio-partner-card {
+            background: var(--supplier-portfolio-card-bg);
             border-radius: 6px;
             padding: 16px 24px;
             display: flex;
@@ -193,13 +193,13 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.02);
         }
 
-        .partner-info {
+        .supplier-portfolio-partner-info {
             display: flex;
             align-items: center;
             gap: 16px;
         }
 
-        .partner-logo-mini {
+        .supplier-portfolio-partner-logo-mini {
             width: 40px;
             height: 40px;
             display: flex;
@@ -207,30 +207,30 @@
             justify-content: center;
         }
 
-        .partner-details h3 {
+        .supplier-portfolio-partner-details h3 {
             font-size: 14px;
             font-weight: 700;
             margin-bottom: 2px;
         }
 
-        .partner-location {
+        .supplier-portfolio-partner-location {
             font-size: 12px;
-            color: var(--text-muted);
+            color: var(--supplier-portfolio-text-muted);
             display: flex;
             align-items: center;
             gap: 4px;
         }
 
         /* --- Shared Action Buttons --- */
-        .actions-group {
+        .supplier-portfolio-actions-group {
             display: flex;
             gap: 8px;
         }
 
-        .btn-profile {
-            background: var(--card-bg);
+        .supplier-portfolio-btn-profile {
+            background: var(--supplier-portfolio-card-bg);
             border: 1px solid #000000;
-            color: var(--text-main);
+            color: var(--supplier-portfolio-text-main);
             padding: 8px 16px;
             font-size: 12px;
             font-weight: 700;
@@ -239,12 +239,12 @@
             transition: background 0.2s;
         }
 
-        .btn-profile:hover {
+        .supplier-portfolio-btn-profile:hover {
             background: #f9fafb;
         }
 
-        .btn-rebates {
-            background: var(--btn-dark);
+        .supplier-portfolio-btn-rebates {
+            background: var(--supplier-portfolio-btn-dark);
             color: #ffffff;
             border: none;
             padding: 8px 16px;
@@ -258,12 +258,12 @@
             transition: opacity 0.2s;
         }
 
-        .btn-rebates:hover {
+        .supplier-portfolio-btn-rebates:hover {
             opacity: 0.9;
         }
 
         /* --- Pagination System --- */
-        .pagination {
+        .supplier-portfolio-pagination {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -271,7 +271,7 @@
             margin-top: 16px;
         }
 
-        .page-link {
+        .supplier-portfolio-page-link {
             min-width: 32px;
             height: 32px;
             display: flex;
@@ -279,95 +279,96 @@
             justify-content: center;
             font-size: 13px;
             font-weight: 500;
-            color: var(--text-muted);
+            color: var(--supplier-portfolio-text-muted);
             text-decoration: none;
             border-radius: 4px;
             cursor: pointer;
         }
 
-        .page-link.active {
-            color: var(--text-main);
+        .supplier-portfolio-page-link.supplier-portfolio-active {
+            color: var(--supplier-portfolio-text-main);
             font-weight: 700;
         }
 
-        .page-link.arrow {
-            color: var(--text-main);
+        .supplier-portfolio-page-link.supplier-portfolio-arrow {
+            color: var(--supplier-portfolio-text-main);
         }
 
         /* Responsive UI Adjustments */
         @media (max-width: 768px) {
-            .promo-banner {
+            .supplier-portfolio-promo-banner {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 16px;
             }
-            .partner-card {
+            .supplier-portfolio-partner-card {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 16px;
             }
-            .actions-group {
+            .supplier-portfolio-actions-group {
                 width: 100%;
                 justify-content: flex-end;
             }
-            .filter-bar > * {
+            .supplier-portfolio-filter-bar > * {
                 flex: 1 1 calc(50% - 12px);
             }
         }
     </style>
 </head>
 <body>
+    <div class="supplier-portfolio">
 
-    <div class="container">
+    <div class="supplier-portfolio-container">
         <h1>Identify your partners and contact decision-makers directly</h1>
 
-        <div class="filter-bar">
-            <div class="search-wrapper">
-                <input type="text" class="search-input" placeholder="Search for a member">
+        <div class="supplier-portfolio-filter-bar">
+            <div class="supplier-portfolio-search-wrapper">
+                <input type="text" class="supplier-portfolio-search-input" placeholder="Search for a member">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
             </div>
-            <select class="dropdown-filter"><option>Company size</option></select>
-            <select class="dropdown-filter"><option>Region</option></select>
-            <select class="dropdown-filter"><option>Country</option></select>
-            <select class="dropdown-filter"><option>Market segment</option></select>
-            <select class="dropdown-filter"><option>Product type</option></select>
+            <select class="supplier-portfolio-dropdown-filter"><option>Company size</option></select>
+            <select class="supplier-portfolio-dropdown-filter"><option>Region</option></select>
+            <select class="supplier-portfolio-dropdown-filter"><option>Country</option></select>
+            <select class="supplier-portfolio-dropdown-filter"><option>Market segment</option></select>
+            <select class="supplier-portfolio-dropdown-filter"><option>Product type</option></select>
         </div>
 
-        <div class="promo-banner">
-            <div class="promo-content">
-                <div class="logo-placeholder">
-                    <span class="logo-text-mock">BOSCH</span>
+        <div class="supplier-portfolio-promo-banner">
+            <div class="supplier-portfolio-promo-content">
+                <div class="supplier-portfolio-logo-placeholder">
+                    <span class="supplier-portfolio-logo-text-mock">BOSCH</span>
                 </div>
-                <div class="promo-text">
+                <div class="supplier-portfolio-promo-text">
                     <h2>Bosch Automotive</h2>
                     <p>Discover our new ceramic braking ranges and benefit from exclusive logistics conditions throughout the month of February</p>
                 </div>
             </div>
-            <button class="btn-profile">See profile</button>
+            <button class="supplier-portfolio-btn-profile">See profile</button>
         </div>
 
-        <div class="tabs-nav">
-            <div class="tab-item active">Strategic</div>
-            <div class="tab-item">Preferred</div>
-            <div class="tab-item">Listed</div>
+        <div class="supplier-portfolio-tabs-nav">
+            <div class="supplier-portfolio-tab-item supplier-portfolio-active">Strategic</div>
+            <div class="supplier-portfolio-tab-item">Preferred</div>
+            <div class="supplier-portfolio-tab-item">Listed</div>
         </div>
 
-        <div class="partner-list">
+        <div class="supplier-portfolio-partner-list">
             <script>
                 // JavaScript loop structure injected here cleanly just to output the identical stacked component row items efficiently.
                 for (let i = 0; i < 10; i++) {
                     document.write(`
-                        <div class="partner-card">
-                            <div class="partner-info">
-                                <div class="partner-logo-mini">
+                        <div class="supplier-portfolio-partner-card">
+                            <div class="supplier-portfolio-partner-info">
+                                <div class="supplier-portfolio-partner-logo-mini">
                                     <span style="font-weight:800; color:#e11d48; font-size:10px;">BOSCH</span>
                                 </div>
-                                <div class="partner-details">
+                                <div class="supplier-portfolio-partner-details">
                                     <h3>Bosch Automotive</h3>
-                                    <div class="partner-location">
+                                    <div class="supplier-portfolio-partner-location">
                                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;">
                                             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                             <circle cx="12" cy="10" r="3"></circle>
@@ -376,9 +377,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="actions-group">
-                                <button class="btn-profile">See profile</button>
-                                <button class="btn-rebates">
+                            <div class="supplier-portfolio-actions-group">
+                                <button class="supplier-portfolio-btn-profile">See profile</button>
+                                <button class="supplier-portfolio-btn-rebates">
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;">
                                         <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
                                     </svg>
@@ -391,16 +392,16 @@
             </script>
         </div>
 
-        <div class="pagination">
-            <span class="page-link arrow">
+        <div class="supplier-portfolio-pagination">
+            <span class="supplier-portfolio-page-link supplier-portfolio-arrow">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
             </span>
-            <span class="page-link active">1</span>
-            <span class="page-link">2</span>
-            <span class="page-link">3</span>
-            <span class="page-link arrow">
+            <span class="supplier-portfolio-page-link supplier-portfolio-active">1</span>
+            <span class="supplier-portfolio-page-link">2</span>
+            <span class="supplier-portfolio-page-link">3</span>
+            <span class="supplier-portfolio-page-link supplier-portfolio-arrow">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
@@ -408,5 +409,6 @@
         </div>
     </div>
 
+    </div>
 </body>
 </html>

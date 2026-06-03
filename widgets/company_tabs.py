@@ -4,22 +4,13 @@ from __future__ import annotations
 
 import streamlit as st
 
-from theme.html_utils import render_html
+from theme.html_utils import render_st_html_page
 from widgets.company_about_tab import (
     build_company_about_tab_html,
     company_about_tab_styles,
-    inject_company_about_tab_styles,
 )
-from widgets.company_contacts_tab import (
-    build_company_contacts_tab_html,
-    company_contacts_tab_styles,
-    inject_company_contacts_tab_styles,
-)
-from widgets.company_news_media_tab import (
-    build_company_news_media_tab_html,
-    company_news_media_tab_styles,
-    inject_company_news_media_tab_styles,
-)
+from widgets.company_contacts_tab import render_company_contacts_tab
+from widgets.company_news_media_tab import render_company_news_media_tab
 
 _PREFIX = "nexus-company-tabs"
 _SESSION_KEY = "nexus_company_active_tab"
@@ -107,6 +98,8 @@ def company_tabs_styles() -> str:
 
 
 def inject_company_tabs_styles() -> None:
+    from theme.html_utils import render_html
+
     render_html(f"<style>{company_tabs_styles()}</style>")
 
 
@@ -132,13 +125,14 @@ def render_company_tabs(
 
     if active == TAB_ABOUT:
         with st.container(key="company_about_tab_container"):
-            full_html = f"<style>{company_about_tab_styles()}</style>{build_company_about_tab_html(about_data)}"
-            render_html(full_html, width="stretch")
+            render_st_html_page(
+                company_about_tab_styles(),
+                build_company_about_tab_html(about_data),
+                width="stretch",
+            )
     elif active == TAB_CONTACTS:
         with st.container(key="company_contacts_tab_container"):
-            full_html = f"<style>{company_contacts_tab_styles()}</style>{build_company_contacts_tab_html(contacts)}"
-            render_html(full_html, width="stretch")
+            render_company_contacts_tab(contacts)
     else:
         with st.container(key="company_news_tab_container"):
-            full_html = f"<style>{company_news_media_tab_styles()}</style>{build_company_news_media_tab_html(news_data)}"
-            render_html(full_html, width="stretch")
+            render_company_news_media_tab(news_data)

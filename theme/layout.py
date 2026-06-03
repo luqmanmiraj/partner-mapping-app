@@ -8,6 +8,8 @@ import streamlit as st
 from theme.sidenav import (  # noqa: F401
     ADMIN_NAV,
     HUB_PORTAL_NAV,
+    HUB_PORTAL_NAV_MEMBER,
+    HUB_PORTAL_NAV_SUPPLIER,
     HUB_PORTAL_SECONDARY,
     PARTNER_MAPPING_NAV,
     REVIEWER_NAV,
@@ -31,26 +33,26 @@ def render_app_page_content(render_fn, *args, **kwargs) -> None:
 
 
 def render_dev_controls() -> tuple[bool, str]:
-    st.divider()
-    st.caption("Developer controls")
-    use_snowflake = st.toggle(
-        "Use Snowflake data",
-        value=st.session_state.get("use_snowflake", False),
-    )
-    passcode = st.text_input(
-        "TOTP passcode",
-        value=st.session_state.get("passcode", ""),
-        type="password",
-    )
+    """Dev-only sidebar controls (hidden in the UI via sidenav CSS)."""
+    with st.container(key="dev_controls"):
+        st.divider()
+        st.caption("Developer controls")
+        use_snowflake = st.toggle(
+            "Use Snowflake data",
+            value=st.session_state.get("use_snowflake", False),
+        )
+        passcode = st.text_input(
+            "TOTP passcode",
+            value=st.session_state.get("passcode", ""),
+            type="password",
+        )
     st.session_state.use_snowflake = use_snowflake
     st.session_state.passcode = passcode
     return use_snowflake, passcode
 
 
 def render_role_switcher() -> None:
-    """Dev-only persona switcher for local testing."""
-    st.divider()
-    st.caption("Dev persona")
+    """Dev-only persona switcher (rendered under sidebar logo)."""
     options = {
         "Supplier — MEYLE": ("11111111", "partner"),
         "Supplier — HELLA": ("44444444", "partner"),
@@ -58,19 +60,22 @@ def render_role_switcher() -> None:
         "Reviewer": ("reviewer", "reviewer"),
         "Admin": ("admin", "admin"),
     }
-    current = st.session_state.get("dev_persona", "Supplier — MEYLE")
-    choice = st.selectbox(
-        "Switch persona",
-        list(options.keys()),
-        index=list(options.keys()).index(current) if current in options else 0,
-    )
-    if choice != current:
-        st.session_state.dev_persona = choice
-        key, role_type = options[choice]
-        if role_type == "partner":
-            st.session_state.hubspot_company_id = key
-        st.session_state.app_role = role_type
-        st.session_state.pop("user_session", None)
-        st.session_state.pop("active_page", None)
-        st.session_state.pop("navigate_to", None)
-        st.rerun()
+    with st.container(key="sidenav_persona"):
+        current = st.session_state.get("dev_persona", "Supplier — MEYLE")
+        st.caption("Persona")
+        choice = st.selectbox(
+            "Persona",
+            list(options.keys()),
+            index=list(options.keys()).index(current) if current in options else 0,
+            label_visibility="collapsed",
+        )
+        if choice != current:
+            st.session_state.dev_persona = choice
+            key, role_type = options[choice]
+            if role_type == "partner":
+                st.session_state.hubspot_company_id = key
+            st.session_state.app_role = role_type
+            st.session_state.pop("user_session", None)
+            st.session_state.pop("active_page", None)
+            st.session_state.pop("navigate_to", None)
+            st.rerun()

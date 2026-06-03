@@ -8,6 +8,7 @@ from auth.session import get_session
 from auth.snowflake_session import scoped_connection
 from data.hub_dashboard_loader import load_hub_dashboard
 from theme.components import render_page_header
+from theme.member_templates import render_member_template
 from widgets.hero_banner import render_hero_banner
 from widgets.overview_section import render_overview_section
 from widgets.ranking_table import render_ranking_table
@@ -18,6 +19,12 @@ from widgets.upcoming_features import render_upcoming_features
 
 def render(active_page: str = "hub_dashboard") -> None:
     session = get_session()
+    # For member persona, use the static HTML prototype so the dashboard
+    # matches the member design exactly.
+    if getattr(session, "declarant_type", "") == "member":
+        render_member_template("member-dashboard")
+        return
+
     use_sf = st.session_state.get("use_snowflake", False)
     passcode = st.session_state.get("passcode", "")
 

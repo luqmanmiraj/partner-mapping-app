@@ -25,8 +25,10 @@ def inject_styles() -> None:
 
     inject_sidenav_styles()
     inject_top_header_styles()
+    from theme.page_content import inject_page_content_styles
     from widgets.overview_section import inject_overview_section_styles
 
+    inject_page_content_styles()
     inject_overview_section_styles()
 
     render_html(
@@ -126,8 +128,8 @@ def inject_styles() -> None:
 
         .block-container {{
             padding-top: 0;
-            padding-left: 2rem;
-            padding-right: 2rem;
+            padding-left: 0;
+            padding-right: 0;
             max-width: 100%;
         }}
 

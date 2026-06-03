@@ -12,23 +12,30 @@ if str(APP_DIR) not in sys.path:
     sys.path.insert(0, str(APP_DIR))
 
 from auth.hubspot_bridge import init_hubspot_auth
-from auth.session import init_session, is_partner, is_reviewer, is_admin
+from auth.session import get_session, init_session, is_partner, is_reviewer, is_admin
 from pages.auth.connection import handle_sso_sign_in, render as render_connection
-from theme.html_utils import render_html
-from theme.layout import render_dev_controls, render_role_switcher
+from theme.layout import render_dev_controls
 from theme.page_content import render_page_content
-from theme.sidenav import handle_sidenav_query, render_sidenav
+from theme.sidenav import handle_sidenav_query, remap_active_page_for_declarant, render_sidenav
 from theme.styles import inject_styles
 from theme.top_header import render_top_header
 
-HUB_PAGES = {
+HUB_PAGES_COMMON = {
     "hub_dashboard": ("pages.portal.hub_dashboard", "render"),
-    "member_directory": ("pages.portal.member_directory", "render"),
     "my_company": ("pages.portal.my_company", "render"),
     "about": ("pages.portal.about", "render"),
     "services": ("pages.portal.services", "render"),
     "news": ("pages.portal.news", "render"),
     "help": ("pages.portal.help", "render"),
+}
+
+HUB_PAGES_SUPPLIER_ONLY = {
+    "member_directory": ("pages.portal.member_directory", "render"),
+}
+
+HUB_PAGES_MEMBER_ONLY = {
+    "offers": ("pages.portal.offers", "render"),
+    "supplier_portfolio": ("pages.portal.supplier_portfolio", "render"),
 }
 
 PARTNER_MAPPING_PAGES = {
@@ -73,7 +80,12 @@ def _default_page() -> str:
 def _accessible_pages() -> dict[str, tuple[str, str]]:
     pages = {}
     if is_partner():
-        pages.update(HUB_PAGES)
+        pages.update(HUB_PAGES_COMMON)
+        session = get_session()
+        if session.declarant_type == "member":
+            pages.update(HUB_PAGES_MEMBER_ONLY)
+        else:
+            pages.update(HUB_PAGES_SUPPLIER_ONLY)
         pages.update(PARTNER_MAPPING_PAGES)
     if is_reviewer():
         pages.update(REVIEWER_PAGES)
@@ -126,6 +138,14 @@ def main() -> None:
     if "active_page" not in st.session_state:
         st.session_state.active_page = default
 
+    if is_partner():
+        remapped = remap_active_page_for_declarant(
+            st.session_state.active_page,
+            get_session().declarant_type,
+        )
+        if remapped != st.session_state.active_page:
+            st.session_state.active_page = remapped
+
     if st.session_state.active_page not in pages:
         st.session_state.active_page = default
 
@@ -140,7 +160,6 @@ def main() -> None:
     with st.sidebar:
         render_sidenav(st.session_state.active_page, accessible)
         render_dev_controls()
-        render_role_switcher()
 
     render_top_header(session.display_name)
 

@@ -2,41 +2,26 @@
 
 from __future__ import annotations
 
-import random
 import uuid
 from datetime import datetime, timezone
 
+import streamlit as st
+
+from auth.snowflake_session import scoped_connection
 from data.notification_fixtures import NotificationItem, get_notifications
 from services.brd_state import (
     DepositRecord,
-    MappingProposal,
     audit,
-    get_config,
-    get_partner,
     init_brd_state,
     save_deposit,
-    save_proposal,
 )
 from services.file_parser import parse_upload
-
-import streamlit as st
-
+from services.memory_store import create_review_entry, resolve_template
 
 def _mock_eur(amount: float, currency: str) -> tuple[float, bool]:
     rates = {"EUR": 1.0, "USD": 0.92, "GBP": 1.17, "PLN": 0.23, "CHF": 1.05}
     rate = rates.get(currency, 1.0)
-    return round(amount * rate, 2), currency != "EUR" and random.random() < 0.1
-
-
-def _resolve_confidence(partner_key: str, source: str, dimension: str) -> float:
-    init_brd_state()
-    local = st.session_state.local_memory.get(partner_key, {})
-    key = f"{dimension}:{source}"
-    if key in local:
-        return 1.0
-    if key in st.session_state.global_memory:
-        return 0.95
-    return round(random.uniform(0.55, 0.98), 2)
+    return round(amount * rate, 2), currency != "EUR"
 
 
 def process_upload(
@@ -52,7 +37,6 @@ def process_upload(
 ) -> tuple[bool, str, str]:
     """Returns (success, upload_id, message)."""
     init_brd_state()
-    threshold = get_config()["confidence_threshold"]
 
     parsed = parse_upload(filename, file_bytes)
     if not parsed.success:
@@ -67,7 +51,7 @@ def process_upload(
     reasons: list[str] = []
     local_total = 0.0
 
-    for i, row in enumerate(parsed.lines[:5000]):
+    for row in parsed.lines[:5000]:
         amount_raw = next((v for k, v in row.items() if k.lower() in ("amount", "total", "turnover", "value")), "0")
         try:
             amount = float(str(amount_raw).replace(",", "").replace("€", "").strip() or 0)
@@ -77,34 +61,36 @@ def process_upload(
             pass  # BR-DECL-07 negative amounts valid
         local_total += amount
 
-        for dim in ("product_category", "counterparty_member", "counterparty_supplier"):
-            source = str(row.get(list(row.keys())[0], f"line_{i}"))
-            conf = _resolve_confidence(partner_key, source, dim)
-            if conf >= threshold:
-                auto += 1
-            else:
-                review += 1
-                pid = f"MAP-{uuid.uuid4().hex[:6].upper()}"
-                save_proposal(
-                    MappingProposal(
-                        proposal_id=pid,
-                        partner_key=partner_key,
-                        upload_id=upload_id,
-                        dimension=dim,
-                        source_value=source[:200],
-                        proposed_target=f"TARGET-{dim[:3].upper()}-{i}",
-                        confidence_score=conf,
-                    )
-                )
+    source_columns = list(parsed.lines[0].keys())
 
-    if rejected == len(parsed.lines) and len(parsed.lines) > 0:
-        status = "Rejected"
-    elif review > 0 and auto > 0:
-        status = "Partially rejected" if rejected else "In review"
-    elif review > 0:
-        status = "In review"
-    else:
-        status = "Validated"
+    use_sf = st.session_state.get("use_snowflake", False)
+    passcode = st.session_state.get("passcode", "")
+    with scoped_connection(passcode, force_demo=not use_sf) as conn:
+        resolved = resolve_template(partner_key, source_columns, conn=conn)
+        if resolved:
+            status = "Validated"
+            auto = parsed.row_count
+            review = 0
+            validation_source = str(resolved.get("scope", "GLOBAL"))
+            mapping = dict(resolved.get("mapping", {}))
+        else:
+            status = "In review"
+            auto = 0
+            review = parsed.row_count
+            validation_source = "NONE"
+            mapping = {}
+
+        create_review_entry(
+            upload_id=upload_id,
+            partner_key=partner_key,
+            filename=filename,
+            period=period,
+            source_columns=source_columns,
+            status=status,
+            validation_source=validation_source,
+            mapping=mapping,
+            conn=conn,
+        )
 
     eur_total, pending_rate = _mock_eur(local_total, currency)
 
@@ -147,7 +133,11 @@ def process_upload(
         ),
     )
     save_deposit(dep)
-    audit(partner_key, "UPLOAD_PROCESSED", f"{upload_id} status={status} lines={parsed.row_count}")
+    audit(
+        partner_key,
+        "UPLOAD_PROCESSED",
+        f"{upload_id} status={status} validation={validation_source} lines={parsed.row_count}",
+    )
 
     get_notifications().insert(
         0,
@@ -161,4 +151,6 @@ def process_upload(
         ),
     )
 
-    return True, upload_id, f"File received and processed. Status: {status}."
+    if status == "Validated":
+        return True, upload_id, "File validated using memory template and stored."
+    return True, upload_id, "File uploaded and routed to reviewer for manual mapping."
