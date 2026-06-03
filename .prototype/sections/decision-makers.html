@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Company Directory List</title>
+  <style>
+    /* Base Presentation Setup */
+    body {
+      background-color: #f1f1f1; /* Soft gray backdrop */
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Outer Container */
+    .directory-container {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Main Card Element */
+    .company-card {
+      background-color: #ffffff;
+      border-radius: 6px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    /* Badges */
+    .badge-wrapper {
+      display: flex;
+    }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 6px 12px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Filled Member Badge Style */
+    .badge.member {
+      background-color: #d9822b;
+      color: #ffffff;
+    }
+
+    /* Outlined Affiliate Badge Style */
+    .badge.affiliate {
+      border: 1px solid #d9822b;
+      color: #d9822b;
+      background-color: transparent;
+    }
+
+    /* Card Main Grid Layout */
+    .card-body {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Left Side Grouping (Logo + Details) */
+    .company-info-group {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    /* Placeholder/Mock Logo Container */
+    .company-logo {
+      font-size: 18px;
+      font-weight: 800;
+      color: #00965e; /* Exact emerald green brand color */
+      font-style: italic;
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+    }
+
+    /* Meta text typography */
+    .company-details h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111111;
+      margin: 0 0 4px 0;
+    }
+
+    .location-box {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #757575;
+      font-size: 15px;
+    }
+
+    .location-icon {
+      width: 16px;
+      height: 16px;
+      color: #757575;
+    }
+
+    /* Right Side CTA Profile Link Button */
+    .profile-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #111111;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      transition: color 0.2s ease;
+    }
+
+    .profile-link:hover {
+      color: #d9822b;
+    }
+
+    .arrow-icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Bottom Pagination Controls Layout */
+    .pagination-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 12px;
+    }
+
+    .pagination-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 32px;
+      height: 32px;
+      border: none;
+      background: none;
+      font-size: 15px;
+      font-weight: 600;
+      color: #4a4a4a;
+      cursor: pointer;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+
+    .pagination-item.active {
+      color: #111111;
+      font-weight: 700;
+    }
+
+    .pagination-arrow {
+      width: 18px;
+      height: 18px;
+      color: #111111;
+    }
+
+    /* Responsive scaling layout */
+    @media (max-width: 600px) {
+      .card-body {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .profile-link {
+        align-self: flex-end;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="directory-container">
+    
+    <div class="company-card">
+      <div class="badge-wrapper">
+        <span class="badge affiliate">
+          <span>☆</span> Affiliate {Parent Company}
+        </span>
+      </div>
+      <div class="card-body">
+        <div class="company-info-group">
+          <div class="company-logo">Feu Vert</div>
+          <div class="company-details">
+            <h3>Feu Vert</h3>
+            <div class="location-box">
+              <svg class="location-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <circle stroke-linecap="round" stroke-linejoin="round" cx="12" cy="11" r="2"></circle>
+              </svg>
+              <span>France</span>
+            </div>
+          </div>
+        </div>
+        <a href="#" class="profile-link">
+          <span>See profile</span>
+          <svg class="arrow-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="company-card">
+      <div class="badge-wrapper">
+        <span class="badge affiliate">
+          <span>☆</span> Affiliate {Parent Company}
+        </span>
+      </div>
+      <div class="card-body">
+        <div class="company-info-group">
+          <div class="company-logo">Feu Vert</div>
+          <div class="company-details">
+            <h3>Feu Vert</h3>
+            <div class="location-box">
+              <svg class="location-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <circle stroke-linecap="round" stroke-linejoin="round" cx="12" cy="11" r="2"></circle>
+              </svg>
+              <span>France</span>
+            </div>
+          </div>
+        </div>
+        <a href="#" class="profile-link">
+          <span>See profile</span>
+          <svg class="arrow-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="company-card">
+      <div class="badge-wrapper">
+        <span class="badge affiliate">
+          <span>☆</span> Affiliate {Parent Company}
+        </span>
+      </div>
+      <div class="card-body">
+        <div class="company-info-group">
+          <div class="company-logo">Feu Vert</div>
+          <div class="company-details">
+            <h3>Feu Vert</h3>
+            <div class="location-box">
+              <svg class="location-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <circle stroke-linecap="round" stroke-linejoin="round" cx="12" cy="11" r="2"></circle>
+              </svg>
+              <span>France</span>
+            </div>
+          </div>
+        </div>
+        <a href="#" class="profile-link">
+          <span>See profile</span>
+          <svg class="arrow-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="company-card">
+      <div class="badge-wrapper">
+        <span class="badge member">
+          <span>★</span> Member
+        </span>
+      </div>
+      <div class="card-body">
+        <div class="company-info-group">
+          <div class="company-logo">Feu Vert</div>
+          <div class="company-details">
+            <h3>Feu Vert</h3>
+            <div class="location-box">
+              <svg class="location-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <circle stroke-linecap="round" stroke-linejoin="round" cx="12" cy="11" r="2"></circle>
+              </svg>
+              <span>France</span>
+            </div>
+          </div>
+        </div>
+        <a href="#" class="profile-link">
+          <span>See profile</span>
+          <svg class="arrow-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="company-card">
+      <div class="badge-wrapper">
+        <span class="badge member">
+          <span>★</span> Member
+        </span>
+      </div>
+      <div class="card-body">
+        <div class="company-info-group">
+          <div class="company-logo">Feu Vert</div>
+          <div class="company-details">
+            <h3>Feu Vert</h3>
+            <div class="location-box">
+              <svg class="location-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <circle stroke-linecap="round" stroke-linejoin="round" cx="12" cy="11" r="2"></circle>
+              </svg>
+              <span>France</span>
+            </div>
+          </div>
+        </div>
+        <a href="#" class="profile-link">
+          <span>See profile</span>
+          <svg class="arrow-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="pagination-container">
+      <button class="pagination-item" aria-label="Previous page">
+        <svg class="pagination-arrow" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+        </svg>
+      </button>
+      <button class="pagination-item active">1</button>
+      <button class="pagination-item">2</button>
+      <button class="pagination-item">3</button>
+      <button class="pagination-item" aria-label="Next page">
+        <svg class="pagination-arrow" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+
+</body>
+</html>

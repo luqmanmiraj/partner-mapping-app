@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Optimize Your Margins Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* --- Base Resets & Typography --- */
+        .member-offers,
+        .member-offers * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+        .member-offers {
+      background-color: #f3f4f6;
+      padding: 40px 20px;
+      color: #1f2937;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .member-offers-container {
+      width: 100%;
+      max-width: none;
+    }
+        .member-offers-container > h1 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #000;
+    }
+
+    /* --- Filter Bar --- */
+    .member-offers-filter-bar {
+      background-color: #fff;
+      padding: 16px;
+      border-radius: 4px;
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      flex-wrap: wrap;
+    }
+
+    .member-offers-search-wrapper {
+      position: relative;
+      flex: 2;
+      min-width: 200px;
+    }
+
+    .member-offers-search-wrapper input {
+      width: 100%;
+      padding: 10px 36px 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .member-offers-search-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      color: #9ca3af;
+      pointer-events: none;
+    }
+
+    .member-offers-filter-select {
+      flex: 1;
+      min-width: 130px;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #374151;
+      background-color: #fff;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 12px;
+    }
+
+    /* --- Offer Card --- */
+    .member-offers-card {
+      background-color: #fff;
+      border-radius: 4px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    /* Card Header */
+    .member-offers-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+    }
+
+    .member-offers-brand-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .member-offers-brand-logo {
+      font-weight: 900;
+      color: #e21a1a;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+    }
+
+    .member-offers-brand-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: #111827;
+    }
+
+    .member-offers-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 13px;
+      color: #374151;
+    }
+
+    .member-offers-time-left {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .member-offers-download-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      color: #4b5563;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Sub-bar (Available member-offerss count) */
+    .member-offers-status {
+      padding: 0 20px 12px 20px;
+      font-size: 13px;
+      color: #4b5563;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Card Banner/Hero Area */
+    .member-offers-banner {
+      position: relative;
+      height: 220px;
+      background: linear-gradient(90deg, #0b0b0b 0%, #26160d 45%, #44342a 70%, #575c66 100%);
+      display: flex;
+      align-items: center;
+      padding: 0 40px;
+      overflow: hidden;
+    }
+
+    .member-offers-banner-content {
+      position: relative;
+      z-index: 2;
+      max-width: 50%;
+      color: #fff;
+    }
+
+    .member-offers-flash-tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #9ca3af;
+      margin-bottom: 8px;
+    }
+
+    .member-offers-banner-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .member-offers-banner-expiry {
+      font-size: 11px;
+      color: #d1d5db;
+      margin-bottom: 20px;
+    }
+
+    .member-offers-cta-btn {
+      display: inline-block;
+      background-color: #fff;
+      color: #000;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 10px 24px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    .member-offers-cta-btn:hover {
+      background-color: #f3f4f6;
+    }
+
+    /* Placeholder Mock Battery Graphic */
+    .member-offers-banner-graphic-placeholder {
+      position: absolute;
+      right: 40px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 45%;
+      height: 80%;
+      display: flex;
+      gap: 15px;
+      align-items: flex-end;
+      justify-content: flex-end;
+      opacity: 0.85;
+    }
+
+    /* Styling CSS shapes to mimic the Bosch car batteries in the image */
+    .member-offers-mock-battery {
+      width: 110px;
+      height: 110px;
+      background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+      border-radius: 4px;
+      position: relative;
+      border-top: 15px solid #2563eb;
+      box-shadow: -5px 10px 20px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: bold;
+      color: #1e3a8a;
+    }
+    .member-offers-mock-battery::before {
+      content: 'BOSCH';
+      font-size: 9px;
+      color: #e21a1a;
+      letter-spacing: 0.5px;
+    }
+    .member-offers-mock-battery.member-offers-silver {
+      height: 125px;
+      background: linear-gradient(135deg, #f8fafc 0%, #cbd5e1 100%);
+      border-top-color: #475569;
+    }
+    .member-offers-mock-battery.member-offers-dark {
+      height: 115px;
+      background: linear-gradient(135deg, #475569 0%, #1e293b 100%);
+      border-top-color: #0f172a;
+    }
+
+    /* Card Footer */
+    .member-offers-card-footer {
+      padding: 14px 0;
+      text-align: center;
+      border-top: 1px solid #f3f4f6;
+    }
+
+    .member-offers-profile-link {
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .member-offers-profile-link:hover {
+      text-decoration: underline;
+    }
+
+    /* --- Pagination --- */
+    .member-offers-pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin-top: 12px;
+      padding: 10px 0;
+    }
+
+    .member-offers-page-btn {
+      background: none;
+      border: none;
+      font-size: 13px;
+      color: #6b7280;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .member-offers-page-number {
+      font-size: 13px;
+      color: #9ca3af;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .member-offers-page-number.member-offers-active {
+      color: #000;
+      font-weight: 700;
+    }
+
+    /* --- Responsive Rules --- */
+    @media (max-width: 768px) {
+      .member-offers-banner-graphic-placeholder {
+        display: none;
+      }
+      .member-offers-banner-content {
+        max-width: 100%;
+      }
+      .member-offers-filter-bar {
+        flex-direction: column;
+      }
+      .member-offers-search-wrapper, .member-offers-filter-select {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+    <div class="offers">
+    <div class="member-offers">
+
+  <div class="member-offers-container">
+    
+    <h1>Optimize your margins with member-offerss negotiated for you</h1>
+
+    <div class="member-offers-filter-bar">
+      <div class="member-offers-search-wrapper">
+        <input type="text" placeholder="Search a product">
+        <i class="fa-solid fa-magnifying-glass member-offers-search-icon"></i>
+      </div>
+      <select class="member-offers-filter-select">
+        <option>Company</option>
+      </select>
+      <select class="member-offers-filter-select">
+        <option>Date</option>
+      </select>
+      <select class="member-offers-filter-select">
+        <option>Market segment</option>
+      </select>
+      <select class="member-offers-filter-select">
+        <option>Product type</option>
+      </select>
+    </div>
+
+    <div class="member-offers-card">
+      <div class="member-offers-card-header">
+        <div class="member-offers-brand-info">
+          <span class="member-offers-brand-logo">BOSCH</span>
+          <span class="member-offers-brand-name">Bosch Automotive</span>
+        </div>
+        <div class="member-offers-card-meta">
+          <span class="member-offers-time-left"><i class="fa-regular fa-clock"></i> 23h 56m 20s</span>
+          <button class="member-offers-download-btn" title="Download"><i class="fa-solid fa-download"></i></button>
+        </div>
+      </div>
+      <div class="member-offers-status">
+        <i class="fa-solid fa-bolt"></i> 1 available member-offers
+      </div>
+      <div class="member-offers-banner">
+        <div class="member-offers-banner-content">
+          <div class="member-offers-flash-tag">Flash Offer</div>
+          <div class="member-offers-banner-title">-15% on e-Mobility Battery ranges.</div>
+          <div class="member-offers-banner-expiry">Valid for all orders placed before March 15, 2025.</div>
+          <a href="#" class="member-offers-cta-btn">Get member-offers now !</a>
+        </div>
+        <div class="member-offers-banner-graphic-placeholder">
+          <div class="member-offers-mock-battery member-offers-silver"></div>
+          <div class="member-offers-mock-battery"></div>
+          <div class="member-offers-mock-battery member-offers-dark"></div>
+        </div>
+      </div>
+      <div class="member-offers-card-footer">
+        <a href="#" class="member-offers-profile-link">See the profile <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+
+    <div class="member-offers-card">
+      <div class="member-offers-card-header">
+        <div class="member-offers-brand-info">
+          <span class="member-offers-brand-logo">BOSCH</span>
+          <span class="member-offers-brand-name">Bosch Automotive</span>
+        </div>
+        <div class="member-offers-card-meta">
+          <span class="member-offers-time-left"><i class="fa-regular fa-clock"></i> 23h 56m 20s</span>
+          <button class="member-offers-download-btn" title="Download"><i class="fa-solid fa-download"></i></button>
+        </div>
+      </div>
+      <div class="member-offers-status">
+        <i class="fa-solid fa-bolt"></i> 1 available member-offers
+      </div>
+      <div class="member-offers-banner">
+        <div class="member-offers-banner-content">
+          <div class="member-offers-flash-tag">Flash Offer</div>
+          <div class="member-offers-banner-title">-15% on e-Mobility Battery ranges.</div>
+          <div class="member-offers-banner-expiry">Valid for all orders placed before March 15, 2025.</div>
+          <a href="#" class="member-offers-cta-btn">Get member-offers now !</a>
+        </div>
+        <div class="member-offers-banner-graphic-placeholder">
+          <div class="member-offers-mock-battery member-offers-silver" style="width: 140px; height: 130px;"></div>
+        </div>
+      </div>
+      <div class="member-offers-card-footer">
+        <a href="#" class="member-offers-profile-link">See the profile <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+
+    <div class="member-offers-card">
+      <div class="member-offers-card-header">
+        <div class="member-offers-brand-info">
+          <span class="member-offers-brand-logo">BOSCH</span>
+          <span class="member-offers-brand-name">Bosch Automotive</span>
+        </div>
+        <div class="member-offers-card-meta">
+          <span class="member-offers-time-left"><i class="fa-regular fa-clock"></i> 23h 56m 20s</span>
+          <button class="member-offers-download-btn" title="Download"><i class="fa-solid fa-download"></i></button>
+        </div>
+      </div>
+      <div class="member-offers-status">
+        <i class="fa-solid fa-bolt"></i> 1 available member-offers
+      </div>
+      <div class="member-offers-banner">
+        <div class="member-offers-banner-content">
+          <div class="member-offers-flash-tag">Flash Offer</div>
+          <div class="member-offers-banner-title">-15% on e-Mobility Battery ranges.</div>
+          <div class="member-offers-banner-expiry">Valid for all orders placed before March 15, 2025.</div>
+          <a href="#" class="member-offers-cta-btn">Get member-offers now !</a>
+        </div>
+        <div class="member-offers-banner-graphic-placeholder">
+          <div class="member-offers-mock-battery member-offers-silver"></div>
+          <div class="member-offers-mock-battery"></div>
+          <div class="member-offers-mock-battery member-offers-dark"></div>
+        </div>
+      </div>
+      <div class="member-offers-card-footer">
+        <a href="#" class="member-offers-profile-link">See the profile <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+
+    <div class="member-offers-pagination">
+      <button class="member-offers-page-btn"><i class="fa-solid fa-chevron-left"></i></button>
+      <a href="#" class="member-offers-page-number member-offers-active">1</a>
+      <a href="#" class="member-offers-page-number">2</a>
+      <a href="#" class="member-offers-page-number">3</a>
+      <button class="member-offers-page-btn"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+
+  </div>
+
+    </div>
+    </div>
+</body>
+</html>

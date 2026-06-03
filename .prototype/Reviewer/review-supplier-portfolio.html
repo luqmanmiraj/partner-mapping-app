@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Member Directory</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f3f3f3;
+      color: #333333;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Container */
+    .sp-directory-container {
+      width: 100%;
+      max-width: 1200px;
+      background-color: transparent;
+    }
+
+    /* Title */
+    .sp-main-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #111111;
+    }
+
+    /* Filter Bar */
+    .sp-filter-bar {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 4px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      margin-bottom: 24px;
+    }
+    .sp-search-wrapper {
+      position: relative;
+      flex: 1;
+      min-width: 240px;
+    }
+    .sp-search-input {
+      width: 100%;
+      padding: 10px 40px 10px 16px;
+      font-size: 14px;
+      border: 1px solid #cccccc;
+      border-radius: 4px;
+      outline: none;
+      color: #666666;
+    }
+    .sp-search-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #111111;
+      font-size: 16px;
+      pointer-events: none;
+    }
+    .sp-filter-select {
+      flex: 1;
+      min-width: 160px;
+      padding: 10px 16px;
+      font-size: 14px;
+      border: 1px solid #cccccc;
+      border-radius: 4px;
+      background-color: #ffffff;
+      color: #444444;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%23666666' d='M0 0l5 5 5-5z'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+    }
+
+    /* Tabs */
+    .sp-tabs-container {
+      border-bottom: 2px solid #dddddd;
+      display: flex;
+      gap: 24px;
+      margin-bottom: 20px;
+      padding-left: 4px;
+    }
+    .sp-tab-button {
+      background: none;
+      border: none;
+      padding: 10px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #888888;
+      cursor: pointer;
+      position: relative;
+      bottom: -2px;
+      transition: color 0.2s ease;
+    }
+    .sp-tab-button:hover {
+      color: #111111;
+    }
+    .sp-tab-button.sp-active {
+      color: #111111;
+      border-bottom: 3px solid #ff6b00; /* Strategic orange accent line */
+    }
+
+    /* Results List */
+    .sp-results-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .sp-result-card {
+      background-color: #ffffff;
+      border-radius: 4px;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .sp-company-info-block {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .sp-logo-placeholder {
+      width: 45px;
+      height: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      color: #e21313; /* Bosch Red vibe */
+      letter-spacing: -0.5px;
+    }
+    .sp-details-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .sp-company-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #111111;
+    }
+    .sp-location-tag {
+      font-size: 14px;
+      color: #666666;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sp-actions-block {
+      display: flex;
+      gap: 10px;
+    }
+    
+    /* Buttons */
+    .sp-btn {
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .sp-btn-secondary {
+      background-color: #ffffff;
+      border: 1px solid #111111;
+      color: #111111;
+    }
+    .sp-btn-secondary:hover {
+      background-color: #f5f5f5;
+    }
+    .sp-btn-primary {
+      background-color: #111111;
+      border: 1px solid #111111;
+      color: #ffffff;
+    }
+    .sp-btn-primary:hover {
+      background-color: #292929;
+    }
+
+    /* Pagination */
+    .sp-pagination-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      margin-top: 24px;
+    }
+    .sp-page-nav, .sp-page-number {
+      background: none;
+      border: none;
+      font-size: 14px;
+      color: #444444;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sp-page-number.sp-active {
+      font-weight: 700;
+      color: #111111;
+    }
+    .sp-page-nav {
+      color: #111111;
+      font-size: 12px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .sp-result-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .sp-actions-block {
+        width: 100%;
+      }
+      .sp-btn {
+        flex: 1;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sp-directory-container">
+    <h1 class="sp-main-title">Lorem ipsum</h1>
+
+    <div class="sp-filter-bar">
+      <div class="sp-search-wrapper">
+        <input type="text" class="sp-search-input" placeholder="Search for a member">
+        <i class="fa-solid fa-magnifying-glass sp-search-icon"></i>
+      </div>
+      <select class="sp-filter-select">
+        <option>Company size</option>
+      </select>
+      <select class="sp-filter-select">
+        <option>Region</option>
+      </select>
+      <select class="sp-filter-select">
+        <option>Country</option>
+      </select>
+      <select class="sp-filter-select">
+        <option>Market segment</option>
+      </select>
+      <select class="sp-filter-select">
+        <option>Product type</option>
+      </select>
+    </div>
+
+    <div class="sp-tabs-container">
+      <button class="sp-tab-button sp-active">Strategic</button>
+      <button class="sp-tab-button">Preferred</button>
+      <button class="sp-tab-button">Listed</button>
+    </div>
+
+    <div class="sp-results-list">
+      
+      <div class="sp-result-card">
+        <div class="sp-company-info-block">
+          <div class="sp-logo-placeholder"><i class="fa-solid fa-circle-nodes" style="margin-right:4px;"></i>BOSCH</div>
+          <div class="sp-details-meta">
+            <span class="sp-company-name">Bosch Automotive</span>
+            <span class="sp-location-tag"><i class="fa-solid fa-location-dot"></i> France</span>
+          </div>
+        </div>
+        <div class="sp-actions-block">
+          <button class="sp-btn sp-btn-secondary">See profile</button>
+          <button class="sp-btn sp-btn-primary"><i class="fa-solid fa-bolt"></i> See Rebates</button>
+        </div>
+      </div>
+
+      <div class="sp-result-card">
+        <div class="sp-company-info-block">
+          <div class="sp-logo-placeholder"><i class="fa-solid fa-circle-nodes" style="margin-right:4px;"></i>BOSCH</div>
+          <div class="sp-details-meta">
+            <span class="sp-company-name">Bosch Automotive</span>
+            <span class="sp-location-tag"><i class="fa-solid fa-location-dot"></i> France</span>
+          </div>
+        </div>
+        <div class="sp-actions-block">
+          <button class="sp-btn sp-btn-secondary">See profile</button>
+          <button class="sp-btn sp-btn-primary"><i class="fa-solid fa-bolt"></i> See Rebates</button>
+        </div>
+      </div>
+
+      <div class="sp-result-card">
+        <div class="sp-company-info-block">
+          <div class="sp-logo-placeholder"><i class="fa-solid fa-circle-nodes" style="margin-right:4px;"></i>BOSCH</div>
+          <div class="sp-details-meta">
+            <span class="sp-company-name">Bosch Automotive</span>
+            <span class="sp-location-tag"><i class="fa-solid fa-location-dot"></i> France</span>
+          </div>
+        </div>
+        <div class="sp-actions-block">
+          <button class="sp-btn sp-btn-secondary">See profile</button>
+          <button class="sp-btn sp-btn-primary"><i class="fa-solid fa-bolt"></i> See Rebates</button>
+        </div>
+      </div>
+
+      <div class="sp-result-card">
+        <div class="sp-company-info-block">
+          <div class="sp-logo-placeholder"><i class="fa-solid fa-circle-nodes" style="margin-right:4px;"></i>BOSCH</div>
+          <div class="sp-details-meta">
+            <span class="sp-company-name">Bosch Automotive</span>
+            <span class="sp-location-tag"><i class="fa-solid fa-location-dot"></i> France</span>
+          </div>
+        </div>
+        <div class="sp-actions-block">
+          <button class="sp-btn sp-btn-secondary">See profile</button>
+          <button class="sp-btn sp-btn-primary"><i class="fa-solid fa-bolt"></i> See Rebates</button>
+        </div>
+      </div>
+
+      <div class="sp-result-card">
+        <div class="sp-company-info-block">
+          <div class="sp-logo-placeholder"><i class="fa-solid fa-circle-nodes" style="margin-right:4px;"></i>BOSCH</div>
+          <div class="sp-details-meta">
+            <span class="sp-company-name">Bosch Automotive</span>
+            <span class="sp-location-tag"><i class="fa-solid fa-location-dot"></i> France</span>
+          </div>
+        </div>
+        <div class="sp-actions-block">
+          <button class="sp-btn sp-btn-secondary">See profile</button>
+          <button class="sp-btn sp-btn-primary"><i class="fa-solid fa-bolt"></i> See Rebates</button>
+        </div>
+      </div>
+
+      <div class="sp-result-card">
+        <div class="sp-company-info-block">
+          <div class="sp-logo-placeholder"><i class="fa-solid fa-circle-nodes" style="margin-right:4px;"></i>BOSCH</div>
+          <div class="sp-details-meta">
+            <span class="sp-company-name">Bosch Automotive</span>
+            <span class="sp-location-tag"><i class="fa-solid fa-location-dot"></i> France</span>
+          </div>
+        </div>
+        <div class="sp-actions-block">
+          <button class="sp-btn sp-btn-secondary">See profile</button>
+          <button class="sp-btn sp-btn-primary"><i class="fa-solid fa-bolt"></i> See Rebates</button>
+        </div>
+      </div>
+
+      <div class="sp-result-card">
+        <div class="sp-company-info-block">
+          <div class="sp-logo-placeholder"><i class="fa-solid fa-circle-nodes" style="margin-right:4px;"></i>BOSCH</div>
+          <div class="sp-details-meta">
+            <span class="sp-company-name">Bosch Automotive</span>
+            <span class="sp-location-tag"><i class="fa-solid fa-location-dot"></i> France</span>
+          </div>
+        </div>
+        <div class="sp-actions-block">
+          <button class="sp-btn sp-btn-secondary">See profile</button>
+          <button class="sp-btn sp-btn-primary"><i class="fa-solid fa-bolt"></i> See Rebates</button>
+        </div>
+      </div>
+
+      <div class="sp-result-card">
+        <div class="sp-company-info-block">
+          <div class="sp-logo-placeholder"><i class="fa-solid fa-circle-nodes" style="margin-right:4px;"></i>BOSCH</div>
+          <div class="sp-details-meta">
+            <span class="sp-company-name">Bosch Automotive</span>
+            <span class="sp-location-tag"><i class="fa-solid fa-location-dot"></i> France</span>
+          </div>
+        </div>
+        <div class="sp-actions-block">
+          <button class="sp-btn sp-btn-secondary">See profile</button>
+          <button class="sp-btn sp-btn-primary"><i class="fa-solid fa-bolt"></i> See Rebates</button>
+        </div>
+      </div>
+
+      <div class="sp-result-card">
+        <div class="sp-company-info-block">
+          <div class="sp-logo-placeholder"><i class="fa-solid fa-circle-nodes" style="margin-right:4px;"></i>BOSCH</div>
+          <div class="sp-details-meta">
+            <span class="sp-company-name">Bosch Automotive</span>
+            <span class="sp-location-tag"><i class="fa-solid fa-location-dot"></i> France</span>
+          </div>
+        </div>
+        <div class="sp-actions-block">
+          <button class="sp-btn sp-btn-secondary">See profile</button>
+          <button class="sp-btn sp-btn-primary"><i class="fa-solid fa-bolt"></i> See Rebates</button>
+        </div>
+      </div>
+
+      <div class="sp-result-card">
+        <div class="sp-company-info-block">
+          <div class="sp-logo-placeholder"><i class="fa-solid fa-circle-nodes" style="margin-right:4px;"></i>BOSCH</div>
+          <div class="sp-details-meta">
+            <span class="sp-company-name">Bosch Automotive</span>
+            <span class="sp-location-tag"><i class="fa-solid fa-location-dot"></i> France</span>
+          </div>
+        </div>
+        <div class="sp-actions-block">
+          <button class="sp-btn sp-btn-secondary">See profile</button>
+          <button class="sp-btn sp-btn-primary"><i class="fa-solid fa-bolt"></i> See Rebates</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="sp-pagination-container">
+      <button class="sp-page-nav"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="sp-page-number sp-active">1</button>
+      <button class="sp-page-number">2</button>
+      <button class="sp-page-number">3</button>
+      <button class="sp-page-nav"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+
+  </div>
+
+</body>
+</html>

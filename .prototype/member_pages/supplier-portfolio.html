@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partners Directory</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        .supplier-portfolio {
+
+            --supplier-portfolio-body-bg: #f3f4f6;
+            --supplier-portfolio-card-bg: #ffffff;
+            --supplier-portfolio-text-main: #000000;
+            --supplier-portfolio-text-muted: #6b7280;
+            --supplier-portfolio-border-color: #e5e7eb;
+            --supplier-portfolio-accent-orange: #f2994a;
+            --supplier-portfolio-btn-dark: #000000;
+        
+}
+        .supplier-portfolio,
+        .supplier-portfolio * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        .supplier-portfolio {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--supplier-portfolio-body-bg);
+            color: var(--supplier-portfolio-text-main);
+            padding: 40px 20px;
+        }
+
+        .supplier-portfolio-container {
+            max-width: none;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .supplier-portfolio-container > h1 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        /* --- Filters Toolbar Bar --- */
+        .supplier-portfolio-filter-bar {
+            background: var(--supplier-portfolio-card-bg);
+            padding: 16px;
+            border-radius: 6px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .supplier-portfolio-search-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .supplier-portfolio-search-wrapper svg {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .supplier-portfolio-search-input {
+            width: 100%;
+            padding: 10px 36px 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .supplier-portfolio-dropdown-filter {
+            padding: 10px 32px 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background-color: var(--supplier-portfolio-card-bg);
+            font-size: 13px;
+            color: #374151;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 14px;
+        }
+
+        /* --- Premium Promo Banner --- */
+        .supplier-portfolio-promo-banner {
+            background: linear-gradient(90deg, #e0ebf6 0%, #f7ebe1 100%);
+            border-radius: 6px;
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .supplier-portfolio-promo-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .supplier-portfolio-logo-placeholder {
+            width: 64px;
+            height: 64px;
+            background: var(--supplier-portfolio-card-bg);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--supplier-portfolio-border-color);
+        }
+
+        .supplier-portfolio-logo-text-mock {
+            font-weight: 800;
+            color: #e11d48;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .supplier-portfolio-promo-text h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .supplier-portfolio-promo-text p {
+            font-size: 13px;
+            color: #374151;
+            max-width: 600px;
+            line-height: 1.4;
+        }
+
+        /* --- Tabs Navigation --- */
+        .supplier-portfolio-tabs-nav {
+            display: flex;
+            gap: 24px;
+            border-bottom: 1px solid #d1d5db;
+            padding-left: 4px;
+            margin-top: 8px;
+        }
+
+        .supplier-portfolio-tab-item {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--supplier-portfolio-text-muted);
+            padding-bottom: 12px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .supplier-portfolio-tab-item.supplier-portfolio-active {
+            color: var(--supplier-portfolio-text-main);
+        }
+
+        .supplier-portfolio-tab-item.supplier-portfolio-active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: var(--supplier-portfolio-accent-orange);
+        }
+
+        /* --- Partner List Cards --- */
+        .supplier-portfolio-partner-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .supplier-portfolio-partner-card {
+            background: var(--supplier-portfolio-card-bg);
+            border-radius: 6px;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        .supplier-portfolio-partner-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .supplier-portfolio-partner-logo-mini {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .supplier-portfolio-partner-details h3 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .supplier-portfolio-partner-location {
+            font-size: 12px;
+            color: var(--supplier-portfolio-text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* --- Shared Action Buttons --- */
+        .supplier-portfolio-actions-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .supplier-portfolio-btn-profile {
+            background: var(--supplier-portfolio-card-bg);
+            border: 1px solid #000000;
+            color: var(--supplier-portfolio-text-main);
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .supplier-portfolio-btn-profile:hover {
+            background: #f9fafb;
+        }
+
+        .supplier-portfolio-btn-rebates {
+            background: var(--supplier-portfolio-btn-dark);
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: opacity 0.2s;
+        }
+
+        .supplier-portfolio-btn-rebates:hover {
+            opacity: 0.9;
+        }
+
+        /* --- Pagination System --- */
+        .supplier-portfolio-pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .supplier-portfolio-page-link {
+            min-width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--supplier-portfolio-text-muted);
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .supplier-portfolio-page-link.supplier-portfolio-active {
+            color: var(--supplier-portfolio-text-main);
+            font-weight: 700;
+        }
+
+        .supplier-portfolio-page-link.supplier-portfolio-arrow {
+            color: var(--supplier-portfolio-text-main);
+        }
+
+        /* Responsive UI Adjustments */
+        @media (max-width: 768px) {
+            .supplier-portfolio-promo-banner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            .supplier-portfolio-partner-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            .supplier-portfolio-actions-group {
+                width: 100%;
+                justify-content: flex-end;
+            }
+            .supplier-portfolio-filter-bar > * {
+                flex: 1 1 calc(50% - 12px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="supplier-portfolio">
+
+    <div class="supplier-portfolio-container">
+        <h1>Identify your partners and contact decision-makers directly</h1>
+
+        <div class="supplier-portfolio-filter-bar">
+            <div class="supplier-portfolio-search-wrapper">
+                <input type="text" class="supplier-portfolio-search-input" placeholder="Search for a member">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </div>
+            <select class="supplier-portfolio-dropdown-filter"><option>Company size</option></select>
+            <select class="supplier-portfolio-dropdown-filter"><option>Region</option></select>
+            <select class="supplier-portfolio-dropdown-filter"><option>Country</option></select>
+            <select class="supplier-portfolio-dropdown-filter"><option>Market segment</option></select>
+            <select class="supplier-portfolio-dropdown-filter"><option>Product type</option></select>
+        </div>
+
+        <div class="supplier-portfolio-promo-banner">
+            <div class="supplier-portfolio-promo-content">
+                <div class="supplier-portfolio-logo-placeholder">
+                    <span class="supplier-portfolio-logo-text-mock">BOSCH</span>
+                </div>
+                <div class="supplier-portfolio-promo-text">
+                    <h2>Bosch Automotive</h2>
+                    <p>Discover our new ceramic braking ranges and benefit from exclusive logistics conditions throughout the month of February</p>
+                </div>
+            </div>
+            <button class="supplier-portfolio-btn-profile">See profile</button>
+        </div>
+
+        <div class="supplier-portfolio-tabs-nav">
+            <div class="supplier-portfolio-tab-item supplier-portfolio-active">Strategic</div>
+            <div class="supplier-portfolio-tab-item">Preferred</div>
+            <div class="supplier-portfolio-tab-item">Listed</div>
+        </div>
+
+        <div class="supplier-portfolio-partner-list">
+            <script>
+                // JavaScript loop structure injected here cleanly just to output the identical stacked component row items efficiently.
+                for (let i = 0; i < 10; i++) {
+                    document.write(`
+                        <div class="supplier-portfolio-partner-card">
+                            <div class="supplier-portfolio-partner-info">
+                                <div class="supplier-portfolio-partner-logo-mini">
+                                    <span style="font-weight:800; color:#e11d48; font-size:10px;">BOSCH</span>
+                                </div>
+                                <div class="supplier-portfolio-partner-details">
+                                    <h3>Bosch Automotive</h3>
+                                    <div class="supplier-portfolio-partner-location">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
+                                        </svg> 
+                                        France
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="supplier-portfolio-actions-group">
+                                <button class="supplier-portfolio-btn-profile">See profile</button>
+                                <button class="supplier-portfolio-btn-rebates">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;">
+                                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                    </svg>
+                                    See Rebates
+                                </button>
+                            </div>
+                        </div>
+                    `);
+                }
+            </script>
+        </div>
+
+        <div class="supplier-portfolio-pagination">
+            <span class="supplier-portfolio-page-link supplier-portfolio-arrow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </span>
+            <span class="supplier-portfolio-page-link supplier-portfolio-active">1</span>
+            <span class="supplier-portfolio-page-link">2</span>
+            <span class="supplier-portfolio-page-link">3</span>
+            <span class="supplier-portfolio-page-link supplier-portfolio-arrow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </span>
+        </div>
+    </div>
+
+    </div>
+</body>
+</html>

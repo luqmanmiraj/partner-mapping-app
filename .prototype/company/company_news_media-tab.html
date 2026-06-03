@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>News & Media Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* --- Base Resets & Global Theme Layout --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f5f7;
+      color: #111111;
+      padding: 20px;
+    }
+
+    .dashboard-container {
+      max-width: 1140px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    /* ==========================================
+       SECTION 1: Navigation Tabs Components
+       ========================================== */
+    .tab-navigation {
+      border-bottom: 2px solid #e2e8f0;
+      display: flex;
+      gap: 25px;
+      margin-bottom: -12px; /* Pulls controls up close to layout guidelines */
+    }
+
+    .tab-item {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #718096;
+      padding-bottom: 12px;
+      cursor: pointer;
+      position: relative;
+      text-decoration: none;
+    }
+
+    .tab-item.active {
+      color: #1a1a1a;
+    }
+
+    .tab-item.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: #f39c12; /* Golden orange accent marker */
+    }
+
+    /* ==========================================
+       SECTION 2: Universal Top Control Bar
+       ========================================== */
+    .control-bar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .add-media-btn {
+      background-color: #0b0f19;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 16px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-dropdown {
+      padding: 10px 30px 10px 12px;
+      font-size: 0.88rem;
+      border: 1.5px solid #cbd5e0;
+      border-radius: 4px;
+      background-color: #ffffff;
+      color: #4a5568;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%234a5568' d='M0 0l5 5 5-5z'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      min-width: 140px;
+    }
+
+    .search-wrapper {
+      position: relative;
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .search-wrapper input {
+      width: 100%;
+      padding: 10px 16px 10px 16px;
+      padding-right: 40px;
+      font-size: 0.88rem;
+      border: 1.5px solid #cbd5e0;
+      border-radius: 4px;
+      color: #2d3748;
+      outline: none;
+    }
+
+    .search-wrapper .search-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #4a5568;
+      font-size: 0.95rem;
+    }
+
+    /* ==========================================
+       SECTION 3: Reusable Dynamic Components
+       ========================================== */
+    .section-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 16px;
+    }
+
+    .section-header-row h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #111111;
+    }
+
+    .view-all-link {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #111111;
+      text-decoration: underline;
+    }
+
+    /* Slider dots layout representation */
+    .carousel-indicators {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 16px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #cbd5e0;
+    }
+
+    .dot.active {
+      background-color: #f39c12;
+      width: 24px;
+      border-radius: 4px;
+    }
+
+    /* ==========================================
+       SECTION 4: Module 1 - News Component Area
+       ========================================== */
+    .news-layout-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 20px;
+    }
+
+    .news-featured-card {
+      border: 1.5px solid #e2e8f0;
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background-color: #ffffff;
+    }
+
+    .featured-image {
+      height: 220px;
+      background: #2d3748 url('https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=600&q=80') center/cover no-repeat;
+    }
+
+    .news-card-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .news-date {
+      font-size: 0.78rem;
+      color: #718096;
+      font-weight: 600;
+    }
+
+    .news-card-body h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #111111;
+    }
+
+    .news-card-body p {
+      font-size: 0.88rem;
+      color: #4a5568;
+      line-height: 1.5;
+    }
+
+    .news-read-more {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #111111;
+      text-decoration: underline;
+      margin-top: 4px;
+      cursor: pointer;
+    }
+
+    .news-sidebar-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .news-row-card {
+      border: 1.5px solid #e2e8f0;
+      border-radius: 6px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      background-color: #ffffff;
+      height: calc(50% - 8px);
+    }
+
+    .sidebar-img-1 {
+      background: #2d3748 url('https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=300&q=80') center/cover no-repeat;
+    }
+
+    .sidebar-img-2 {
+      background: #2d3748 url('https://images.unsplash.com/photo-1517524206127-48bbd363f3d7?auto=format&fit=crop&w=300&q=80') center/cover no-repeat;
+    }
+
+    /* ==========================================
+       SECTION 5: Module 2 - Documents Catalogues
+       ========================================== */
+    .docs-list-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .doc-row-item {
+      background-color: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .doc-icon-box {
+      color: #f39c12;
+      background-color: #fffdf9;
+      border: 1.5px solid #fdeed6;
+      border-radius: 6px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .doc-info-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .doc-info-wrapper h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #111111;
+    }
+
+    .doc-info-wrapper span {
+      font-size: 0.8rem;
+      color: #718096;
+      margin-top: 2px;
+    }
+
+    .doc-actions-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #718096;
+      font-size: 0.95rem;
+    }
+
+    .doc-actions-wrapper i {
+      cursor: pointer;
+    }
+
+    .doc-actions-wrapper i:hover {
+      color: #111111;
+    }
+
+    /* ==========================================
+       SECTION 6: Module 3 - Videos & Media Cards
+       ========================================== */
+    .media-triple-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .video-card-element {
+      position: relative;
+      border-radius: 6px;
+      overflow: hidden;
+      height: 250px;
+      background: #111111 url('https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=500&q=80') center/cover no-repeat;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .video-card-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.85) 100%);
+      z-index: 1;
+    }
+
+    .video-play-badge {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #f39c12;
+      font-size: 2.5rem;
+      z-index: 3;
+      opacity: 0.9;
+      cursor: pointer;
+    }
+
+    .video-card-content {
+      position: relative;
+      z-index: 2;
+      padding: 16px;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: 100%;
+    }
+
+    .video-card-content h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .video-card-content p {
+      font-size: 0.82rem;
+      color: #cbd5e0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .top-right-options {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      color: #ffffff;
+      z-index: 3;
+      font-size: 0.95rem;
+      cursor: pointer;
+      opacity: 0.8;
+    }
+
+    /* ==========================================
+       SECTION 7: Module 4 - Gallery Asset Grid
+       ========================================== */
+    .gallery-card-element {
+      position: relative;
+      border-radius: 6px;
+      overflow: hidden;
+      height: 250px;
+      background: #111111 url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=500&q=80') center/cover no-repeat;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    /* ==========================================
+       SECTION 8: Dynamic Viewport Breakdowns
+       ========================================== */
+    @media (max-width: 900px) {
+      .news-layout-grid {
+        grid-template-columns: 1fr;
+      }
+      .news-row-card {
+        height: auto;
+        grid-template-columns: 140px 1fr;
+      }
+      .media-triple-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .control-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .search-wrapper {
+        order: -1;
+      }
+      .media-triple-grid {
+        grid-template-columns: 1fr;
+      }
+      .news-row-card {
+        grid-template-columns: 1fr;
+      }
+      .news-row-card div:first-child {
+        height: 140px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-container">
+    
+    <nav class="tab-navigation">
+      <a href="#" class="tab-item">About</a>
+      <a href="#" class="tab-item">Contacts</a>
+      <a href="#" class="tab-item active">News & Media</a>
+    </nav>
+
+    <div class="control-bar">
+      <button class="add-media-btn"><i class="fa-solid fa-plus"></i> Add Media</button>
+      
+      <select class="filter-dropdown">
+        <option>Country</option>
+      </select>
+
+      <select class="filter-dropdown">
+        <option>Product</option>
+      </select>
+
+      <div class="search-wrapper">
+        <input type="text" placeholder="Search for a topic...">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      </div>
+    </div>
+
+    <section>
+      <div class="section-header-row">
+        <h2>News</h2>
+        <a href="#" class="view-all-link">View all</a>
+      </div>
+
+      <div class="news-layout-grid">
+        <article class="news-featured-card">
+          <div class="featured-image"></div>
+          <div class="news-card-body">
+            <span class="news-date">Last Month</span>
+            <h3>Title</h3>
+            <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+            <span class="news-read-more">Read</span>
+          </div>
+        </article>
+
+        <div class="news-sidebar-stack">
+          <article class="news-row-card">
+            <div class="sidebar-img-1"></div>
+            <div class="news-card-body">
+              <span class="news-date">Last Month</span>
+              <h3>Title</h3>
+              <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+              <span class="news-read-more">Read</span>
+            </div>
+          </article>
+
+          <article class="news-row-card">
+            <div class="sidebar-img-2"></div>
+            <div class="news-card-body">
+              <span class="news-date">Last Month</span>
+              <h3>Title</h3>
+              <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+              <span class="news-read-more">Read</span>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="carousel-indicators">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-header-row">
+        <h2>Documents & Catalogues</h2>
+        <a href="#" class="view-all-link">View all</a>
+      </div>
+
+      <div class="docs-list-stack">
+        <div class="doc-row-item">
+          <div class="doc-icon-box"><i class="fa-regular fa-copy"></i></div>
+          <div class="doc-info-wrapper">
+            <h4>Title.pdf</h4>
+            <span>2 MB</span>
+          </div>
+          <div class="doc-actions-wrapper">
+            <i class="fa-solid fa-ellipsis"></i>
+            <i class="fa-regular fa-eye"></i>
+            <i class="fa-solid fa-download"></i>
+          </div>
+        </div>
+
+        <div class="doc-row-item">
+          <div class="doc-icon-box"><i class="fa-regular fa-copy"></i></div>
+          <div class="doc-info-wrapper">
+            <h4>Title.pdf</h4>
+            <span>2 MB</span>
+          </div>
+          <div class="doc-actions-wrapper">
+            <i class="fa-solid fa-ellipsis"></i>
+            <i class="fa-regular fa-eye"></i>
+            <i class="fa-solid fa-download"></i>
+          </div>
+        </div>
+
+        <div class="doc-row-item">
+          <div class="doc-icon-box"><i class="fa-regular fa-copy"></i></div>
+          <div class="doc-info-wrapper">
+            <h4>Title.pdf</h4>
+            <span>2 MB</span>
+          </div>
+          <div class="doc-actions-wrapper">
+            <i class="fa-solid fa-ellipsis"></i>
+            <i class="fa-regular fa-eye"></i>
+            <i class="fa-solid fa-download"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="carousel-indicators">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-header-row">
+        <h2>Videos</h2>
+        <a href="#" class="view-all-link">View all</a>
+      </div>
+
+      <div class="media-triple-grid">
+        <div class="video-card-element">
+          <div class="video-card-overlay"></div>
+          <span class="top-right-options"><i class="fa-solid fa-ellipsis"></i></span>
+          <span class="video-play-badge"><i class="fa-regular fa-circle-play"></i></span>
+          <div class="video-card-content">
+            <h4>Title</h4>
+            <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+          </div>
+        </div>
+
+        <div class="video-card-element">
+          <div class="video-card-overlay"></div>
+          <span class="top-right-options"><i class="fa-solid fa-ellipsis"></i></span>
+          <span class="video-play-badge"><i class="fa-regular fa-circle-play"></i></span>
+          <div class="video-card-content">
+            <h4>Title</h4>
+            <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+          </div>
+        </div>
+
+        <div class="video-card-element">
+          <div class="video-card-overlay"></div>
+          <span class="top-right-options"><i class="fa-solid fa-ellipsis"></i></span>
+          <span class="video-play-badge"><i class="fa-regular fa-circle-play"></i></span>
+          <div class="video-card-content">
+            <h4>Title</h4>
+            <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="carousel-indicators">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-header-row">
+        <h2>Gallery</h2>
+        <a href="#" class="view-all-link">View all</a>
+      </div>
+
+      <div class="media-triple-grid">
+        <div class="gallery-card-element">
+          <div class="video-card-overlay"></div>
+          <span class="top-right-options"><i class="fa-solid fa-ellipsis"></i></span>
+          <div class="video-card-content">
+            <h4>Title</h4>
+            <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+          </div>
+        </div>
+
+        <div class="gallery-card-element">
+          <div class="video-card-overlay"></div>
+          <span class="top-right-options"><i class="fa-solid fa-ellipsis"></i></span>
+          <div class="video-card-content">
+            <h4>Title</h4>
+            <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+          </div>
+        </div>
+
+        <div class="gallery-card-element">
+          <div class="video-card-overlay"></div>
+          <span class="top-right-options"><i class="fa-solid fa-ellipsis"></i></span>
+          <div class="video-card-content">
+            <h4>Title</h4>
+            <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="carousel-indicators">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </section>
+
+  </div>
+
+</body>
+</html>

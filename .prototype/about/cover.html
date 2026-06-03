@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS Automotive Header</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* --- Reset & Global Styles --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      color: #111;
+      padding: 20px;
+    }
+
+    /* --- Header Component Container --- */
+    .profile-header {
+      max-width: 1100px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    /* --- Banner --- */
+    .banner {
+      position: relative;
+      height: 180px;
+      /* Using a tech-themed network background from Unsplash */
+      background: #060b14 url('https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1100&q=80') center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 20px;
+    }
+
+    .banner-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(6, 11, 20, 0.85) 0%, rgba(26, 16, 5, 0.8) 100%);
+    }
+
+    .banner-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .banner h1 {
+      color: #ffffff;
+      font-size: 1.85rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      line-height: 1.25;
+    }
+
+    .banner h1 .highlight {
+      color: #f39c12; /* Distinctive gold/orange color from layout */
+    }
+
+    /* Social Media Icons Layout */
+    .social-icons {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      z-index: 3;
+      display: flex;
+      gap: 12px;
+    }
+
+    .social-icons a {
+      color: #ffffff;
+      font-size: 0.95rem;
+      opacity: 0.85;
+      text-decoration: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .social-icons a:hover {
+      opacity: 1;
+    }
+
+    /* --- Info Section Layout --- */
+    .info-container {
+      position: relative;
+      padding: 25px 30px 30px 220px; /* Leaves room on the left for the absolute positioned logo */
+      min-height: 140px;
+    }
+
+    /* --- Logo Box Overlay --- */
+    .logo-box {
+      position: absolute;
+      top: -90px; /* Shifts the logo box halfway into the banner */
+      left: 30px;
+      width: 160px;
+      height: 160px;
+      background-color: #ffffff;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    /* Pure CSS stylized representation of the original logo layout */
+    .logo-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .logo-main {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #4a4a4a;
+      letter-spacing: 0.5px;
+    }
+
+    .logo-main .exclamation {
+      color: #f39c12;
+    }
+
+    .logo-sub {
+      font-size: 0.42rem;
+      color: #f39c12;
+      margin-top: 4px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    /* --- Brand Title & Metadata --- */
+    .company-name {
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 20px;
+    }
+
+    .meta-details {
+      display: grid;
+      grid-template-columns: minmax(250px, auto) minmax(250px, auto);
+      gap: 30px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    /* Icon badge design mirroring the graphic frame design */
+    .icon-wrapper {
+      color: #f39c12;
+      border: 1.5px solid #f39c12;
+      border-radius: 35%; 
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .meta-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .meta-text strong {
+      font-size: 0.85rem;
+      color: #666666;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .meta-text span, 
+    .meta-text a {
+      font-size: 0.9rem;
+      color: #222222;
+      text-decoration: none;
+    }
+
+    .meta-text a:hover {
+      text-decoration: underline;
+      color: #f39c12;
+    }
+
+    /* --- Responsive Queries --- */
+    @media (max-width: 768px) {
+      .info-container {
+        padding: 90px 20px 20px 20px; /* Reset padding to clear stacked elements gracefully */
+        text-align: center;
+      }
+
+      .logo-box {
+        left: 50%;
+        transform: translateX(-50%);
+        top: -80px;
+      }
+
+      .meta-details {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .meta-item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .banner h1 {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="profile-header">
+    <div class="banner">
+      <div class="banner-overlay"></div>
+      <div class="banner-content">
+        <h1>COMMITED TOGETHER.<br><span class="highlight">THE FUTURE IS OURS.</span></h1>
+      </div>
+      <div class="social-icons">
+        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" aria-label="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
+      </div>
+    </div>
+
+    <div class="info-container">
+      <div class="logo-box">
+        <div class="logo-placeholder">
+          <span class="logo-main">N<span class="exclamation">!</span> | NEXUS</span>
+          <span class="logo-sub">THE AUTOMOTIVE AFTERMARKET COMPANY</span>
+        </div>
+      </div>
+
+      <h2 class="company-name">NEXUS Automotive</h2>
+
+      <div class="meta-details">
+        <div class="meta-item">
+          <div class="icon-wrapper">
+            <i class="fas fa-map-marker-alt"></i>
+          </div>
+          <div class="meta-text">
+            <strong>Headquarters</strong>
+            <span>164 Av. Jean Jaurès, 69007 Lyon</span>
+          </div>
+        </div>
+
+        <div class="meta-item">
+          <div class="icon-wrapper">
+            <i class="fas fa-globe"></i>
+          </div>
+          <div class="meta-text">
+            <strong>Website</strong>
+            <a href="https://www.nexusautomotiveinternational.eu" target="_blank">www.nexusautomotiveinternational.eu</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+</body>
+</html>

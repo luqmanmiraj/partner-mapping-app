@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bosch Automotive - Supplier Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        .supplier-profile {
+
+            --supplier-profile-bg-global: #f3f4f6;
+            --supplier-profile-bg-card: #ffffff;
+            --supplier-profile-text-main: #1f2937;
+            --supplier-profile-text-muted: #4b5563;
+            --supplier-profile-text-light: #9ca3af;
+            --supplier-profile-accent-orange: #e04f00;
+            --supplier-profile-tag-bg: #ffedd5;
+            --supplier-profile-tag-text: #c2410c;
+            --supplier-profile-border-color: #e5e7eb;
+        
+}
+        .supplier-profile,
+        .supplier-profile * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        .supplier-profile {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--supplier-profile-bg-global);
+            color: var(--supplier-profile-text-main);
+            line-height: 1.5;
+            padding-bottom: 40px;
+        }
+
+        .supplier-profile-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        /* Top Nav Link */
+        .supplier-profile-back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--supplier-profile-text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            margin: 16px 0;
+        }
+
+        .supplier-profile-back-link:hover {
+            color: var(--supplier-profile-text-main);
+        }
+
+        /* --- Main Profile Header Card --- */
+        .supplier-profile-header-card {
+            background: var(--supplier-profile-bg-card);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        /* Banner styling using gradients to match the car/tech theme background */
+        .supplier-profile-banner {
+            height: 160px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 40%, #3b82f6 100%);
+            position: relative;
+        }
+
+        /* Simulated background abstract design elements */
+        .supplier-profile-banner::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            opacity: 0.15;
+            background-image: radial-gradient(circle at 20% 30%, #fff 1px, transparent 1px),
+                              radial-gradient(circle at 75% 60%, #fff 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .supplier-profile-social-icons {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .supplier-profile-social-icons a {
+            color: #ffffff;
+            font-size: 16px;
+            opacity: 0.9;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .supplier-profile-social-icons a:hover {
+            opacity: 1;
+        }
+
+        /* Profile details section */
+        .supplier-profile-info-block {
+            padding: 24px;
+            position: relative;
+            padding-top: 50px; 
+        }
+
+        .supplier-profile-logo-container {
+            position: absolute;
+            top: -70px;
+            left: 24px;
+            width: 130px;
+            height: 130px;
+            background: #ffffff;
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+
+        /* Constructed Bosch Typography Logo SVG fallback style */
+        .supplier-profile-logo-placeholder {
+            text-align: center;
+            font-weight: 800;
+            color: #e50015; /* Bosch Corporate Red */
+            font-size: 22px;
+            letter-spacing: 0.5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .supplier-profile-logo-placeholder i {
+            font-size: 28px;
+            margin-bottom: 4px;
+        }
+
+        .supplier-profile-title-section {
+            margin-bottom: 24px;
+        }
+
+        .supplier-profile-title-section h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .supplier-profile-title-section p {
+            font-size: 14px;
+            color: var(--supplier-profile-text-light);
+            margin-top: 4px;
+        }
+
+        /* Grid for company metadata */
+        .supplier-profile-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px 40px;
+        }
+
+        .supplier-profile-meta-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .supplier-profile-meta-icon {
+            width: 32px;
+            height: 32px;
+            background-color: #fef3c7;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #d97706;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .supplier-profile-meta-content label {
+            display: block;
+            font-size: 11px;
+            color: var(--supplier-profile-text-light);
+            text-transform: capitalize;
+            margin-bottom: 2px;
+            font-weight: 500;
+        }
+
+        .supplier-profile-meta-content span, .supplier-profile-meta-content a {
+            font-size: 13px;
+            color: var(--supplier-profile-text-muted);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .supplier-profile-meta-content a:hover {
+            text-decoration: underline;
+        }
+
+        .supplier-profile-tag-container {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+
+        .supplier-profile-tag {
+            background-color: var(--supplier-profile-tag-bg);
+            color: var(--supplier-profile-tag-text);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 4px;
+        }
+
+        /* --- Navigation Tabs --- */
+        .supplier-profile-tabs-nav {
+            display: flex;
+            border-bottom: 1px solid var(--supplier-profile-border-color);
+            margin-bottom: 20px;
+            gap: 24px;
+        }
+
+        .supplier-profile-tab-btn {
+            background: none;
+            border: none;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--supplier-profile-text-light);
+            padding: 8px 0;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .supplier-profile-tab-btn.supplier-profile-active {
+            color: var(--supplier-profile-accent-orange);
+        }
+
+        .supplier-profile-tab-btn.supplier-profile-active::after {
+            content: "";
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: var(--supplier-profile-accent-orange);
+            border-radius: 2px 2px 0 0;
+        }
+
+        /* --- Content Sections --- */
+        .supplier-profile-content-card {
+            background: var(--supplier-profile-bg-card);
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .supplier-profile-section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .supplier-profile-section-title i {
+            color: #d97706;
+            font-size: 16px;
+        }
+
+        .supplier-profile-content-card p {
+            font-size: 13px;
+            color: var(--supplier-profile-text-muted);
+            line-height: 1.6;
+        }
+
+        /* --- Active Offers Section --- */
+        .supplier-profile-offers-heading {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 28px 0 16px 0;
+        }
+
+        .supplier-profile-offer-banner {
+            background: linear-gradient(90deg, #0b0f19 0%, #201710 45%, #4b5563 100%);
+            border-radius: 6px;
+            overflow: hidden;
+            padding: 24px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            min-height: 160px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Simulating the battery image render on the right aspect of the card */
+        .supplier-profile-offer-banner::after {
+            content: "";
+            position: absolute;
+            right: 40px;
+            top: 20px;
+            bottom: 20px;
+            width: 300px;
+            background: linear-gradient(135deg, #374151 0%, #111827 100%);
+            border-radius: 6px;
+            opacity: 0.4;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            /* Fallback to show battery graphic representation layout */
+            display: flex;
+        }
+
+        .supplier-profile-offer-content {
+            z-index: 2;
+            max-width: 55%;
+        }
+
+        .supplier-profile-offer-badge {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #9ca3af;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .supplier-profile-offer-content h2 {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .supplier-profile-offer-content p {
+            color: #9ca3af;
+            font-size: 11px;
+            margin-bottom: 20px;
+        }
+
+        .supplier-profile-offer-btn {
+            display: inline-block;
+            background-color: #ffffff;
+            color: #111827;
+            font-weight: 700;
+            font-size: 13px;
+            padding: 8px 18px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .supplier-profile-offer-btn:hover {
+            background-color: #f3f4f6;
+        }
+
+        /* Visual indicator over the right side layout inside the pseudo-element supplier-profile-container */
+        .supplier-profile-battery-preview-art {
+            position: absolute;
+            right: 80px;
+            z-index: 3;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .supplier-profile-battery-box {
+            width: 70px;
+            height: 60px;
+            background: #4b5563;
+            border: 2px solid #9ca3af;
+            border-radius: 4px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 4px;
+            color: white;
+            font-size: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .supplier-profile-battery-box::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 15px;
+            width: 10px;
+            height: 6px;
+            background: #9ca3af;
+        }
+        .supplier-profile-battery-box::after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            right: 15px;
+            width: 10px;
+            height: 6px;
+            background: #9ca3af;
+        }
+        .supplier-profile-battery-box.supplier-profile-blue { background: #1e3a8a; border-color: #3b82f6;}
+        .supplier-profile-battery-box.supplier-profile-blue::before, .supplier-profile-battery-box.supplier-profile-blue::after { background: #3b82f6; }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            .supplier-profile-meta-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .supplier-profile-offer-banner {
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: center;
+                gap: 16px;
+            }
+            .supplier-profile-offer-content {
+                max-width: 100%;
+            }
+            .supplier-profile-offer-banner::after, .supplier-profile-battery-preview-art {
+                display: none; /* Hide illustrative battery block structures on compact view */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="supplier-profile">
+
+    <div class="supplier-profile-container">
+        <a href="#" class="supplier-profile-back-link">
+            <i class="fa-solid fa-arrow-left"></i> Back to Supplier Portfolio
+        </a>
+
+        <div class="supplier-profile-header-card">
+            <div class="supplier-profile-banner">
+                <div class="supplier-profile-social-icons">
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                </div>
+            </div>
+            
+            <div class="supplier-profile-info-block">
+                <div class="supplier-profile-logo-container">
+                    <div class="supplier-profile-logo-placeholder">
+                        <i class="fa-solid fa-car-on"></i>
+                        BOSCH
+                    </div>
+                </div>
+
+                <div class="supplier-profile-title-section">
+                    <h1>Bosch Automotive</h1>
+                    <p>Original Equipment Manufacturer / Aftermarket</p>
+                </div>
+
+                <div class="supplier-profile-meta-grid">
+                    <div class="supplier-profile-meta-item">
+                        <div class="supplier-profile-meta-icon"><i class="fa-solid fa-wrench"></i></div>
+                        <div class="supplier-profile-meta-content">
+                            <label>Activity</label>
+                            <span>Manufacturer</span>
+                        </div>
+                    </div>
+                    
+                    <div class="supplier-profile-meta-item">
+                        <div class="supplier-profile-meta-icon"><i class="fa-solid fa-star"></i></div>
+                        <div class="supplier-profile-meta-content">
+                            <label>Products</label>
+                            <div class="supplier-profile-tag-container">
+                                <span class="supplier-profile-tag">Injection</span>
+                                <span class="supplier-profile-tag">Batteries</span>
+                                <span class="supplier-profile-tag">Wipers</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="supplier-profile-meta-item">
+                        <div class="supplier-profile-meta-icon"><i class="fa-solid fa-at"></i></div>
+                        <div class="supplier-profile-meta-content">
+                            <label>General Email</label>
+                            <a href="mailto:contact@bosch.com">contact@bosch.com</a>
+                        </div>
+                    </div>
+
+                    <div class="supplier-profile-meta-item">
+                        <div class="supplier-profile-meta-icon"><i class="fa-solid fa-location-dot"></i></div>
+                        <div class="supplier-profile-meta-content">
+                            <label>Headquarters</label>
+                            <span>164 Av. Jean Jaurès, 69007 Lyon</span>
+                        </div>
+                    </div>
+
+                    <div class="supplier-profile-meta-item">
+                        <div class="supplier-profile-meta-icon"><i class="fa-solid fa-globe"></i></div>
+                        <div class="supplier-profile-meta-content">
+                            <label>Website</label>
+                            <a href="https://www.bosch-automotive.com" target="_blank">www.bosch-automotive.com</a>
+                        </div>
+                    </div>
+
+                    <div class="supplier-profile-meta-item">
+                        <div class="supplier-profile-meta-icon"><i class="fa-solid fa-phone"></i></div>
+                        <div class="supplier-profile-meta-content">
+                            <label>Contact Number</label>
+                            <a href="tel:+3301020304">+ 33 01 02 03 04</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="supplier-profile-tabs-nav">
+            <button class="supplier-profile-tab-btn supplier-profile-active">About</button>
+            <button class="supplier-profile-tab-btn">Contacts</button>
+            <button class="supplier-profile-tab-btn">Medias</button>
+        </div>
+
+        <div class="supplier-profile-content-card">
+            <div class="supplier-profile-section-title">
+                <i class="fa-solid fa-building"></i> About
+            </div>
+            <p>
+                Global leader in automotive technology and services. We provide innovative solutions for connected, automated, and electrified mobility. Our expertise covers braking systems, steering, and engine management solutions.
+            </p>
+        </div>
+
+        <div class="supplier-profile-content-card">
+            <div class="supplier-profile-section-title">
+                <i class="fa-solid fa-star"></i> Expertise & Product Ranges
+            </div>
+            <div class="supplier-profile-tag-container">
+                <span class="supplier-profile-tag">Injection</span>
+                <span class="supplier-profile-tag">Batteries</span>
+                <span class="supplier-profile-tag">Wipers</span>
+            </div>
+        </div>
+
+        <h3 class="supplier-profile-offers-heading">Active offers</h3>
+
+        <div class="supplier-profile-offer-banner">
+            <div class="supplier-profile-offer-content">
+                <span class="supplier-profile-offer-badge">Flash Offer</span>
+                <h2>-15% on e-Mobility Battery ranges.</h2>
+                <p>Valid for all orders placed before March 15, 2025.</p>
+                <a href="#" class="supplier-profile-offer-btn">Get offer now !</a>
+            </div>
+            <div class="supplier-profile-battery-preview-art">
+                <div class="supplier-profile-battery-box">S5</div>
+                <div class="supplier-profile-battery-box supplier-profile-blue">S4</div>
+                <div class="supplier-profile-battery-box">S3</div>
+            </div>
+        </div>
+
+        <div class="supplier-profile-offer-banner">
+            <div class="supplier-profile-offer-content">
+                <span class="supplier-profile-offer-badge">Flash Offer</span>
+                <h2>-15% on e-Mobility Battery ranges.</h2>
+                <p>Valid for all orders placed before March 15, 2025.</p>
+                <a href="#" class="supplier-profile-offer-btn">Get offer now !</a>
+            </div>
+            <div class="supplier-profile-battery-preview-art">
+                <div class="supplier-profile-battery-box">S5</div>
+                <div class="supplier-profile-battery-box supplier-profile-blue">S4</div>
+                <div class="supplier-profile-battery-box">S3</div>
+            </div>
+        </div>
+
+    </div>
+
+    </div>
+</body>
+</html>

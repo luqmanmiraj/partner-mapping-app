@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="family">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        .member-dashboard {
+
+            --member-dashboard-bg-gradient: linear-gradient(135deg, #fbf7f4 0%, #f4eade 100%);
+            --member-dashboard-card-bg: #ffffff;
+            --member-dashboard-text-main: #000000;
+            --member-dashboard-text-muted: #71717a;
+            --member-dashboard-primary-orange: #f2994a;
+            --member-dashboard-orange-light: #fef08a;
+            --member-dashboard-green-trend-bg: #dcfce7;
+            --member-dashboard-green-trend-text: #166534;
+            --member-dashboard-red-trend-bg: #fee2e2;
+            --member-dashboard-red-trend-text: #991b1b;
+            --member-dashboard-border-color: #e4e4e7;
+        
+}
+        .member-dashboard,
+        .member-dashboard * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        .member-dashboard {
+            font-family: 'Inter', sans-serif;
+            background: transparent;
+            color: var(--member-dashboard-text-main);
+            min-height: 100vh;
+        }
+
+        .member-dashboard-container {
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* --- Global Typography & Headers --- */
+        .member-dashboard-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .member-dashboard-title-group h2 {
+            font-size: 22px;
+            font-weight: 700;
+            display: inline-block;
+            margin-right: 12px;
+        }
+
+        .member-dashboard-last-updated {
+            font-size: 13px;
+            color: var(--member-dashboard-text-muted);
+            font-weight: 400;
+        }
+
+        /* --- Header Actions / Controls --- */
+        .member-dashboard-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .member-dashboard-btn-dropdown, .member-dashboard-btn-action {
+            background: var(--member-dashboard-card-bg);
+            border: 1px solid var(--member-dashboard-border-color);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #27272a;
+            transition: all 0.2s ease;
+        }
+
+        .member-dashboard-btn-dropdown {
+            min-width: 120px;
+            justify-content: space-between;
+        }
+
+        .member-dashboard-btn-dropdown::after {
+            content: '\f107';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            font-size: 11px;
+            color: var(--member-dashboard-text-muted);
+        }
+
+        .member-dashboard-btn-action:hover, .member-dashboard-btn-dropdown:hover {
+            background: #fafafa;
+            border-color: #d4d4d8;
+        }
+
+        /* --- Overview Cards Layout --- */
+        .member-dashboard-overview-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .member-dashboard-card-kpi {
+            background: var(--member-dashboard-card-bg);
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .member-dashboard-card-kpi .member-dashboard-kpi-label {
+            color: var(--member-dashboard-primary-orange);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .member-dashboard-card-kpi .member-dashboard-kpi-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        /* --- Trend Badges --- */
+        .member-dashboard-trend-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .member-dashboard-trend-badge.member-dashboard-positive {
+            background-color: var(--member-dashboard-green-trend-bg);
+            color: var(--member-dashboard-green-trend-text);
+        }
+
+        .member-dashboard-trend-badge.member-dashboard-negative {
+            background-color: var(--member-dashboard-red-trend-bg);
+            color: var(--member-dashboard-red-trend-text);
+        }
+
+        /* --- Sales Section Layout --- */
+        .member-dashboard-sales-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        .member-dashboard-chart-card, .member-dashboard-list-card {
+            background: var(--member-dashboard-card-bg);
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .member-dashboard-chart-card h3, .member-dashboard-list-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        /* --- Chart Mockup (CSS SVG Styling) --- */
+        .member-dashboard-chart-container {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            margin-top: 20px;
+        }
+
+        /* --- Horizontal Bar Chart (Product Groups) --- */
+        .member-dashboard-bar-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .member-dashboard-bar-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .member-dashboard-bar-track {
+            position: relative;
+            background: #f4f4f5;
+            height: 32px;
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+        }
+
+        .member-dashboard-bar-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, #ffedd5 0%, #fed7aa 100%);
+            z-index: 1;
+        }
+
+        .member-dashboard-bar-label {
+            position: relative;
+            z-index: 2;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .member-dashboard-bar-value {
+            position: absolute;
+            right: 12px;
+            font-size: 11px;
+            color: var(--member-dashboard-text-muted);
+            font-weight: 500;
+            z-index: 2;
+        }
+
+        /* --- Partners Table Section --- */
+        .member-dashboard-table-card {
+            background: var(--member-dashboard-card-bg);
+            border-radius: 8px;
+            padding: 12px 0 24px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            overflow: hidden;
+        }
+
+        .member-dashboard-custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .member-dashboard-custom-table th {
+            font-size: 12px;
+            color: var(--member-dashboard-text-muted);
+            font-weight: 500;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--member-dashboard-border-color);
+        }
+
+        .member-dashboard-custom-table td {
+            padding: 20px 24px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .member-dashboard-custom-table tr td:first-child, 
+        .member-dashboard-custom-table tr th:first-child {
+            font-weight: 700;
+        }
+
+        /* Responsive Breakdowns */
+        @media (max-width: 1024px) {
+            .member-dashboard-overview-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .member-dashboard-sales-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .member-dashboard-overview-grid {
+                grid-template-columns: 1fr;
+            }
+            .member-dashboard-section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="member-dashboard">
+
+    <div class="member-dashboard-container">
+        
+        <section>
+            <div class="member-dashboard-section-header">
+                <div class="member-dashboard-title-group">
+                    <h2>Overview</h2>
+                    <span class="member-dashboard-last-updated">Last updated: Today, 04:00 AM</span>
+                </div>
+                <div class="member-dashboard-controls">
+                    <button class="member-dashboard-btn-dropdown">Date</button>
+                    <button class="member-dashboard-btn-dropdown">Lorem ipsum</button>
+                    <button class="member-dashboard-btn-action"><i class="fa-solid fa-download"></i> Import</button>
+                    <button class="member-dashboard-btn-action"><i class="fa-solid fa-upload"></i> Export</button>
+                </div>
+            </div>
+
+            <div class="member-dashboard-overview-grid">
+                <div class="member-dashboard-card-kpi">
+                    <div class="member-dashboard-kpi-label">Net Sales</div>
+                    <div class="member-dashboard-kpi-value">€3.2M</div>
+                    <span class="member-dashboard-trend-badge member-dashboard-positive"><i class="fa-solid fa-arrow-trend-up"></i> +10%</span>
+                </div>
+                <div class="member-dashboard-card-kpi">
+                    <div class="member-dashboard-kpi-label">Net Sales</div>
+                    <div class="member-dashboard-kpi-value">€3.2M</div>
+                    <span class="member-dashboard-trend-badge member-dashboard-negative"><i class="fa-solid fa-arrow-trend-down"></i> -5%</span>
+                </div>
+                <div class="member-dashboard-card-kpi">
+                    <div class="member-dashboard-kpi-label">Net Sales</div>
+                    <div class="member-dashboard-kpi-value">€3.2M</div>
+                    <span class="member-dashboard-trend-badge member-dashboard-positive"><i class="fa-solid fa-arrow-trend-up"></i> +10%</span>
+                </div>
+                <div class="member-dashboard-card-kpi">
+                    <div class="member-dashboard-kpi-label">Net Sales</div>
+                    <div class="member-dashboard-kpi-value">€3.2M</div>
+                    <span class="member-dashboard-trend-badge member-dashboard-positive"><i class="fa-solid fa-arrow-trend-up"></i> +10%</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- member-dashboard:sales -->
+
+        <section>
+            <div class="member-dashboard-section-header">
+                <div class="member-dashboard-title-group">
+                    <h2>Top Performing Partners</h2>
+                    <span class="member-dashboard-last-updated">Last updated: Today, 04:00 AM</span>
+                </div>
+            </div>
+
+            <div class="member-dashboard-table-card">
+                <table class="member-dashboard-custom-table">
+                    <thead>
+                        <tr>
+                            <th>Member</th>
+                            <th>Country</th>
+                            <th>Volume</th>
+                            <th>Growth</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Digitalisim</td>
+                            <td>France</td>
+                            <td><strong>€100K</strong></td>
+                            <td><span class="member-dashboard-trend-badge member-dashboard-positive"><i class="fa-solid fa-arrow-trend-up"></i> +10%</span></td>
+                        </tr>
+                        <tr>
+                            <td>Digitalisim</td>
+                            <td>France</td>
+                            <td><strong>€100K</strong></td>
+                            <td><span class="member-dashboard-trend-badge member-dashboard-negative"><i class="fa-solid fa-arrow-trend-up"></i> +10%</span></td>
+                        </tr>
+                        <tr>
+                            <td>Digitalisim</td>
+                            <td>France</td>
+                            <td><strong>€100K</strong></td>
+                            <td><span class="member-dashboard-trend-badge member-dashboard-positive"><i class="fa-solid fa-arrow-trend-up"></i> +10%</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+    </div>
+</body>
+</html>

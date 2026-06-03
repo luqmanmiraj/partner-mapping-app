@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feu Vert - Member Profile</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Base Variables & Structural Setup */
+.member-company-media-root {
+  --mcm-bg-body: #f4f6f8;
+  --mcm-bg-white: #ffffff;
+  --mcm-text-dark: #333333;
+  --mcm-text-gray: #666666;
+  --mcm-text-light: #999999;
+  --mcm-primary-green: #00875a;
+  --mcm-accent-orange: #f0a04b;
+  --mcm-border-color: #e1e4e8;
+  --mcm-border-radius: 6px;
+  --mcm-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.member-company-media-body {
+  background-color: var(--mcm-bg-body);
+  margin: 0;
+  padding: 20px;
+  font-family: var(--mcm-font-family);
+  color: var(--mcm-text-dark);
+}
+
+.member-company-media-container {
+  max-width: none;
+  width: 100%;
+  margin: 0 auto;
+  background-color: var(--mcm-bg-white);
+  border-radius: var(--mcm-border-radius);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+/* Header & Banner styling */
+.member-company-media-header {
+  height: 180px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--mcm-primary-green);
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  padding: 15px;
+}
+
+.member-company-media-social-links a {
+  color: var(--mcm-bg-white);
+  font-size: 1.1rem;
+  margin-left: 12px;
+  text-decoration: none;
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+
+.member-company-media-social-links a:hover {
+  opacity: 1;
+}
+
+/* Profile Card Structure */
+.member-company-media-profile-card {
+  display: flex;
+  padding: 0 30px 35px 30px;
+  position: relative;
+  border-bottom: 1px solid var(--mcm-border-color);
+}
+
+.member-company-media-logo-wrapper {
+  width: 140px;
+  height: 140px;
+  background: var(--mcm-bg-white);
+  border: 1px solid var(--mcm-border-color);
+  border-radius: var(--mcm-border-radius);
+  position: relative;
+  top: -40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  flex-shrink: 0;
+}
+
+.member-company-media-logo-fallback {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: var(--mcm-primary-green);
+}
+
+.member-company-media-profile-details {
+  flex-grow: 1;
+  margin-left: 30px;
+  margin-top: 15px;
+}
+
+.member-company-media-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.member-company-media-title-row h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.member-company-media-edit-btn {
+  background: none;
+  border: none;
+  color: var(--mcm-text-light);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.member-company-media-subtitle {
+  margin: 4px 0 20px 0;
+  color: var(--mcm-text-gray);
+  font-size: 0.95rem;
+}
+
+/* Information Grid Setup */
+.member-company-media-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px 40px;
+}
+
+.member-company-media-info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.member-company-media-info-item i {
+  color: var(--mcm-accent-orange);
+  font-size: 1.1rem;
+  margin-top: 2px;
+}
+
+.member-company-media-label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--mcm-text-light);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.member-company-media-value {
+  font-size: 0.9rem;
+  color: var(--mcm-text-dark);
+}
+
+/* Tags Styling */
+.member-company-media-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.member-company-media-tag {
+  background-color: #fff3e0;
+  color: #e65100;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Tab Navigation */
+.member-company-media-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--mcm-border-color);
+  padding: 0 30px;
+}
+
+.member-company-media-tab {
+  padding: 15px 20px;
+  text-decoration: none;
+  color: var(--mcm-text-gray);
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+}
+
+.member-company-media-tab-active {
+  color: var(--mcm-text-dark);
+  border-bottom-color: var(--mcm-text-dark);
+}
+
+/* Filter Controls Toolbar */
+.member-company-media-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+}
+
+.member-company-media-filter-group {
+  display: flex;
+  gap: 10px;
+}
+
+.member-company-media-add-btn-main {
+  background: #111;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--mcm-border-radius);
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.member-company-media-select {
+  border: 1px solid var(--mcm-border-color);
+  background: #fff;
+  padding: 8px 30px 8px 12px;
+  border-radius: var(--mcm-border-radius);
+  font-size: 0.85rem;
+  color: var(--mcm-text-gray);
+}
+
+.member-company-media-search-wrapper {
+  position: relative;
+  width: 280px;
+}
+
+.member-company-media-search {
+  width: 100%;
+  border: 1px solid var(--mcm-border-color);
+  padding: 8px 35px 8px 12px;
+  border-radius: var(--mcm-border-radius);
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+
+.member-company-media-search-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--mcm-text-light);
+  font-size: 0.85rem;
+}
+
+/* Section Components Layouts */
+.member-company-media-section {
+  padding: 20px 30px;
+}
+
+.member-company-media-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 15px;
+}
+
+.member-company-media-section-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.member-company-media-view-all {
+  font-size: 0.85rem;
+  color: var(--mcm-text-gray);
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+/* Documents Lists styling */
+.member-company-media-doc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.member-company-media-doc-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  border: 1px solid var(--mcm-border-color);
+  border-radius: var(--mcm-border-radius);
+}
+
+.member-company-media-doc-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.member-company-media-pdf-icon {
+  color: var(--mcm-accent-orange);
+  font-size: 1.5rem;
+}
+
+.member-company-media-doc-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.member-company-media-doc-size {
+  font-size: 0.75rem;
+  color: var(--mcm-text-light);
+}
+
+.member-company-media-doc-actions button {
+  background: none;
+  border: none;
+  color: var(--mcm-text-gray);
+  cursor: pointer;
+  margin-left: 15px;
+  font-size: 0.95rem;
+}
+
+/* Grids Design */
+.member-company-media-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.member-company-media-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Standard Video/Gallery Cards block layout */
+.member-company-media-card {
+  border: 1px solid var(--mcm-border-color);
+  border-radius: var(--mcm-border-radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.member-company-media-card-media {
+  height: 180px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  background-color: #eaeaea;
+}
+
+.member-company-media-overlay-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.member-company-media-context-btn {
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.member-company-media-play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: none;
+  border: 2px solid #fff;
+  color: #fff;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding-left: 4px; /* visually centered play arrow icon */
+}
+
+.member-company-media-card-body {
+  padding: 15px;
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(0,0,0,0.02) 100%);
+}
+
+.member-company-media-card-body h3 {
+  margin: 0 0 6px 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.member-company-media-card-body p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--mcm-text-gray);
+  line-height: 1.4;
+}
+
+/* News Section Layout styling */
+.member-company-media-news-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 20px;
+}
+
+.member-company-media-news-main {
+  border: 1px solid var(--mcm-border-color);
+  border-radius: var(--mcm-border-radius);
+  overflow: hidden;
+}
+
+.member-company-media-news-img {
+  height: 220px;
+  background-size: cover;
+  background-position: center;
+  background-color: #eaeaea;
+}
+
+.member-company-media-news-content {
+  padding: 20px;
+}
+
+.member-company-media-news-date {
+  font-size: 0.75rem;
+  color: var(--mcm-text-light);
+  display: block;
+  margin-bottom: 5px;
+}
+
+.member-company-media-news-content h3, 
+.member-company-media-news-sidebar h3 {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.member-company-media-news-content p,
+.member-company-media-news-sidebar p {
+  margin: 0 0 15px 0;
+  font-size: 0.85rem;
+  color: var(--mcm-text-gray);
+  line-height: 1.4;
+}
+
+.member-company-media-read-more {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--mcm-text-dark);
+  text-decoration: underline;
+}
+
+/* Sidebar structure inside News container */
+.member-company-media-news-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.member-company-media-news-row {
+  display: flex;
+  gap: 15px;
+  border: 1px solid var(--mcm-border-color);
+  border-radius: var(--mcm-border-radius);
+  overflow: hidden;
+  flex: 1;
+}
+
+.member-company-media-news-thumb {
+  width: 140px;
+  background-size: cover;
+  background-position: center;
+  background-color: #eaeaea;
+  flex-shrink: 0;
+}
+
+.member-company-media-news-thumb-content {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.member-company-media-news-thumb-content p {
+  margin-bottom: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Pagination dot elements layout */
+.member-company-media-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 20px;
+}
+
+.member-company-media-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--mcm-border-color);
+  border-radius: 50%;
+}
+
+.member-company-media-dot-active {
+  background-color: var(--mcm-accent-orange);
+  width: 18px;
+  border-radius: 4px;
+}
+
+/* Responsive Overrides Rules */
+@media (max-width: 900px) {
+  .member-company-media-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .member-company-media-news-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 650px) {
+  .member-company-media-profile-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .member-company-media-profile-details {
+    margin-left: 0;
+  }
+  .member-company-media-title-row {
+    justify-content: center;
+  }
+  .member-company-media-info-grid {
+    grid-template-columns: 1fr;
+    text-align: left;
+  }
+  .member-company-media-controls {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  .member-company-media-search-wrapper {
+    width: 100%;
+  }
+  .member-company-media-grid-3 {
+    grid-template-columns: 1fr;
+  }
+  .member-company-media-news-row {
+    flex-direction: column;
+  }
+  .member-company-media-news-thumb {
+    width: 100%;
+    height: 150px;
+  }
+}
+  </style>
+</head>
+<body class="member-company-media-body">
+
+  <div class="member-company-media-container">
+    
+    <header class="member-company-media-header" style="background-image: url('https://via.placeholder.com/1200x250');">
+      <div class="member-company-media-social-links">
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-x-twitter"></i></a>
+      </div>
+    </header>
+
+    <section class="member-company-media-profile-card">
+      <div class="member-company-media-logo-wrapper">
+        <div class="member-company-media-logo-fallback">Feu Vert</div>
+      </div>
+      
+      <div class="member-company-media-profile-details">
+        <div class="member-company-media-title-row">
+          <h1>Feu Vert</h1>
+          <button class="member-company-media-edit-btn"><i class="fas fa-pencil"></i></button>
+        </div>
+        <p class="member-company-media-subtitle">Original Equipment Manufacturer / Aftermarket</p>
+        
+        <div class="member-company-media-info-grid">
+          <div class="member-company-media-info-item">
+            <i class="fas fa-gears"></i>
+            <div>
+              <span class="member-company-media-label">Activity</span>
+              <span class="member-company-media-value">Manufacturer</span>
+            </div>
+          </div>
+          <div class="member-company-media-info-item">
+            <i class="fas fa-box"></i>
+            <div>
+              <span class="member-company-media-label">Products</span>
+              <span class="member-company-media-tags">
+                <span class="member-company-media-tag">Injection</span>
+                <span class="member-company-media-tag">Batteries</span>
+                <span class="member-company-media-tag">Wipers</span>
+              </span>
+            </div>
+          </div>
+          <div class="member-company-media-info-item">
+            <i class="fas fa-envelope"></i>
+            <div>
+              <span class="member-company-media-label">General Email</span>
+              <span class="member-company-media-value">contact@bosch.com</span>
+            </div>
+          </div>
+          <div class="member-company-media-info-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <div>
+              <span class="member-company-media-label">Headquarters</span>
+              <span class="member-company-media-value">164 Av. Jean Jaurès, 69007 Lyon</span>
+            </div>
+          </div>
+          <div class="member-company-media-info-item">
+            <i class="fas fa-globe"></i>
+            <div>
+              <span class="member-company-media-label">Website</span>
+              <span class="member-company-media-value">www.bosch-automotive.com</span>
+            </div>
+          </div>
+          <div class="member-company-media-info-item">
+            <i class="fas fa-phone"></i>
+            <div>
+              <span class="member-company-media-label">Contact Number</span>
+              <span class="member-company-media-value">+ 33 01 02 03 04</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <nav class="member-company-media-tabs">
+      <a href="#" class="member-company-media-tab">About</a>
+      <a href="#" class="member-company-media-tab">Contacts</a>
+      <a href="#" class="member-company-media-tab member-company-media-tab-active">Medias</a>
+      <a href="#" class="member-company-media-tab">ID Card</a>
+    </nav>
+
+    <div class="member-company-media-controls">
+      <div class="member-company-media-filter-group">
+        <button class="member-company-media-add-btn-main"><i class="fas fa-plus"></i> Add Media</button>
+        <select class="member-company-media-select">
+          <option>Country</option>
+        </select>
+        <select class="member-company-media-select">
+          <option>Product</option>
+        </select>
+      </div>
+      <div class="member-company-media-search-wrapper">
+        <input type="text" class="member-company-media-search" placeholder="Search for a topic...">
+        <i class="fas fa-search member-company-media-search-icon"></i>
+      </div>
+    </div>
+
+    <section class="member-company-media-section">
+      <div class="member-company-media-section-header">
+        <h2>Documents & Catalogues</h2>
+        <a href="#" class="member-company-media-view-all">View all</a>
+      </div>
+      <div class="member-company-media-doc-list">
+        <div class="member-company-media-doc-row">
+          <div class="member-company-media-doc-info">
+            <i class="far fa-file-pdf member-company-media-pdf-icon"></i>
+            <div>
+              <div class="member-company-media-doc-title">Title.pdf</div>
+              <div class="member-company-media-doc-size">2 MB</div>
+            </div>
+          </div>
+          <div class="member-company-media-doc-actions">
+            <button><i class="fas fa-ellipsis-h"></i></button>
+            <button><i class="far fa-eye"></i></button>
+            <button><i class="fas fa-download"></i></button>
+          </div>
+        </div>
+        <div class="member-company-media-doc-row">
+          <div class="member-company-media-doc-info">
+            <i class="far fa-file-pdf member-company-media-pdf-icon"></i>
+            <div>
+              <div class="member-company-media-doc-title">Title.pdf</div>
+              <div class="member-company-media-doc-size">2 MB</div>
+            </div>
+          </div>
+          <div class="member-company-media-doc-actions">
+            <button><i class="fas fa-ellipsis-h"></i></button>
+            <button><i class="far fa-eye"></i></button>
+            <button><i class="fas fa-download"></i></button>
+          </div>
+        </div>
+        <div class="member-company-media-doc-row">
+          <div class="member-company-media-doc-info">
+            <i class="far fa-file-pdf member-company-media-pdf-icon"></i>
+            <div>
+              <div class="member-company-media-doc-title">Title.pdf</div>
+              <div class="member-company-media-doc-size">2 MB</div>
+            </div>
+          </div>
+          <div class="member-company-media-doc-actions">
+            <button><i class="fas fa-ellipsis-h"></i></button>
+            <button><i class="far fa-eye"></i></button>
+            <button><i class="fas fa-download"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="member-company-media-dots">
+        <span class="member-company-media-dot member-company-media-dot-active"></span>
+        <span class="member-company-media-dot"></span>
+        <span class="member-company-media-dot"></span>
+        <span class="member-company-media-dot"></span>
+        <span class="member-company-media-dot"></span>
+      </div>
+    </section>
+
+    <section class="member-company-media-section">
+      <div class="member-company-media-section-header">
+        <h2>Videos</h2>
+        <a href="#" class="member-company-media-view-all">View all</a>
+      </div>
+      <div class="member-company-media-grid member-company-media-grid-3">
+        <div class="member-company-media-card">
+          <div class="member-company-media-card-media" style="background-image: url('https://via.placeholder.com/400x250');">
+            <div class="member-company-media-overlay-actions">
+              <button class="member-company-media-context-btn"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <button class="member-company-media-play-btn"><i class="fas fa-play"></i></button>
+          </div>
+          <div class="member-company-media-card-body">
+            <h3>Title</h3>
+            <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+          </div>
+        </div>
+        <div class="member-company-media-card">
+          <div class="member-company-media-card-media" style="background-image: url('https://via.placeholder.com/400x250');">
+            <div class="member-company-media-overlay-actions">
+              <button class="member-company-media-context-btn"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <button class="member-company-media-play-btn"><i class="fas fa-play"></i></button>
+          </div>
+          <div class="member-company-media-card-body">
+            <h3>Title</h3>
+            <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+          </div>
+        </div>
+        <div class="member-company-media-card">
+          <div class="member-company-media-card-media" style="background-image: url('https://via.placeholder.com/400x250');">
+            <div class="member-company-media-overlay-actions">
+              <button class="member-company-media-context-btn"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <button class="member-company-media-play-btn"><i class="fas fa-play"></i></button>
+          </div>
+          <div class="member-company-media-card-body">
+            <h3>Title</h3>
+            <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+          </div>
+        </div>
+      </div>
+      <div class="member-company-media-dots">
+        <span class="member-company-media-dot member-company-media-dot-active"></span>
+        <span class="member-company-media-dot"></span>
+        <span class="member-company-media-dot"></span>
+        <span class="member-company-media-dot"></span>
+        <span class="member-company-media-dot"></span>
+      </div>
+    </section>
+
+    <section class="member-company-media-section">
+      <div class="member-company-media-section-header">
+        <h2>Gallery</h2>
+        <a href="#" class="member-company-media-view-all">View all</a>
+      </div>
+      <div class="member-company-media-grid member-company-media-grid-3">
+        <div class="member-company-media-card">
+          <div class="member-company-media-card-media" style="background-image: url('https://via.placeholder.com/400x250');">
+            <div class="member-company-media-overlay-actions">
+              <button class="member-company-media-context-btn"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+          </div>
+          <div class="member-company-media-card-body">
+            <h3>Title</h3>
+            <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+          </div>
+        </div>
+        <div class="member-company-media-card">
+          <div class="member-company-media-card-media" style="background-image: url('https://via.placeholder.com/400x250');">
+            <div class="member-company-media-overlay-actions">
+              <button class="member-company-media-context-btn"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+          </div>
+          <div class="member-company-media-card-body">
+            <h3>Title</h3>
+            <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+          </div>
+        </div>
+        <div class="member-company-media-card">
+          <div class="member-company-media-card-media" style="background-image: url('https://via.placeholder.com/400x250');">
+            <div class="member-company-media-overlay-actions">
+              <button class="member-company-media-context-btn"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+          </div>
+          <div class="member-company-media-card-body">
+            <h3>Title</h3>
+            <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+          </div>
+        </div>
+      </div>
+      <div class="member-company-media-dots">
+        <span class="member-company-media-dot member-company-media-dot-active"></span>
+        <span class="member-company-media-dot"></span>
+        <span class="member-company-media-dot"></span>
+        <span class="member-company-media-dot"></span>
+        <span class="member-company-media-dot"></span>
+      </div>
+    </section>
+
+    <section class="member-company-media-section">
+      <div class="member-company-media-section-header">
+        <h2>News</h2>
+        <a href="#" class="member-company-media-view-all">View all</a>
+      </div>
+      <div class="member-company-media-news-layout">
+        <div class="member-company-media-news-main">
+          <div class="member-company-media-news-img" style="background-image: url('https://via.placeholder.com/600x350');"></div>
+          <div class="member-company-media-news-content">
+            <span class="member-company-media-news-date">Last Month</span>
+            <h3>Title</h3>
+            <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+            <a href="#" class="member-company-media-read-more">Read</a>
+          </div>
+        </div>
+
+        <div class="member-company-media-news-sidebar">
+          <div class="member-company-media-news-row">
+            <div class="member-company-media-news-thumb" style="background-image: url('https://via.placeholder.com/150x150');"></div>
+            <div class="member-company-media-news-thumb-content">
+              <span class="member-company-media-news-date">Last Month</span>
+              <h3>Title</h3>
+              <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+              <a href="#" class="member-company-media-read-more">Read</a>
+            </div>
+          </div>
+          <div class="member-company-media-news-row">
+            <div class="member-company-media-news-thumb" style="background-image: url('https://via.placeholder.com/150x150');"></div>
+            <div class="member-company-media-news-thumb-content">
+              <span class="member-company-media-news-date">Last Month</span>
+              <h3>Title</h3>
+              <p>Vestibulum condimentum lectus mauris, eget iaculis sem tristique non.</p>
+              <a href="#" class="member-company-media-read-more">Read</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="member-company-media-dots">
+        <span class="member-company-media-dot member-company-media-dot-active"></span>
+        <span class="member-company-media-dot"></span>
+        <span class="member-company-media-dot"></span>
+        <span class="member-company-media-dot"></span>
+        <span class="member-company-media-dot"></span>
+      </div>
+    </section>
+
+  </div>
+
+</body>
+</html>

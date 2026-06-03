@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketing Service Details & Scheduling</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* --- Core Resets & Variables --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #eeeeee;
+      color: #111111;
+      padding: 24px;
+    }
+
+    .main-workspace-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* Common Card Styling base */
+    .content-card-panel {
+      background-color: #ffffff;
+      border-radius: 4px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    /* ==========================================
+       LEFT COLUMN: Service Data Sheets
+       ========================================== */
+    .left-stream-container {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .back-nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #333333;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: -8px;
+    }
+
+    /* Main service header metadata */
+    .service-profile-header {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .service-icon-box {
+      width: 48px;
+      height: 48px;
+      border: 1.5px solid #bdc3c7;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: #333333;
+      flex-shrink: 0;
+    }
+
+    .service-title-block h1 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #000000;
+      margin-bottom: 4px;
+    }
+
+    .service-title-block p {
+      font-size: 0.9rem;
+      color: #666666;
+    }
+
+    /* Dynamic internal informational content blocks */
+    .info-inner-block {
+      background-color: #f5f5f5;
+      border-radius: 4px;
+      padding: 20px;
+    }
+
+    .info-inner-block h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #000000;
+      margin-bottom: 10px;
+    }
+
+    .info-inner-block p {
+      font-size: 0.86rem;
+      color: #444444;
+      line-height: 1.5;
+    }
+
+    /* Bullet List items with checklist checkmarks */
+    .checklist-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .checklist-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.86rem;
+      color: #444444;
+    }
+
+    .checklist-row i {
+      color: #f39c12; /* Accent golden checklist ring color */
+      font-size: 0.95rem;
+    }
+
+    /* Document assets components double col layout grid */
+    .resources-grid-layout {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .resource-mini-card {
+      background-color: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .resource-icon-orange {
+      color: #f39c12;
+      font-size: 1.1rem;
+    }
+
+    .resource-meta {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .resource-meta h4 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #111111;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .resource-meta span {
+      font-size: 0.76rem;
+      color: #777777;
+    }
+
+    .resource-actions-tray {
+      display: flex;
+      gap: 12px;
+      color: #777777;
+      font-size: 0.88rem;
+    }
+
+    .resource-actions-tray i {
+      cursor: pointer;
+    }
+
+    /* Contacts Directory Grid Elements inside workflow */
+    .contacts-section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #000000;
+      margin-bottom: 14px;
+    }
+
+    .contacts-filter-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .contact-search-box {
+      position: relative;
+      flex: 1;
+    }
+
+    .contact-search-box input {
+      width: 100%;
+      padding: 10px 35px 10px 12px;
+      font-size: 0.84rem;
+      border: 1px solid #cccccc;
+      border-radius: 4px;
+      outline: none;
+    }
+
+    .contact-search-box i {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #333333;
+    }
+
+    .contact-dropdown-select {
+      padding: 10px 24px 10px 12px;
+      font-size: 0.84rem;
+      border: 1px solid #cccccc;
+      border-radius: 4px;
+      background-color: #ffffff;
+      color: #333333;
+      outline: none;
+      min-width: 140px;
+    }
+
+    .contacts-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .profile-mini-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      overflow: hidden;
+      background-color: #ffffff;
+    }
+
+    .profile-card-header {
+      background-color: #f0f0f0;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .profile-card-header h4 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #000000;
+    }
+
+    .profile-card-header span {
+      font-size: 0.78rem;
+      color: #555555;
+      margin-top: 2px;
+    }
+
+    .profile-card-body {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .profile-info-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.78rem;
+      color: #555555;
+    }
+
+    .profile-info-line i {
+      color: #777777;
+      width: 14px;
+      text-align: center;
+    }
+
+    /* Contacts List Pagination System footer controls */
+    .pagination-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin-top: 16px;
+      font-size: 0.82rem;
+      color: #555555;
+    }
+
+    .pagination-row i {
+      cursor: pointer;
+    }
+
+    .pagination-row span.active-page {
+      font-weight: 700;
+      color: #000000;
+    }
+
+    /* ==========================================
+       RIGHT COLUMN: Scheduling / Calendar Engine
+       ========================================== */
+    .right-sidebar-panel {
+      display: flex;
+      flex-direction: column;
+      background-color: #ffffff;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    /* Progress header tracker sequence flow indicator */
+    .tracker-steps-header {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 16px 10px;
+      border-bottom: 1px solid #eeeeee;
+      background-color: #ffffff;
+    }
+
+    .step-indicator-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+      flex: 1;
+    }
+
+    .step-indicator-item::after {
+      content: '';
+      position: absolute;
+      top: 5px;
+      right: -50%;
+      width: 100%;
+      height: 1px;
+      background-color: #dddddd;
+      z-index: 1;
+    }
+
+    .step-indicator-item:last-child::after {
+      display: none;
+    }
+
+    .circle-node {
+      width: 12px;
+      height: 12px;
+      border: 1px solid #777777;
+      border-radius: 50%;
+      background-color: #ffffff;
+      z-index: 2;
+    }
+
+    .step-indicator-item.active .circle-node {
+      background-color: #ffffff;
+      border-color: #111111;
+    }
+
+    .step-indicator-item label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #666666;
+      letter-spacing: 0.5px;
+    }
+
+    /* Calendar Block Window Main Container Body */
+    .calendar-dark-section {
+      background-color: #141619; /* Dark premium graphite palette block */
+      color: #ffffff;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .calendar-host-profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .calendar-host-profile img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 12px;
+    }
+
+    .calendar-host-profile h2 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    /* Date switcher header layout */
+    .calendar-month-selector {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      width: 100%;
+      margin-bottom: 20px;
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+
+    .calendar-month-selector i {
+      cursor: pointer;
+      font-size: 0.75rem;
+    }
+
+    /* Days Framework Matrix layouts table systems */
+    .calendar-days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 12px 6px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .day-header-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #999999;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .day-numeric-cell {
+      font-size: 0.8rem;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #ffffff;
+    }
+
+    .day-numeric-cell.muted {
+      color: #444444;
+      pointer-events: none;
+    }
+
+    .day-numeric-cell.selected-active {
+      background-color: #f39c12; /* Distinct highlight theme state circle indicator */
+      color: #141619;
+      font-weight: 700;
+      border-radius: 50%;
+      width: 28px;
+      margin: 0 auto;
+    }
+
+    /* Bottom Segment Booking Control Actions Form */
+    .booking-interactive-body {
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background-color: #ffffff;
+    }
+
+    .booking-question-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #000000;
+    }
+
+    /* Segment tabs selectors for time configurations */
+    .duration-toggle-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .duration-option-btn {
+      text-align: center;
+      padding: 10px 0;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #666666;
+      background-color: #ffffff;
+      border: none;
+      cursor: pointer;
+      border-right: 1px solid #e0e0e0;
+    }
+
+    .duration-option-btn:last-child {
+      border-right: none;
+    }
+
+    .duration-option-btn.active {
+      background-color: #f39c12;
+      color: #ffffff;
+    }
+
+    /* Slot generation picker layout components vertical strip */
+    .timezone-stamp-meta {
+      font-size: 0.72rem;
+      color: #666666;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .timezone-stamp-meta select {
+      border: none;
+      background: transparent;
+      font-weight: 700;
+      color: #444444;
+      font-size: 0.72rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .time-slots-vertical-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .time-slot-option-row {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      background-color: #ffffff;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: #333333;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .time-slot-option-row:hover {
+      border-color: #111111;
+      background-color: #fafafa;
+    }
+
+    /* Custom Webkit scrollbar tuning for slots */
+    .time-slots-vertical-stack::-webkit-scrollbar {
+      width: 4px;
+    }
+    .time-slots-vertical-stack::-webkit-scrollbar-thumb {
+      background-color: #cccccc;
+      border-radius: 2px;
+    }
+
+    /* ==========================================
+       RESPONSIVE MATRIX BREAKPOINTS
+       ========================================== */
+    @media (max-width: 992px) {
+      .main-workspace-wrapper {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .contacts-cards-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .resources-grid-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .contacts-cards-grid {
+        grid-template-columns: 1fr;
+      }
+      .contacts-filter-bar {
+        flex-direction: column;
+      }
+      .contact-dropdown-select {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-workspace-wrapper">
+    
+    <div class="left-stream-container">
+      
+      <a href="#" class="back-nav-link"><i class="fa-solid fa-arrow-left"></i> Back to Service Catalog</a>
+
+      <main class="content-card-panel left-stream-container">
+        
+        <div class="service-profile-header">
+          <div class="service-icon-box">
+            <i class="fa-regular fa-image"></i>
+          </div>
+          <div class="service-title-block">
+            <h1>Marketing</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur</p>
+          </div>
+        </div>
+
+        <div class="info-inner-block">
+          <h3>About</h3>
+          <p>Praesent ac dapibus lectus, eu porttitor ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
+        </div>
+
+        <div class="info-inner-block">
+          <h3>Expertise & Product Ranges</h3>
+          <p>Praesent ac dapibus lectus, eu porttitor ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
+          
+          <div class="checklist-container">
+            <div class="checklist-row">
+              <i class="fa-solid fa-circle-check"></i>
+              <span>Praesent ac dapibus lectus, eu porttitor ante.</span>
+            </div>
+            <div class="checklist-row">
+              <i class="fa-solid fa-circle-check"></i>
+              <span>Praesent ac dapibus lectus, eu porttitor ante.</span>
+            </div>
+            <div class="checklist-row">
+              <i class="fa-solid fa-circle-check"></i>
+              <span>Praesent ac dapibus lectus, eu porttitor ante.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-inner-block">
+          <h3>Resources</h3>
+          
+          <div class="resources-grid-layout">
+            <div class="resource-mini-card">
+              <i class="fa-regular fa-copy resource-icon-orange"></i>
+              <div class="resource-meta">
+                <h4>Title.pdf</h4>
+                <span>2 MB</span>
+              </div>
+              <div class="resource-actions-tray">
+                <i class="fa-regular fa-eye"></i>
+                <i class="fa-solid fa-download"></i>
+              </div>
+            </div>
+
+            <div class="resource-mini-card">
+              <i class="fa-regular fa-copy resource-icon-orange"></i>
+              <div class="resource-meta">
+                <h4>Title.pdf</h4>
+                <span>2 MB</span>
+              </div>
+              <div class="resource-actions-tray">
+                <i class="fa-regular fa-eye"></i>
+                <i class="fa-solid fa-download"></i>
+              </div>
+            </div>
+
+            <div class="resource-mini-card">
+              <i class="fa-regular fa-copy resource-icon-orange"></i>
+              <div class="resource-meta">
+                <h4>Title.pdf</h4>
+                <span>2 MB</span>
+              </div>
+              <div class="resource-actions-tray">
+                <i class="fa-regular fa-eye"></i>
+                <i class="fa-solid fa-download"></i>
+              </div>
+            </div>
+
+            <div class="resource-mini-card">
+              <i class="fa-regular fa-copy resource-icon-orange"></i>
+              <div class="resource-meta">
+                <h4>Title.pdf</h4>
+                <span>2 MB</span>
+              </div>
+              <div class="resource-actions-tray">
+                <i class="fa-regular fa-eye"></i>
+                <i class="fa-solid fa-download"></i>
+              </div>
+            </div>
+
+            <div class="resource-mini-card">
+              <i class="fa-regular fa-copy resource-icon-orange"></i>
+              <div class="resource-meta">
+                <h4>Title.pdf</h4>
+                <span>2 MB</span>
+              </div>
+              <div class="resource-actions-tray">
+                <i class="fa-regular fa-eye"></i>
+                <i class="fa-solid fa-download"></i>
+              </div>
+            </div>
+
+            <div class="resource-mini-card">
+              <i class="fa-regular fa-copy resource-icon-orange"></i>
+              <div class="resource-meta">
+                <h4>Title.pdf</h4>
+                <span>2 MB</span>
+              </div>
+              <div class="resource-actions-tray">
+                <i class="fa-regular fa-eye"></i>
+                <i class="fa-solid fa-download"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="contacts-section-title">Contacts</h3>
+          
+          <div class="contacts-filter-bar">
+            <div class="contact-search-box">
+              <input type="text" placeholder="Search for a member...">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <select class="contact-dropdown-select">
+              <option>Department</option>
+            </select>
+          </div>
+
+          <div class="contacts-cards-grid">
+            
+            <div class="profile-mini-card">
+              <div class="profile-card-header">
+                <h4>{Name} {Last name}</h4>
+                <span>{Position}</span>
+              </div>
+              <div class="profile-card-body">
+                <div class="profile-info-line"><i class="fa-solid fa-map-marker-alt"></i> <span>{region}</span></div>
+                <div class="profile-info-line"><i class="fa-regular fa-envelope"></i> <span>{e-mail}</span></div>
+                <div class="profile-info-line"><i class="fa-solid fa-phone"></i> <span>{phone number}</span></div>
+              </div>
+            </div>
+
+            <div class="profile-mini-card">
+              <div class="profile-card-header">
+                <h4>{Name} {Last name}</h4>
+                <span>{Position}</span>
+              </div>
+              <div class="profile-card-body">
+                <div class="profile-info-line"><i class="fa-solid fa-map-marker-alt"></i> <span>{region}</span></div>
+                <div class="profile-info-line"><i class="fa-regular fa-envelope"></i> <span>{e-mail}</span></div>
+                <div class="profile-info-line"><i class="fa-solid fa-phone"></i> <span>{phone number}</span></div>
+              </div>
+            </div>
+
+            <div class="profile-mini-card">
+              <div class="profile-card-header">
+                <h4>{Name} {Last name}</h4>
+                <span>{Position}</span>
+              </div>
+              <div class="profile-card-body">
+                <div class="profile-info-line"><i class="fa-solid fa-map-marker-alt"></i> <span>{region}</span></div>
+                <div class="profile-info-line"><i class="fa-regular fa-envelope"></i> <span>{e-mail}</span></div>
+                <div class="profile-info-line"><i class="fa-solid fa-phone"></i> <span>{phone number}</span></div>
+              </div>
+            </div>
+
+            <div class="profile-mini-card">
+              <div class="profile-card-header">
+                <h4>{Name} {Last name}</h4>
+                <span>{Position}</span>
+              </div>
+              <div class="profile-card-body">
+                <div class="profile-info-line"><i class="fa-solid fa-map-marker-alt"></i> <span>{region}</span></div>
+                <div class="profile-info-line"><i class="fa-regular fa-envelope"></i> <span>{e-mail}</span></div>
+                <div class="profile-info-line"><i class="fa-solid fa-phone"></i> <span>{phone number}</span></div>
+              </div>
+            </div>
+
+            <div class="profile-mini-card">
+              <div class="profile-card-header">
+                <h4>{Name} {Last name}</h4>
+                <span>{Position}</span>
+              </div>
+              <div class="profile-card-body">
+                <div class="profile-info-line"><i class="fa-solid fa-map-marker-alt"></i> <span>{region}</span></div>
+                <div class="profile-info-line"><i class="fa-regular fa-envelope"></i> <span>{e-mail}</span></div>
+                <div class="profile-info-line"><i class="fa-solid fa-phone"></i> <span>{phone number}</span></div>
+              </div>
+            </div>
+
+            <div class="profile-mini-card">
+              <div class="profile-card-header">
+                <h4>{Name} {Last name}</h4>
+                <span>{Position}</span>
+              </div>
+              <div class="profile-card-body">
+                <div class="profile-info-line"><i class="fa-solid fa-map-marker-alt"></i> <span>{region}</span></div>
+                <div class="profile-info-line"><i class="fa-regular fa-envelope"></i> <span>{e-mail}</span></div>
+                <div class="profile-info-line"><i class="fa-solid fa-phone"></i> <span>{phone number}</span></div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="pagination-row">
+            <i class="fa-solid fa-chevron-left"></i>
+            <span class="active-page">1</span>
+            <span>2</span>
+            <span>3</span>
+            <i class="fa-solid fa-chevron-right"></i>
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+    <aside class="right-sidebar-panel">
+      
+      <div class="tracker-steps-header">
+        <div class="step-indicator-item active">
+          <div class="circle-node"></div>
+          <label>Choisir L'heure</label>
+        </div>
+        <div class="step-indicator-item">
+          <div class="circle-node"></div>
+          <label>Vos Informations</label>
+        </div>
+      </div>
+
+      <div class="calendar-dark-section">
+        <div class="calendar-host-profile">
+          <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80" alt="Consultant Profile Photo">
+          <h2>Prenez rendez-vous avec {name}</h2>
+        </div>
+
+        <div class="calendar-month-selector">
+          <i class="fa-solid fa-chevron-left"></i>
+          <span>Décembre 2025</span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </div>
+
+        <div class="calendar-days-grid">
+          <span class="day-header-label">Lun.</span>
+          <span class="day-header-label">Mar.</span>
+          <span class="day-header-label">Mer.</span>
+          <span class="day-header-label">Jeu.</span>
+          <span class="day-header-label">Ven.</span>
+          <span class="day-header-label">Sam.</span>
+          <span class="day-header-label">Dim.</span>
+
+          <span class="day-numeric-cell muted">1</span>
+          <span class="day-numeric-cell muted">2</span>
+          <span class="day-numeric-cell muted">3</span>
+          <span class="day-numeric-cell muted">4</span>
+          <span class="day-numeric-cell muted">5</span>
+          <span class="day-numeric-cell muted">6</span>
+          <span class="day-numeric-cell muted">7</span>
+
+          <span class="day-numeric-cell muted">8</span>
+          <span class="day-numeric-cell muted">9</span>
+          <span class="day-numeric-cell muted">10</span>
+          <span class="day-numeric-cell muted">11</span>
+          <span class="day-numeric-cell muted">12</span>
+          <span class="day-numeric-cell muted">13</span>
+          <span class="day-numeric-cell muted">14</span>
+
+          <span class="day-numeric-cell">15</span>
+          <span class="day-numeric-cell">16</span>
+          <span class="day-numeric-cell">17</span>
+          <span class="day-numeric-cell"><div class="day-numeric-cell selected-active">18</div></span>
+          <span class="day-numeric-cell">19</span>
+          <span class="day-numeric-cell">20</span>
+          <span class="day-numeric-cell">21</span>
+
+          <span class="day-numeric-cell">22</span>
+          <span class="day-numeric-cell">23</span>
+          <span class="day-numeric-cell">24</span>
+          <span class="day-numeric-cell">25</span>
+          <span class="day-numeric-cell">26</span>
+          <span class="day-numeric-cell">27</span>
+          <span class="day-numeric-cell">28</span>
+
+          <span class="day-numeric-cell">29</span>
+          <span class="day-numeric-cell">30</span>
+          <span class="day-numeric-cell">31</span>
+        </div>
+      </div>
+
+      <div class="booking-interactive-body">
+        <h3 class="booking-question-title">De combien de temps avez-vous besoin ?</h3>
+        
+        <div class="duration-toggle-row">
+          <button class="duration-option-btn active">15 min</button>
+          <button class="duration-option-btn">30 min</button>
+          <button class="duration-option-btn">1 heure</button>
+        </div>
+
+        <h3 class="booking-question-title" style="margin-top: 8px;">Quelle heure vous convient le mieux ?</h3>
+        
+        <div class="timezone-stamp-meta">
+          <span>Affichage des heures pour le <strong>18 décembre 2026</strong></span>
+          <select>
+            <option>UTC +01:00 Heure normale d'Europe centrale (Europe)</option>
+          </select>
+        </div>
+
+        <div class="time-slots-vertical-stack">
+          <button class="time-slot-option-row">09:30</button>
+          <button class="time-slot-option-row">10:00</button>
+          <button class="time-slot-option-row">10:30</button>
+          <button class="time-slot-option-row">11:00</button>
+          <button class="time-slot-option-row">11:30</button>
+          <button class="time-slot-option-row">12:00</button>
+          <button class="time-slot-option-row">12:30</button>
+        </div>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feu Vert Company Profile</title>
+    <style>
+        .member-company-idcard-root {
+
+            --member-company-idcard-bg: #f3f4f6;
+            --member-company-idcard-card-bg: #ffffff;
+            --member-company-idcard-text-main: #333333;
+            --member-company-idcard-text-muted: #666666;
+            --member-company-idcard-accent: #00732f;
+            --member-company-idcard-badge-bg: #ffe8cc;
+            --member-company-idcard-badge-text: #b25e00;
+            --member-company-idcard-border: #e5e7eb;
+            --member-company-idcard-success: #2e7d32;
+            --member-company-idcard-danger: #c62828;
+        
+}
+
+        .member-company-idcard-body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--member-company-idcard-bg);
+            margin: 0;
+            padding: 20px;
+            color: var(--member-company-idcard-text-main);
+            display: flex;
+            justify-content: center;
+        }
+
+        .member-company-idcard-container {
+            width: 100%;
+            max-width: none;
+            background: var(--member-company-idcard-card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Header / Banner Styles */
+        .member-company-idcard-banner {
+            height: 150px;
+            background: linear-gradient(135deg, #005a24 0%, #009639 100%);
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            padding: 0 30px;
+        }
+
+        .member-company-idcard-banner-overlay {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .member-company-idcard-social-icon {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .member-company-idcard-edit-btn {
+            position: absolute;
+            right: 30px;
+            bottom: -50px;
+            background: #f3f4f6;
+            border: 1px solid var(--member-company-idcard-border);
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            color: var(--member-company-idcard-text-muted);
+        }
+
+        .member-company-idcard-logo-container {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+            bottom: -25px;
+            width: 130px;
+            height: 130px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+        .member-company-idcard-logo-text {
+            color: #009639;
+            font-weight: 800;
+            font-size: 26px;
+            letter-spacing: -1px;
+        }
+
+        /* Profile Info Section */
+        .member-company-idcard-profile-section {
+            padding: 40px 30px 20px 30px;
+        }
+
+        .member-company-idcard-title-block {
+            margin-bottom: 25px;
+        }
+
+        .member-company-idcard-main-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 5px 0;
+        }
+
+        .member-company-idcard-subtitle {
+            font-size: 15px;
+            color: var(--member-company-idcard-text-muted);
+            margin: 0;
+        }
+
+        .member-company-idcard-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            border-bottom: 1px solid var(--member-company-idcard-border);
+            padding-bottom: 30px;
+        }
+
+        .member-company-idcard-info-item {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .member-company-idcard-icon-wrapper {
+            background: #fff7ed;
+            color: #ea580c;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .member-company-idcard-info-content label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--member-company-idcard-text-muted);
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .member-company-idcard-info-content span, 
+        .member-company-idcard-info-content a {
+            font-size: 13px;
+            color: var(--member-company-idcard-text-main);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .member-company-idcard-badge-container {
+            display: flex;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .member-company-idcard-badge {
+            background: var(--member-company-idcard-badge-bg);
+            color: var(--member-company-idcard-badge-text);
+            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        /* Navigation Tabs */
+        .member-company-idcard-tabs {
+            display: flex;
+            gap: 25px;
+            border-bottom: 2px solid var(--member-company-idcard-border);
+            padding: 0 30px;
+            background: #fafafa;
+        }
+
+        .member-company-idcard-tab {
+            padding: 12px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--member-company-idcard-text-muted);
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .member-company-idcard-tab.member-company-idcard-active {
+            color: #ea580c;
+            border-bottom: 3px solid #ea580c;
+            margin-bottom: -2px;
+        }
+
+        /* Content Blocks */
+        .member-company-idcard-content-section {
+            padding: 25px 30px;
+        }
+
+        .member-company-idcard-section-heading {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .member-company-idcard-info-circle {
+            font-size: 13px;
+            color: var(--member-company-idcard-text-muted);
+            cursor: pointer;
+        }
+
+        /* Table Styling */
+        .member-company-idcard-data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-bottom: 40px;
+        }
+
+        .member-company-idcard-data-table th {
+            font-weight: 600;
+            color: var(--member-company-idcard-text-muted);
+            text-align: right;
+            padding: 8px 12px;
+        }
+
+        .member-company-idcard-data-table th:first-child {
+            text-align: left;
+        }
+
+        .member-company-idcard-data-table td {
+            padding: 6px 12px;
+            text-align: right;
+            color: var(--member-company-idcard-text-muted);
+        }
+
+        .member-company-idcard-data-table td:first-child {
+            text-align: left;
+            color: var(--member-company-idcard-text-main);
+        }
+
+        .member-company-idcard-row-bold td:first-child {
+            font-weight: 700;
+        }
+
+        .member-company-idcard-row-indent td:first-child {
+            padding-left: 24px;
+        }
+
+        /* Services List Styling */
+        .member-company-idcard-services-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .member-company-idcard-service-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 13px;
+            color: var(--member-company-idcard-text-muted);
+        }
+
+        .member-company-idcard-status-icon {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .member-company-idcard-status-success {
+            background-color: var(--member-company-idcard-success);
+        }
+
+        .member-company-idcard-status-danger {
+            background-color: var(--member-company-idcard-danger);
+        }
+    </style>
+</head>
+<body class="member-company-idcard-body">
+    <div class="member-company-idcard-root">
+    <div class="member-company-idcard-root" class="member-company-idcard-body">
+
+    <div class="member-company-idcard-container">
+        <div class="member-company-idcard-banner">
+            <div class="member-company-idcard-banner-overlay">
+                <span class="member-company-idcard-social-icon">✏️</span>
+                <span class="member-company-idcard-social-icon">📸</span>
+                <span class="member-company-idcard-social-icon">💼</span>
+                <span class="member-company-idcard-social-icon">👤</span>
+                <span class="member-company-idcard-social-icon">✖</span>
+            </div>
+            <div class="member-company-idcard-logo-container">
+                <div class="member-company-idcard-logo-text">Feu Vert</div>
+            </div>
+        </div>
+
+        <div class="member-company-idcard-profile-section">
+            <div style="position: relative;">
+                <div class="member-company-idcard-title-block">
+                    <h1 class="member-company-idcard-main-title">Feu Vert</h1>
+                    <p class="member-company-idcard-subtitle">Original Equipment Manufacturer / Aftermarket</p>
+                </div>
+                <button class="member-company-idcard-edit-btn">✏️</button>
+            </div>
+
+            <div class="member-company-idcard-info-grid">
+                <div class="member-company-idcard-info-item">
+                    <div class="member-company-idcard-icon-wrapper">🔧</div>
+                    <div class="member-company-idcard-info-content">
+                        <label>Activity</label>
+                        <span>Manufacturer</span>
+                    </div>
+                </div>
+                <div class="member-company-idcard-info-item">
+                    <div class="member-company-idcard-icon-wrapper">⭐</div>
+                    <div class="member-company-idcard-info-content">
+                        <label>Products</label>
+                        <div class="member-company-idcard-badge-container">
+                            <span class="member-company-idcard-badge">Injection</span>
+                            <span class="member-company-idcard-badge">Batteries</span>
+                            <span class="member-company-idcard-badge">Wipers</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="member-company-idcard-info-item">
+                    <div class="member-company-idcard-icon-wrapper">@</div>
+                    <div class="member-company-idcard-info-content">
+                        <label>General Email</label>
+                        <a href="mailto:contact@bosch.com">contact@bosch.com</a>
+                    </div>
+                </div>
+                <div class="member-company-idcard-info-item">
+                    <div class="member-company-idcard-icon-wrapper">📍</div>
+                    <div class="member-company-idcard-info-content">
+                        <label>Headquarters</label>
+                        <span>164 Av. Jean Jaurès, 69007 Lyon</span>
+                    </div>
+                </div>
+                <div class="member-company-idcard-info-item">
+                    <div class="member-company-idcard-icon-wrapper">🌐</div>
+                    <div class="member-company-idcard-info-content">
+                        <label>Website</label>
+                        <a href="https://www.bosch-automotive.com" target="_blank">www.bosch-automotive.com</a>
+                    </div>
+                </div>
+                <div class="member-company-idcard-info-item">
+                    <div class="member-company-idcard-icon-wrapper">📞</div>
+                    <div class="member-company-idcard-info-content">
+                        <label>Contact Number</label>
+                        <span>+ 33 01 02 03 04</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="member-company-idcard-tabs">
+            <a class="member-company-idcard-tab">About</a>
+            <a class="member-company-idcard-tab">Contacts</a>
+            <a class="member-company-idcard-tab">Medias</a>
+            <a class="member-company-idcard-tab member-company-idcard-active">ID Card</a>
+        </div>
+
+        <div class="member-company-idcard-content-section">
+            
+            <h2 class="member-company-idcard-section-heading">
+                Commercial Data <span class="member-company-idcard-info-circle">ⓘ</span>
+            </h2>
+            
+            <table class="member-company-idcard-data-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>2024</th>
+                        <th>IAM Ratio</th>
+                        <th>2023</th>
+                        <th>IAM Ratio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="member-company-idcard-row-bold">
+                        <td>Turnover</td>
+                        <td>510 000 000</td>
+                        <td>100%</td>
+                        <td>476 000 000</td>
+                        <td>100%</td>
+                    </tr>
+                    <tr class="member-company-idcard-row-indent">
+                        <td>PC</td>
+                        <td>510 000 000</td>
+                        <td>100%</td>
+                        <td>476 000 000</td>
+                        <td>100%</td>
+                    </tr>
+                    <tr class="member-company-idcard-row-indent">
+                        <td>HD</td>
+                        <td>-</td>
+                        <td>100%</td>
+                        <td>-</td>
+                        <td>100%</td>
+                    </tr>
+                    <tr class="member-company-idcard-row-bold">
+                        <td>Total purchase</td>
+                        <td>165 000 000</td>
+                        <td>100%</td>
+                        <td>146 366 152</td>
+                        <td>100%</td>
+                    </tr>
+                    <tr class="member-company-idcard-row-indent">
+                        <td>PC</td>
+                        <td>165 000 000</td>
+                        <td>100%</td>
+                        <td>146 366 152</td>
+                        <td>100%</td>
+                    </tr>
+                    <tr class="member-company-idcard-row-indent">
+                        <td>HD</td>
+                        <td>-</td>
+                        <td>100%</td>
+                        <td>-</td>
+                        <td>100%</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 class="member-company-idcard-section-heading">Services</h2>
+            <div class="member-company-idcard-services-list">
+                <div class="member-company-idcard-service-item">
+                    <span>Central warehouse</span>
+                    <div class="member-company-idcard-status-icon member-company-idcard-status-success">✓</div>
+                </div>
+                <div class="member-company-idcard-service-item">
+                    <span>Logistics solution</span>
+                    <div class="member-company-idcard-status-icon member-company-idcard-status-success">✓</div>
+                </div>
+                <div class="member-company-idcard-service-item">
+                    <span>Internet platform</span>
+                    <div class="member-company-idcard-status-icon member-company-idcard-status-danger">✕</div>
+                </div>
+                <div class="member-company-idcard-service-item">
+                    <span>Private label</span>
+                    <div class="member-company-idcard-status-icon member-company-idcard-status-success">✓</div>
+                </div>
+                <div class="member-company-idcard-service-item">
+                    <span>Tires business</span>
+                    <div class="member-company-idcard-status-icon member-company-idcard-status-success">✓</div>
+                </div>
+                <div class="member-company-idcard-service-item">
+                    <span>Body parts business</span>
+                    <div class="member-company-idcard-status-icon member-company-idcard-status-success">✓</div>
+                </div>
+                <div class="member-company-idcard-service-item">
+                    <span>Is OEM</span>
+                    <div class="member-company-idcard-status-icon member-company-idcard-status-danger">✕</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Container Frame Setup */
+.member-company-contact-container {
+    max-width: none;
+    width: 100%;
+    margin: 40px auto;
+    background-color: #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+/* Banner Layout */
+.member-company-contact-banner {
+    position: relative;
+    height: 140px;
+    background-color: #0c7a43;
+}
+.member-company-contact-banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.85;
+}
+.member-company-contact-social-icons {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    display: flex;
+    gap: 12px;
+}
+.member-company-contact-social-icons a {
+    color: #ffffff;
+    font-size: 14px;
+    opacity: 0.9;
+    transition: opacity 0.2s;
+    text-decoration: none;
+}
+.member-company-contact-social-icons a:hover {
+    opacity: 1;
+}
+
+/* Profile Card Styling */
+.member-company-contact-profile-card {
+    position: relative;
+    padding: 24px 32px;
+    border-bottom: 1px solid #eef0f2;
+}
+.member-company-contact-logo-wrapper {
+    position: absolute;
+    top: -60px;
+    left: 32px;
+    width: 150px;
+    height: 150px;
+    background: #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    box-sizing: border-box;
+}
+.member-company-contact-logo-placeholder {
+    font-weight: 800;
+    font-size: 26px;
+    color: #008744;
+    letter-spacing: -1px;
+}
+.member-company-contact-profile-header {
+    margin-left: 180px;
+    margin-bottom: 24px;
+}
+.member-company-contact-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.member-company-contact-company-name {
+    margin: 0;
+    font-size: 24px;
+    color: #1a1a1a;
+    font-weight: 700;
+}
+.member-company-contact-edit-btn {
+    background: #f0f2f5;
+    border: none;
+    border-radius: 4px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 11px;
+    color: #65676b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.member-company-contact-subtitle {
+    margin: 4px 0 0 0;
+    color: #65676b;
+    font-size: 14px;
+}
+
+/* Metadata Configuration Field */
+.member-company-contact-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 40px;
+    margin-top: 32px;
+}
+.member-company-contact-detail-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+}
+.member-company-contact-icon-box {
+    color: #e6a23c;
+    font-size: 16px;
+    margin-top: 2px;
+    width: 20px;
+    text-align: center;
+}
+.member-company-contact-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #8d949e;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+.member-company-contact-value {
+    font-size: 13px;
+    color: #1c1e21;
+}
+.member-company-contact-value a {
+    color: #1c1e21;
+    text-decoration: none;
+}
+.member-company-contact-value a:hover {
+    text-decoration: underline;
+}
+.member-company-contact-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.member-company-contact-tag {
+    background-color: #fdeed2;
+    color: #b27310;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+/* tab navigation interface layout */
+.member-company-contact-tabs-nav {
+    display: flex;
+    padding: 0 32px;
+    border-bottom: 1px solid #eef0f2;
+    background: #ffffff;
+}
+.member-company-contact-tab-link {
+    background: none;
+    border: none;
+    padding: 14px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #65676b;
+    cursor: pointer;
+    position: relative;
+}
+.member-company-contact-tab-active {
+    color: #e6a23c;
+}
+.member-company-contact-tab-active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 16px;
+    right: 16px;
+    height: 3px;
+    background-color: #e6a23c;
+    border-radius: 3px 3px 0 0;
+}
+
+/* Inner Body Elements Setup */
+.member-company-contact-content-body {
+    padding: 24px 32px 40px 32px;
+    background-color: #fafbfc;
+}
+.member-company-contact-filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+.member-company-contact-search-wrapper {
+    position: relative;
+    width: 320px;
+}
+.member-company-contact-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8d949e;
+    font-size: 14px;
+}
+.member-company-contact-search-input {
+    width: 100%;
+    padding: 8px 12px 8px 36px;
+    border: 1px solid #ccd0d5;
+    border-radius: 4px;
+    font-size: 13px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+}
+.member-company-contact-search-input:focus {
+    outline: none;
+    border-color: #8d949e;
+}
+.member-company-contact-actions-right {
+    display: flex;
+    gap: 12px;
+}
+.member-company-contact-select {
+    padding: 8px 32px 8px 12px;
+    border: 1px solid #ccd0d5;
+    border-radius: 4px;
+    font-size: 13px;
+    background-color: #ffffff;
+    color: #1c1e21;
+    cursor: pointer;
+}
+.member-company-contact-add-btn-main {
+    background-color: #111111;
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Cards Element Item Design Grid */
+.member-company-contact-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+.member-company-contact-user-card {
+    background: #ffffff;
+    border: 1px solid #eef0f2;
+    border-radius: 6px;
+    overflow: hidden;
+}
+.member-company-contact-card-header {
+    background-color: #f0f2f5;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.member-company-contact-avatar-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.member-company-contact-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #ccd0d5;
+}
+.member-company-contact-user-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1c1e21;
+}
+.member-company-contact-user-position {
+    font-size: 12px;
+    color: #65676b;
+    margin-top: 1px;
+}
+.member-company-contact-more-btn {
+    background: none;
+    border: none;
+    color: #65676b;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px;
+}
+.member-company-contact-card-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.member-company-contact-info-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #65676b;
+}
+.member-company-contact-info-row i {
+    width: 16px;
+    color: #8d949e;
+    text-align: center;
+}
+
+/* Pagination Rules Layout */
+.member-company-contact-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    margin-top: 32px;
+}
+.member-company-contact-pag-btn {
+    background: none;
+    border: none;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #65676b;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.member-company-contact-pag-btn:hover {
+    background-color: #f0f2f5;
+}
+.member-company-contact-pag-active {
+    font-weight: 700;
+    color: #1c1e21;
+}
+
+/* Desktop Responsiveness */
+@media (max-width: 992px) {
+    .member-company-contact-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 768px) {
+    .member-company-contact-cards-grid {
+        grid-template-columns: 1fr;
+    }
+    .member-company-contact-details-grid {
+        grid-template-columns: 1fr;
+    }
+    .member-company-contact-profile-header {
+        margin-left: 0;
+        margin-top: 100px;
+    }
+    .member-company-contact-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    .member-company-contact-search-wrapper {
+        width: 100%;
+    }
+}
+  </style>
+  
+</head>
+<body style="background-color: #f5f6f8; margin: 0; font-family: 'Inter', sans-serif;">
+
+    <div class="member-company-contact-root">
+<div class="member-company-contact-container">
+        
+        <div class="member-company-contact-banner">
+            <img src="https://images.unsplash.com/photo-1617886322168-72b886573c35?auto=format&fit=crop&q=80&w=1200" alt="Feu Vert Banner" class="member-company-contact-banner-img">
+            <div class="member-company-contact-social-icons">
+                <a href="#"><i class="fa-solid fa-pen"></i></a>
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+            </div>
+        </div>
+
+        <div class="member-company-contact-profile-card">
+            <div class="member-company-contact-logo-wrapper">
+                <div class="member-company-contact-logo-placeholder">Feu Vert</div>
+            </div>
+            
+            <div class="member-company-contact-profile-header">
+                <div class="member-company-contact-title-row">
+                    <h1 class="member-company-contact-company-name">Feu Vert</h1>
+                    <button class="member-company-contact-edit-btn"><i class="fa-solid fa-pen"></i></button>
+                </div>
+                <p class="member-company-contact-subtitle">Original Equipment Manufacturer / Aftermarket</p>
+            </div>
+
+            <div class="member-company-contact-details-grid">
+                <div class="member-company-contact-detail-item">
+                    <div class="member-company-contact-icon-box"><i class="fa-solid fa-wrench"></i></div>
+                    <div>
+                        <div class="member-company-contact-label">Activity</div>
+                        <div class="member-company-contact-value">Manufacturer</div>
+                    </div>
+                </div>
+                <div class="member-company-contact-detail-item">
+                    <div class="member-company-contact-icon-box"><i class="fa-solid fa-star"></i></div>
+                    <div>
+                        <div class="member-company-contact-label">Products</div>
+                        <div class="member-company-contact-tags">
+                            <span class="member-company-contact-tag">Injection</span>
+                            <span class="member-company-contact-tag">Batteries</span>
+                            <span class="member-company-contact-tag">Wipers</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="member-company-contact-detail-item">
+                    <div class="member-company-contact-icon-box"><i class="fa-solid fa-at"></i></div>
+                    <div>
+                        <div class="member-company-contact-label">General Email</div>
+                        <div class="member-company-contact-value"><a href="mailto:contact@bosch.com">contact@bosch.com</a></div>
+                    </div>
+                </div>
+                <div class="member-company-contact-detail-item">
+                    <div class="member-company-contact-icon-box"><i class="fa-solid fa-location-dot"></i></div>
+                    <div>
+                        <div class="member-company-contact-label">Headquarters</div>
+                        <div class="member-company-contact-value">164 Av. Jean Jaurès, 69007 Lyon</div>
+                    </div>
+                </div>
+                <div class="member-company-contact-detail-item">
+                    <div class="member-company-contact-icon-box"><i class="fa-solid fa-globe"></i></div>
+                    <div>
+                        <div class="member-company-contact-label">Website</div>
+                        <div class="member-company-contact-value"><a href="https://www.bosch-automotive.com" target="_blank">www.bosch-automotive.com</a></div>
+                    </div>
+                </div>
+                <div class="member-company-contact-detail-item">
+                    <div class="member-company-contact-icon-box"><i class="fa-solid fa-phone"></i></div>
+                    <div>
+                        <div class="member-company-contact-label">Contact Number</div>
+                        <div class="member-company-contact-value">+ 33 01 02 03 04</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="member-company-contact-tabs-nav">
+            <button class="member-company-contact-tab-link">About</button>
+            <button class="member-company-contact-tab-link member-company-contact-tab-active">Contacts</button>
+            <button class="member-company-contact-tab-link">Medias</button>
+            <button class="member-company-contact-tab-link">ID Card</button>
+        </div>
+
+        <div class="member-company-contact-content-body">
+            
+            <div class="member-company-contact-filter-bar">
+                <div class="member-company-contact-search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass member-company-contact-search-icon"></i>
+                    <input type="text" class="member-company-contact-search-input" placeholder="Search for a topic...">
+                </div>
+                <div class="member-company-contact-actions-right">
+                    <select class="member-company-contact-select">
+                        <option>Region</option>
+                    </select>
+                    <button class="member-company-contact-add-btn-main"><i class="fa-solid fa-plus"></i> Add New Contact</button>
+                </div>
+            </div>
+
+            <div class="member-company-contact-cards-grid">
+                <script>
+                    for (let i = 0; i < 9; i++) {
+                        document.write(`
+                        <div class="member-company-contact-user-card">
+                            <div class="member-company-contact-card-header">
+                                <div class="member-company-contact-avatar-wrapper">
+                                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150" alt="User Profile" class="member-company-contact-avatar">
+                                    <div>
+                                        <div class="member-company-contact-user-name">{Name} {Last name}</div>
+                                        <div class="member-company-contact-user-position">{Position}</div>
+                                    </div>
+                                </div>
+                                <button class="member-company-contact-more-btn"><i class="fa-solid fa-ellipsis"></i></button>
+                            </div>
+                            <div class="member-company-contact-card-body">
+                                <div class="member-company-contact-info-row">
+                                    <i class="fa-solid fa-location-dot"></i> <span>{region}</span>
+                                </div>
+                                <div class="member-company-contact-info-row">
+                                    <i class="fa-solid fa-envelope"></i> <span>{e-mail}</span>
+                                </div>
+                                <div class="member-company-contact-info-row">
+                                    <i class="fa-solid fa-phone"></i> <span>{phone number}</span>
+                                </div>
+                            </div>
+                        </div>
+                        `);
+                    }
+                </script>
+            </div>
+
+            <div class="member-company-contact-pagination">
+                <button class="member-company-contact-pag-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                <button class="member-company-contact-pag-btn member-company-contact-pag-active">1</button>
+                <button class="member-company-contact-pag-btn">2</button>
+                <button class="member-company-contact-pag-btn">3</button>
+                <button class="member-company-contact-pag-btn"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
