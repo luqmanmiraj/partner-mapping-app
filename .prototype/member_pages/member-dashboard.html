@@ -33,15 +33,12 @@
         }
         .member-dashboard {
             font-family: 'Inter', sans-serif;
-            background: var(--member-dashboard-bg-gradient);
-            background-attachment: fixed;
+            background: transparent;
             color: var(--member-dashboard-text-main);
-            padding: 40px;
             min-height: 100vh;
         }
 
         .member-dashboard-container {
-            max-width: 1200px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
@@ -287,9 +284,6 @@
                 align-items: flex-start;
                 gap: 12px;
             }
-        .member-dashboard {
-                padding: 16px;
-            }
         }
     </style>
 </head>
@@ -336,102 +330,7 @@
             </div>
         </section>
 
-        <section>
-            <div class="member-dashboard-section-header">
-                <div class="member-dashboard-title-group">
-                    <h2>Sales</h2>
-                    <span class="member-dashboard-last-updated">Last updated: Today, 04:00 AM</span>
-                </div>
-            </div>
-
-            <div class="member-dashboard-sales-grid">
-                <div class="member-dashboard-chart-card">
-                    <h3>Sales by Country</h3>
-                    <div class="member-dashboard-chart-container">
-                        <svg viewBox="0 0 700 220" width="100%" height="100%" preserveAspectRatio="none">
-                            <defs>
-                                <pattern id="grid" width="100" height="40" patternUnits="userSpaceOnUse">
-                                    <line x1="0" y1="0" x2="700" y2="0" stroke="#f4f4f5" stroke-width="1"/>
-                                </pattern>
-                                <linearGradient id="chart-grad" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stop-color="#f2994a" stop-opacity="0.6"/>
-                                    <stop offset="100%" stop-color="#f2994a" stop-opacity="0.0"/>
-                                </linearGradient>
-                            </defs>
-                            
-                            <rect width="100%" height="200" fill="url(#grid)" />
-                            
-                            <path d="M 50,170 L 140,160 L 230,100 L 320,70 L 410,170 L 500,150 L 590,80 L 680,50 L 680,200 L 50,200 Z" fill="url(#chart-grad)" />
-                            
-                            <path d="M 50,170 L 140,160 L 230,100 L 320,70 L 410,170 L 500,150 L 590,80 L 680,50" fill="none" stroke="#e08526" stroke-width="2.5" stroke-dasharray="3,3" />
-                            
-                            <text x="50" y="218" fill="#a1a1aa" font-size="12" text-anchor="middle">2016</text>
-                            <text x="140" y="218" fill="#a1a1aa" font-size="12" text-anchor="middle">2017</text>
-                            <text x="230" y="218" fill="#a1a1aa" font-size="12" text-anchor="middle">2018</text>
-                            <text x="320" y="218" fill="#a1a1aa" font-size="12" text-anchor="middle">2019</text>
-                            <text x="410" y="218" fill="#a1a1aa" font-size="12" text-anchor="middle">2020</text>
-                            <text x="500" y="218" fill="#a1a1aa" font-size="12" text-anchor="middle">2021</text>
-                            <text x="590" y="218" fill="#a1a1aa" font-size="12" text-anchor="middle">2022</text>
-                            <text x="680" y="218" fill="#a1a1aa" font-size="12" text-anchor="middle">2023</text>
-
-                            <text x="35" y="173" fill="#a1a1aa" font-size="12" text-anchor="end">10k</text>
-                            <text x="35" y="133" fill="#a1a1aa" font-size="12" text-anchor="end">20k</text>
-                            <text x="35" y="93" fill="#a1a1aa" font-size="12" text-anchor="end">50k</text>
-                            <text x="35" y="53" fill="#a1a1aa" font-size="12" text-anchor="end">100k</text>
-                            <text x="35" y="202" fill="#a1a1aa" font-size="12" text-anchor="end">0</text>
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="member-dashboard-list-card">
-                    <h3>Sales by Product Group</h3>
-                    <div class="member-dashboard-bar-list">
-                        <div class="member-dashboard-bar-item">
-                            <div class="member-dashboard-bar-track">
-                                <div class="member-dashboard-bar-fill" style="width: 95%;"></div>
-                                <span class="member-dashboard-bar-label">NY</span>
-                                <span class="member-dashboard-bar-value">120K</span>
-                            </div>
-                        </div>
-                        <div class="member-dashboard-bar-item">
-                            <div class="member-dashboard-bar-track">
-                                <div class="member-dashboard-bar-fill" style="width: 75%;"></div>
-                                <span class="member-dashboard-bar-label">MA</span>
-                                <span class="member-dashboard-bar-value">80K</span>
-                            </div>
-                        </div>
-                        <div class="member-dashboard-bar-item">
-                            <div class="member-dashboard-bar-track">
-                                <div class="member-dashboard-bar-fill" style="width: 65%;"></div>
-                                <span class="member-dashboard-bar-label">NH</span>
-                                <span class="member-dashboard-bar-value">70K</span>
-                            </div>
-                        </div>
-                        <div class="member-dashboard-bar-item">
-                            <div class="member-dashboard-bar-track">
-                                <div class="member-dashboard-bar-fill" style="width: 45%;"></div>
-                                <span class="member-dashboard-bar-label">OR</span>
-                                <span class="member-dashboard-bar-value">50K</span>
-                            </div>
-                        </div>
-                        <div class="member-dashboard-bar-item">
-                            <div class="member-dashboard-bar-track">
-                                <div class="member-dashboard-bar-fill" style="width: 45%;"></div>
-                                <span class="member-dashboard-bar-label">OR</span>
-                                <span class="member-dashboard-bar-value">50K</span>
-                            </div>
-                        </div>
-                        <div class="member-dashboard-bar-item">
-                            <div class="member-dashboard-bar-track">
-                                <div class="member-dashboard-bar-fill" style="width: 45%;"></div>
-                                <span class="member-dashboard-bar-label">OR</span>
-                                <span class="member-dashboard-bar-value">50K</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <!-- member-dashboard:sales -->
 
         <section>
             <div class="member-dashboard-section-header">

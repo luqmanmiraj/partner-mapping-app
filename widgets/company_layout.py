@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from theme.html_utils import render_html
+from theme.html_utils import inject_parent_styles
 from widgets.company_about_tab import company_about_tab_styles
 from widgets.company_overview import company_overview_styles
 from widgets.company_tabs import company_tabs_styles
+from theme.company_templates import company_contacts_tab_styles, company_news_media_tab_styles
 
 _PREFIX = "nexus-company-layout"
 _MAIN = '[data-testid="stMain"]'
@@ -38,7 +39,9 @@ def company_layout_styles() -> str:
         {_MAIN} .st-key-company_about_tab_container,
         {_MAIN} .st-key-company_contacts_tab_container,
         {_MAIN} .st-key-company_news_tab_container,
-        {_MAIN} .st-key-company_tabs_nav {{
+        {_MAIN} .st-key-company_tabs_nav,
+        {_MAIN} .nexus-company-contacts-tab,
+        {_MAIN} .nexus-company-news-tab {{
             width: 100% !important;
             max-width: 100% !important;
         }}
@@ -66,12 +69,14 @@ def company_layout_styles() -> str:
 
 
 def inject_company_layout_styles() -> None:
-    render_html(f"<style>{company_layout_styles()}</style>")
+    inject_parent_styles(company_layout_styles(), style_id="nexus-company-layout")
 
 
 def inject_all_company_page_styles() -> None:
-    """Preload layout, overview, tabs, about (contacts/news CSS lives in st.html)."""
-    render_html(
-        f"<style>{company_layout_styles()}{company_overview_styles()}"
-        f"{company_tabs_styles()}{company_about_tab_styles()}</style>"
+    """Preload layout, overview, tabs, and tab-panel styles in the parent document."""
+    inject_parent_styles(
+        f"{company_layout_styles()}{company_overview_styles()}"
+        f"{company_tabs_styles()}{company_about_tab_styles()}"
+        f"{company_contacts_tab_styles()}{company_news_media_tab_styles()}",
+        style_id="nexus-supplier-company-page",
     )

@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Optimize Your Margins Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     /* --- Base Resets & Typography --- */
         .member-offers,
@@ -24,7 +25,7 @@
 
     .member-offers-container {
       width: 100%;
-      max-width: 1000px;
+      max-width: none;
     }
         .member-offers-container > h1 {
       font-size: 20px;
@@ -53,16 +54,14 @@
 
     .member-offers-search-wrapper input {
       width: 100%;
-      padding: 10px 12px 10px 12px;
+      padding: 10px 36px 10px 12px;
       border: 1px solid #d1d5db;
       border-radius: 4px;
       font-size: 13px;
       color: #6b7280;
     }
 
-    /* Search icon simulation */
-    .member-offers-search-wrapper::after {
-      content: "🔍";
+    .member-offers-search-icon {
       position: absolute;
       right: 12px;
       top: 50%;
@@ -144,6 +143,9 @@
       cursor: pointer;
       font-size: 16px;
       color: #4b5563;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     /* Sub-bar (Available member-offerss count) */
@@ -340,6 +342,7 @@
     <div class="member-offers-filter-bar">
       <div class="member-offers-search-wrapper">
         <input type="text" placeholder="Search a product">
+        <i class="fa-solid fa-magnifying-glass member-offers-search-icon"></i>
       </div>
       <select class="member-offers-filter-select">
         <option>Company</option>
@@ -362,12 +365,12 @@
           <span class="member-offers-brand-name">Bosch Automotive</span>
         </div>
         <div class="member-offers-card-meta">
-          <span class="member-offers-time-left">🕒 23h 56m 20s</span>
-          <button class="member-offers-download-btn" title="Download">📥</button>
+          <span class="member-offers-time-left"><i class="fa-regular fa-clock"></i> 23h 56m 20s</span>
+          <button class="member-offers-download-btn" title="Download"><i class="fa-solid fa-download"></i></button>
         </div>
       </div>
       <div class="member-offers-status">
-        ⚡ 1 available member-offers
+        <i class="fa-solid fa-bolt"></i> 1 available member-offers
       </div>
       <div class="member-offers-banner">
         <div class="member-offers-banner-content">
@@ -383,7 +386,7 @@
         </div>
       </div>
       <div class="member-offers-card-footer">
-        <a href="#" class="member-offers-profile-link">See the profile →</a>
+        <a href="#" class="member-offers-profile-link">See the profile <i class="fa-solid fa-arrow-right"></i></a>
       </div>
     </div>
 
@@ -394,12 +397,12 @@
           <span class="member-offers-brand-name">Bosch Automotive</span>
         </div>
         <div class="member-offers-card-meta">
-          <span class="member-offers-time-left">🕒 23h 56m 20s</span>
-          <button class="member-offers-download-btn" title="Download">📥</button>
+          <span class="member-offers-time-left"><i class="fa-regular fa-clock"></i> 23h 56m 20s</span>
+          <button class="member-offers-download-btn" title="Download"><i class="fa-solid fa-download"></i></button>
         </div>
       </div>
       <div class="member-offers-status">
-        ⚡ 1 available member-offers
+        <i class="fa-solid fa-bolt"></i> 1 available member-offers
       </div>
       <div class="member-offers-banner">
         <div class="member-offers-banner-content">
@@ -413,7 +416,7 @@
         </div>
       </div>
       <div class="member-offers-card-footer">
-        <a href="#" class="member-offers-profile-link">See the profile →</a>
+        <a href="#" class="member-offers-profile-link">See the profile <i class="fa-solid fa-arrow-right"></i></a>
       </div>
     </div>
 
@@ -424,12 +427,12 @@
           <span class="member-offers-brand-name">Bosch Automotive</span>
         </div>
         <div class="member-offers-card-meta">
-          <span class="member-offers-time-left">🕒 23h 56m 20s</span>
-          <button class="member-offers-download-btn" title="Download">📥</button>
+          <span class="member-offers-time-left"><i class="fa-regular fa-clock"></i> 23h 56m 20s</span>
+          <button class="member-offers-download-btn" title="Download"><i class="fa-solid fa-download"></i></button>
         </div>
       </div>
       <div class="member-offers-status">
-        ⚡ 1 available member-offers
+        <i class="fa-solid fa-bolt"></i> 1 available member-offers
       </div>
       <div class="member-offers-banner">
         <div class="member-offers-banner-content">
@@ -445,16 +448,16 @@
         </div>
       </div>
       <div class="member-offers-card-footer">
-        <a href="#" class="member-offers-profile-link">See the profile →</a>
+        <a href="#" class="member-offers-profile-link">See the profile <i class="fa-solid fa-arrow-right"></i></a>
       </div>
     </div>
 
     <div class="member-offers-pagination">
-      <button class="member-offers-page-btn">⟨</button>
+      <button class="member-offers-page-btn"><i class="fa-solid fa-chevron-left"></i></button>
       <a href="#" class="member-offers-page-number member-offers-active">1</a>
       <a href="#" class="member-offers-page-number">2</a>
       <a href="#" class="member-offers-page-number">3</a>
-      <button class="member-offers-page-btn">⟩</button>
+      <button class="member-offers-page-btn"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
 
   </div>

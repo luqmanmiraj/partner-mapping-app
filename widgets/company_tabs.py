@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import streamlit as st
 
-from theme.html_utils import render_st_html_page
+from theme.html_utils import inject_parent_styles, render_st_html_page
 from widgets.company_about_tab import (
     build_company_about_tab_html,
     company_about_tab_styles,
@@ -98,9 +98,7 @@ def company_tabs_styles() -> str:
 
 
 def inject_company_tabs_styles() -> None:
-    from theme.html_utils import render_html
-
-    render_html(f"<style>{company_tabs_styles()}</style>")
+    inject_parent_styles(company_tabs_styles(), style_id="nexus-company-tabs")
 
 
 def render_company_tabs(

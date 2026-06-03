@@ -5,7 +5,7 @@ from __future__ import annotations
 import html
 from typing import Any
 
-from theme.html_utils import render_html
+from theme.html_utils import render_st_html_page
 
 _PREFIX = "nexus-company-overview"
 _BANNER_IMAGE = (
@@ -399,9 +399,14 @@ def build_company_overview_html(data: dict[str, Any]) -> str:
 
 
 def inject_company_overview_styles() -> None:
-    render_html(f"<style>{company_overview_styles()}</style>")
+    from theme.html_utils import inject_parent_styles
+
+    inject_parent_styles(company_overview_styles(), style_id="nexus-company-overview")
 
 
 def render_company_overview(data: dict[str, Any]) -> None:
-    full_html = f"<style>{company_overview_styles()}</style>{build_company_overview_html(data)}"
-    render_html(full_html, width="stretch")
+    render_st_html_page(
+        company_overview_styles(),
+        build_company_overview_html(data),
+        width="stretch",
+    )

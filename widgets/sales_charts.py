@@ -81,8 +81,13 @@ def render_sales_charts(
     policy: HubDashboardPolicy,
     region_chart: pd.DataFrame,
     country_chart: pd.DataFrame,
+    *,
+    column_weights: tuple[int | float, int | float] | None = None,
 ) -> None:
-    col_left, col_right = st.columns(2, gap="medium")
+    if column_weights:
+        col_left, col_right = st.columns(column_weights, gap="medium")
+    else:
+        col_left, col_right = st.columns(2, gap="medium")
     with col_left:
         if not region_chart.empty:
             st.plotly_chart(

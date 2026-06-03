@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import html
 import re
 from functools import lru_cache
 from pathlib import Path
@@ -21,6 +22,105 @@ _FONT_AWESOME_CDN = (
 _FONT_AWESOME_IMPORT = (
     "@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');"
 )
+
+# Streamlit-side layout overrides for member dashboard (appended inside st.html).
+MEMBER_DASHBOARD_LAYOUT_CSS = """
+.member-dashboard {
+    background: transparent !important;
+    padding: 0 !important;
+    min-height: 0 !important;
+}
+
+.member-dashboard-container {
+    max-width: none !important;
+    width: 100% !important;
+}
+"""
+
+MEMBER_OFFERS_LAYOUT_CSS = """
+.member-offers {
+    background: transparent !important;
+    padding: 0 !important;
+    align-items: stretch !important;
+}
+
+.member-offers-container {
+    max-width: none !important;
+    width: 100% !important;
+}
+
+.member-offers-search-icon,
+.member-offers-time-left i,
+.member-offers-download-btn i,
+.member-offers-status i,
+.member-offers-profile-link i,
+.member-offers-page-btn i {
+    color: inherit;
+}
+
+.member-offers-search-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+.member-offers-time-left i,
+.member-offers-status i {
+    color: #6b7280;
+}
+
+.member-offers-download-btn i {
+    font-size: 16px;
+    color: #4b5563;
+}
+
+.member-offers-status i {
+    color: #f59e0b;
+}
+"""
+
+MEMBER_SUPPLIER_PORTFOLIO_LAYOUT_CSS = """
+.supplier-portfolio {
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+.supplier-portfolio-container {
+    max-width: none !important;
+    width: 100% !important;
+}
+"""
+
+MEMBER_COMPANY_LAYOUT_CSS = """
+.member-company-body {
+    padding: 0 !important;
+}
+
+.member-company-container,
+.member-company-contact-container,
+.member-company-contact-content-body,
+.member-company-media-container,
+.member-company-idcard-container {
+    max-width: none !important;
+    width: 100% !important;
+}
+
+.member-company-container {
+    padding: 0 !important;
+}
+"""
+
+_MEMBER_PAGE_LAYOUT_CSS: dict[str, str] = {
+    "member-dashboard": MEMBER_DASHBOARD_LAYOUT_CSS,
+    "offers": MEMBER_OFFERS_LAYOUT_CSS,
+    "supplier-portfolio": MEMBER_SUPPLIER_PORTFOLIO_LAYOUT_CSS,
+}
+
+_MEMBER_DASHBOARD_SALES_MARKER = "<!-- member-dashboard:sales -->"
 
 _COMPANY_TAB_PANEL_SCOPE_CSS = """
 .member-company-tab-panel--medias .member-company-media-root {
@@ -296,7 +396,7 @@ def _build_member_company_page() -> tuple[str, str, str]:
             None,
             [_FONT_AWESOME_IMPORT]
             + [_extract_all_styles(text) for text in texts]
-            + [_COMPANY_TAB_PANEL_CSS, _COMPANY_TAB_PANEL_SCOPE_CSS],
+            + [_COMPANY_TAB_PANEL_CSS, _COMPANY_TAB_PANEL_SCOPE_CSS, MEMBER_COMPANY_LAYOUT_CSS],
         ),
     )
 
@@ -347,6 +447,68 @@ def _load_member_template(slug: str) -> tuple[str, str, str]:
     return head_links, css, body
 
 
+@lru_cache(maxsize=1)
+def _member_dashboard_body_parts() -> tuple[str, str]:
+    """Split member dashboard prototype into HTML before/after the sales placeholder."""
+    _, _, body = _load_member_template("member-dashboard")
+    if _MEMBER_DASHBOARD_SALES_MARKER not in body:
+        raise ValueError(
+            f"Member dashboard template missing sales marker: {_MEMBER_DASHBOARD_SALES_MARKER}"
+        )
+    before, after = body.split(_MEMBER_DASHBOARD_SALES_MARKER, 1)
+    return before.strip(), after.strip()
+
+
+def _render_member_dashboard_document(body_fragment: str, *, width: str = "stretch") -> None:
+    text = _read_template_file("member-dashboard")
+    head_links = _merge_head_links(text)
+    _, css, _ = _load_member_template("member-dashboard")
+    layout_css = _MEMBER_PAGE_LAYOUT_CSS.get("member-dashboard", "")
+    stylesheet = _normalize_css(f"{_FONT_AWESOME_IMPORT}\n{css}\n{layout_css}")
+    document = f"{head_links}\n<style>{stylesheet}</style>\n{body_fragment.strip()}"
+    st.html(document, width=width)  # type: ignore[arg-type]
+
+
+def render_member_dashboard_overview(*, width: str = "stretch") -> None:
+    """Overview KPI section from the member dashboard prototype."""
+    before, _ = _member_dashboard_body_parts()
+    fragment = f"{before.rstrip()}\n    </div>\n    </div>"
+    _render_member_dashboard_document(fragment, width=width)
+
+
+def render_member_dashboard_sales_header(
+    title: str,
+    last_updated: str,
+    *,
+    width: str = "stretch",
+) -> None:
+    """Sales section header styled like the member dashboard prototype."""
+    safe_title = html.escape(title)
+    safe_updated = html.escape(last_updated)
+    fragment = f"""
+<div class="member-dashboard">
+    <div class="member-dashboard-container">
+        <section>
+            <div class="member-dashboard-section-header">
+                <div class="member-dashboard-title-group">
+                    <h2>{safe_title}</h2>
+                    <span class="member-dashboard-last-updated">Last updated: {safe_updated}</span>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+""".strip()
+    _render_member_dashboard_document(fragment, width=width)
+
+
+def render_member_dashboard_ranking(*, width: str = "stretch") -> None:
+    """Ranking table section from the member dashboard prototype."""
+    _, after = _member_dashboard_body_parts()
+    fragment = f'<div class="member-dashboard">\n\n    <div class="member-dashboard-container">\n        {after.strip()}'
+    _render_member_dashboard_document(fragment, width=width)
+
+
 def render_member_template(slug: str, *, width: str = "stretch") -> None:
     """
     Render a member persona HTML prototype in a single `st.html` iframe.
@@ -357,7 +519,8 @@ def render_member_template(slug: str, *, width: str = "stretch") -> None:
     text = _read_template_file(slug)
     head_links = _merge_head_links(text)
     _, css, body = _load_member_template(slug)
-    stylesheet = _normalize_css(f"{_FONT_AWESOME_IMPORT}\n{css}")
+    layout_css = _MEMBER_PAGE_LAYOUT_CSS.get(slug, "")
+    stylesheet = _normalize_css(f"{_FONT_AWESOME_IMPORT}\n{css}\n{layout_css}")
     document = f"{head_links}\n<style>{stylesheet}</style>\n{body.strip()}"
     st.html(document, width=width)  # type: ignore[arg-type]
 
