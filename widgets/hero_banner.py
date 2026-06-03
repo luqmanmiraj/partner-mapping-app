@@ -6,7 +6,7 @@ import html
 
 from content_policies.hub_dashboard import HubDashboardPolicy
 from theme.asset_urls import asset_img_tag
-from theme.html_utils import render_html
+from theme.html_utils import render_st_html_page
 from theme.paths import icon_path, image_path
 
 _PREFIX = "nexus-hub-hero"
@@ -109,12 +109,7 @@ def hero_banner_styles() -> str:
     """
 
 
-def inject_hero_banner_styles() -> None:
-    render_html(f"<style>{hero_banner_styles()}</style>")
-
-
 def render_hero_banner(policy: HubDashboardPolicy) -> None:
-    inject_hero_banner_styles()
     p = _PREFIX
     arrow = asset_img_tag(
         icon_path(_LIST_ARROW_ICON),
@@ -135,7 +130,8 @@ def render_hero_banner(policy: HubDashboardPolicy) -> None:
             f"<li>{arrow}<span>{html.escape(bullet)}</span></li>"
         )
 
-    render_html(
+    render_st_html_page(
+        hero_banner_styles(),
         f"""
         <section class="{p}__banner">
             <div class="{p}__left">
@@ -146,5 +142,5 @@ def render_hero_banner(policy: HubDashboardPolicy) -> None:
                 {showcase}
             </div>
         </section>
-        """
+        """,
     )

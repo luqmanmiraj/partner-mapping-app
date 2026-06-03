@@ -6,7 +6,7 @@ import html
 
 from content_policies.hub_dashboard import HubDashboardPolicy
 from theme.asset_urls import asset_img_tag
-from theme.html_utils import render_html
+from theme.html_utils import render_st_html_page
 from theme.paths import icon_path
 
 _PREFIX = "nexus-upcoming-features"
@@ -63,12 +63,7 @@ def upcoming_features_styles() -> str:
     """
 
 
-def inject_upcoming_features_styles() -> None:
-    render_html(f"<style>{upcoming_features_styles()}</style>")
-
-
 def render_upcoming_features(policy: HubDashboardPolicy) -> None:
-    inject_upcoming_features_styles()
     p = _PREFIX
     icon = asset_img_tag(
         icon_path(_UPCOMING_ICON),
@@ -78,7 +73,8 @@ def render_upcoming_features(policy: HubDashboardPolicy) -> None:
         image_id="nexus-upcoming-features-icon",
     )
 
-    render_html(
+    render_st_html_page(
+        upcoming_features_styles(),
         f"""
         <section class="{p}__banner">
             <div class="{p}__header">
@@ -87,5 +83,5 @@ def render_upcoming_features(policy: HubDashboardPolicy) -> None:
             </div>
             <p>{html.escape(policy.upcoming_blurb)}</p>
         </section>
-        """
+        """,
     )

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from theme.asset_urls import asset_img_tag
-from theme.html_utils import render_html
+from theme.html_utils import render_st_html_page
 from theme.paths import image_path
 
 _PREFIX = "nexus-member-map"
@@ -36,10 +36,6 @@ def member_map_styles() -> str:
     """
 
 
-def inject_member_map_styles() -> None:
-    render_html(f"<style>{member_map_styles()}</style>")
-
-
 def build_member_map_html() -> str:
     p = _PREFIX
     img = asset_img_tag(
@@ -57,5 +53,4 @@ def build_member_map_html() -> str:
 
 
 def render_member_directory_map() -> None:
-    inject_member_map_styles()
-    render_html(build_member_map_html(), width="stretch")
+    render_st_html_page(member_map_styles(), build_member_map_html(), width="stretch")

@@ -19,7 +19,7 @@ from theme.tokens import (
 
 
 def inject_styles() -> None:
-    from theme.html_utils import render_html
+    from theme.html_utils import inject_parent_styles
     from theme.sidenav import inject_sidenav_styles
     from theme.top_header import inject_top_header_styles
 
@@ -31,9 +31,8 @@ def inject_styles() -> None:
     inject_page_content_styles()
     inject_overview_section_styles()
 
-    render_html(
+    inject_parent_styles(
         f"""
-        <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
         html, body, [class*="css"] {{
@@ -276,6 +275,6 @@ def inject_styles() -> None:
         @media (max-width: 1100px) {{
             .metric-grid {{ grid-template-columns: repeat(2, 1fr); }}
         }}
-        </style>
-        """
+        """,
+        style_id="nexus-global-styles",
     )

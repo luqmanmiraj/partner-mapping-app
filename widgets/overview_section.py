@@ -5,7 +5,7 @@ from __future__ import annotations
 import html
 
 from content_policies.hub_dashboard import HubDashboardPolicy
-from theme.html_utils import render_html
+from theme.html_utils import inject_parent_styles, render_html
 
 _ROOT = "nexus-overview"
 
@@ -275,7 +275,7 @@ def overview_section_styles() -> str:
 
 def inject_overview_section_styles() -> None:
     """Register overview CSS with app startup (same pattern as top header / sidenav)."""
-    render_html(f"<style>{overview_section_styles()}</style>")
+    inject_parent_styles(overview_section_styles(), style_id="nexus-overview-section")
 
 
 def _controls_html(policy: HubDashboardPolicy) -> str:

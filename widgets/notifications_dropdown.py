@@ -7,7 +7,7 @@ import re
 
 from content_policies.notifications import apply_notification_policy
 from data.notification_fixtures import NotificationItem
-from theme.html_utils import render_html
+from theme.html_utils import inject_parent_styles, render_html
 
 _PREFIX = "nexus-notifications-dropdown"
 
@@ -208,7 +208,10 @@ def notifications_dropdown_styles() -> str:
 
 
 def inject_notifications_dropdown_styles() -> None:
-    render_html(f"<style>{notifications_dropdown_styles()}</style>")
+    inject_parent_styles(
+        notifications_dropdown_styles(),
+        style_id="nexus-notifications-dropdown",
+    )
 
 
 def _message_html(message: str) -> str:

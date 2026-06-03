@@ -1,25 +1,28 @@
-"""Resolve bundled images to Streamlit media URLs for use in HTML."""
+"""Resolve bundled images to embeddable URLs for use in HTML (data URIs)."""
 
 from __future__ import annotations
 
+import base64
 import html
+import mimetypes
 from pathlib import Path
 
-from streamlit.elements.lib.image_utils import image_to_url
-from streamlit.elements.lib.layout_utils import LayoutConfig
 
-
-def asset_image_url(path: Path, image_id: str) -> str:
+def file_data_uri(path: Path) -> str | None:
+    """Return a data: URI for a local image file (works in st.html iframes and on Cloud)."""
     if not path.is_file():
-        return ""
-    return image_to_url(
-        str(path),
-        layout_config=LayoutConfig(width="content"),
-        clamp=False,
-        channels="RGB",
-        output_format="auto",
-        image_id=image_id,
-    )
+        return None
+    raw = path.read_bytes()
+    mime = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+    if mime == "image/svg+xml" or path.suffix.lower() == ".svg":
+        mime = "image/svg+xml"
+    encoded = base64.b64encode(raw).decode("ascii")
+    return f"data:{mime};base64,{encoded}"
+
+
+def asset_image_url(path: Path, image_id: str = "") -> str:
+    """Stable URL for a bundled asset (data URI; ``image_id`` kept for call-site compatibility)."""
+    return file_data_uri(path) or ""
 
 
 def asset_img_tag(
@@ -28,7 +31,7 @@ def asset_img_tag(
     css_class: str = "",
     width: int | None = None,
     height: int | None = None,
-    image_id: str,
+    image_id: str = "",
 ) -> str:
     url = asset_image_url(path, image_id)
     if not url:

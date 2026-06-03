@@ -2,15 +2,14 @@
 
 from __future__ import annotations
 
-import base64
 import html
-import mimetypes
 
 import streamlit as st
 import streamlit.components.v1 as components
 
 from auth.session import get_session, is_admin, is_partner, is_reviewer
-from theme.html_utils import render_html
+from theme.asset_urls import file_data_uri
+from theme.html_utils import inject_parent_styles, render_html
 from theme.paths import image_path, nav_icon_path
 
 _PREFIX = "nexus-sidenav"
@@ -164,7 +163,7 @@ def _nav_icon_mask_css_rules() -> str:
         filename = _NAV_ICON_FILES.get(page_id)
         if not filename:
             continue
-        uri = _file_data_uri(nav_icon_path(filename))
+        uri = file_data_uri(nav_icon_path(filename))
         if not uri:
             continue
         selector = f'section[data-testid="stSidebar"] .st-key-nav_{page_id} button::before'
@@ -472,6 +471,7 @@ def sidenav_styles() -> str:
             display: flex !important;
             align-items: center !important;
             justify-content: flex-start !important;
+            text-align: left !important;
             width: 100% !important;
             padding: 10px 20px !important;
             margin: 0 !important;
@@ -556,10 +556,18 @@ def sidenav_styles() -> str:
         }}
 
         section[data-testid="stSidebar"] [class*="st-key-nav_"] button > span,
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button > div {{
+        section[data-testid="stSidebar"] [class*="st-key-nav_"] button > div,
+        section[data-testid="stSidebar"] [class*="st-key-nav_"] button p,
+        section[data-testid="stSidebar"] [class*="st-key-nav_"] button [data-testid="stMarkdownContainer"],
+        section[data-testid="stSidebar"] [class*="st-key-nav_"] button [data-testid="stMarkdownContainer"] p {{
             background: transparent !important;
             border: none !important;
             box-shadow: none !important;
+            text-align: left !important;
+            justify-content: flex-start !important;
+            margin-left: 0 !important;
+            margin-right: auto !important;
+            width: auto !important;
         }}
 
         section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="tertiary"]:hover > span,
@@ -580,22 +588,11 @@ def sidenav_styles() -> str:
 
 
 def inject_sidenav_styles() -> None:
-    render_html(f"<style>{sidenav_styles()}</style>")
-
-
-def _file_data_uri(path) -> str | None:
-    if not path.is_file():
-        return None
-    raw = path.read_bytes()
-    mime = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
-    if mime == "image/svg+xml" or path.suffix.lower() == ".svg":
-        mime = "image/svg+xml"
-    encoded = base64.b64encode(raw).decode("ascii")
-    return f"data:{mime};base64,{encoded}"
+    inject_parent_styles(sidenav_styles(), style_id="nexus-sidenav")
 
 
 def _logo_data_uri() -> str | None:
-    return _file_data_uri(image_path(_LOGO_FILE))
+    return file_data_uri(image_path(_LOGO_FILE))
 
 
 def _render_nav_link(page_id: str, label: str, active_page: str) -> None:

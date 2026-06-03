@@ -5,7 +5,7 @@ from __future__ import annotations
 import html
 
 from auth.session import UserSession, get_session
-from theme.html_utils import render_html
+from theme.html_utils import inject_parent_styles, render_html
 
 _PREFIX = "nexus-user-dropdown"
 
@@ -127,7 +127,7 @@ def user_dropdown_styles() -> str:
 
 
 def inject_user_dropdown_styles() -> None:
-    render_html(f"<style>{user_dropdown_styles()}</style>")
+    inject_parent_styles(user_dropdown_styles(), style_id="nexus-user-dropdown")
 
 
 def _user_email(session: UserSession) -> str:

@@ -8,7 +8,7 @@ from typing import Any
 import streamlit as st
 import streamlit.components.v1 as components
 
-from theme.html_utils import render_html
+from theme.html_utils import inject_parent_styles
 
 _PREFIX = "nexus-page-content"
 _CONTAINER_KEY = "page_content"
@@ -61,7 +61,7 @@ def page_content_styles() -> str:
 
 
 def inject_page_content_styles() -> None:
-    render_html(f"<style>{page_content_styles()}</style>")
+    inject_parent_styles(page_content_styles(), style_id="nexus-page-content")
 
 
 def _assign_page_content_class() -> None:

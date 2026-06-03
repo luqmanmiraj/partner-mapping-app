@@ -10,7 +10,7 @@ from auth.session import get_session
 from content_policies.notifications import apply_notification_policy
 from data.notification_fixtures import unread_count
 from theme.asset_urls import asset_img_tag
-from theme.html_utils import render_html
+from theme.html_utils import inject_parent_styles, render_html
 from theme.paths import icon_path
 from widgets.notifications_dropdown import (
     build_notifications_dropdown_html,
@@ -282,7 +282,7 @@ def top_header_styles() -> str:
 def inject_top_header_styles() -> None:
     inject_notifications_dropdown_styles()
     inject_user_dropdown_styles()
-    render_html(f"<style>{top_header_styles()}</style>")
+    inject_parent_styles(top_header_styles(), style_id="nexus-top-header")
 
 
 def _greeting_name(display_name: str) -> str:
