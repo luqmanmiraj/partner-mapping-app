@@ -9,7 +9,7 @@ import os
 
 import streamlit as st
 
-from theme.html_utils import render_html
+from theme.html_utils import inject_parent_styles, render_html
 from theme.paths import image_path
 
 LOGO_FILE = "logo.jpg"
@@ -52,23 +52,40 @@ def _login_shell_css() -> str:
     """Streamlit chrome only — not part of the login component design."""
     return """
         section[data-testid="stSidebar"] { display: none !important; }
-        header[data-testid="stHeader"] { visibility: hidden; height: 0; }
-        .stApp { background-color: #ededed !important; }
-        section.main > div {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            width: 100%;
-            padding: 1.5rem 1rem;
-            box-sizing: border-box;
+        header[data-testid="stHeader"] {
+            visibility: hidden !important;
+            height: 0 !important;
+            min-height: 0 !important;
         }
-        .main .block-container {
-            max-width: 720px !important;
-            width: 100%;
+        .stApp { background-color: #ededed !important; }
+        [data-testid="stMain"] [data-testid="stMainBlockContainer"],
+        [data-testid="stMain"] [data-testid="block-container"],
+        section.main > div,
+        section.main .block-container {
             padding-top: 0 !important;
             padding-bottom: 0 !important;
+            margin-top: 0 !important;
+        }
+        [data-testid="stMain"] [data-testid="stMainBlockContainer"] > div {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-height: 100vh !important;
+            width: 100% !important;
+            padding: 0 1rem !important;
+            box-sizing: border-box !important;
+            gap: 0 !important;
+        }
+        [data-testid="stMain"] [data-testid="block-container"] {
+            max-width: 720px !important;
+            width: 100% !important;
             margin: 0 auto !important;
+        }
+        [data-testid="stMain"] [data-testid="stElementContainer"]:has(iframe[height="0"]) {
+            display: none !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
     """
 
@@ -179,13 +196,9 @@ def _login_component_css() -> str:
 
 
 def _inject_login_styles() -> None:
-    render_html(
-        f"""
-        <style>
-        {_login_shell_css()}
-        {_login_component_css()}
-        </style>
-        """
+    inject_parent_styles(
+        _login_shell_css() + _login_component_css(),
+        style_id="nexus-login-shell",
     )
 
 

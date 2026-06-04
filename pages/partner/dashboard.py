@@ -10,6 +10,7 @@ from auth.snowflake_session import scoped_connection
 from data.dashboard_metrics import load_financial_dashboard
 from theme.components import render_data_table, render_metric_cards, render_page_header, render_section_header
 from theme.tokens import BORDER, ORANGE, TEXT_MUTED, TEXT_PRIMARY
+from widgets.workflow_logs_section import render_workflow_logs_controls
 
 
 def _build_turnover_chart(monthly, *, granularity: str) -> go.Figure:
@@ -55,6 +56,14 @@ def render(active_page: str = "dashboard") -> None:
     passcode = st.session_state.get("passcode", "")
 
     render_page_header(session.display_name, subtitle="Financial dashboard")
+
+    render_workflow_logs_controls(
+        partner_key=session.partner_key,
+        button_key="financial_logs_view_btn",
+        session_flag="show_workflow_logs_financial",
+        strip_key="financial_workflow_logs_strip",
+        title="Workflow activity log",
+    )
 
     granularity = st.radio(
         "View",

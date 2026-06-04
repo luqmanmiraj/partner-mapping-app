@@ -2,11 +2,22 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 import streamlit as st
 
 from auth.snowflake_session import scoped_connection
 from auth.session import get_session
 from services.memory_store import get_review_entry, save_global_template
+from services.upload_workflow import (
+    MappingChange,
+    append_mapping_changes,
+    compute_mapping_diff,
+    detect_mapping_issues,
+    get_workflow_by_review,
+    record_mapping_snapshot,
+)
+from services.workflow_log import append_log
 from theme.components import render_page_header, render_section_header
 from theme.html_utils import inject_parent_styles
 
@@ -106,21 +117,33 @@ def render(active_page: str = "review_detail") -> None:
             st.warning("This file has no detected columns.")
             return
 
+        existing_mapping = detail.get("mapping", {}) or {}
+        upload_id = detail.get("upload_id", "")
+        partner_key = detail.get("partner_key", "")
+        wf = get_workflow_by_review(review_id)
+
         render_section_header(
             "Review Item",
             subtitle=(
-                f"{detail.get('upload_id', '')} — {detail.get('partner_key', '')} — "
+                f"{upload_id} — {partner_key} — "
                 f"{detail.get('filename', '')}"
             ),
         )
-        st.caption(
-            f"Status: {detail.get('status', 'In review')} | "
-            f"Validation source: {detail.get('validation_source', 'NONE')}"
-        )
+        cap_parts = [
+            f"Status: {detail.get('status', 'In review')}",
+            f"Validation: {detail.get('validation_source', 'NONE')}",
+        ]
+        if wf:
+            if wf.get("sheet_name"):
+                cap_parts.append(f"Sheet: {wf['sheet_name']}")
+            if wf.get("truncated"):
+                cap_parts.append("Rows truncated for performance")
+        st.caption(" | ".join(cap_parts))
+
+        record_mapping_snapshot(review_id, existing_mapping, phase="review_open")
 
         st.markdown("### Column Mapping Editor")
         right_column_options = _TARGET_FIELDS
-        existing_mapping = detail.get("mapping", {}) or {}
         mapping_result: dict[str, str] = {}
 
         left_col, right_col = st.columns(2)
@@ -163,6 +186,62 @@ def render(active_page: str = "review_detail") -> None:
         if save_clicked:
             session = get_session()
             reviewer = session.display_name if session else "reviewer"
+            wf = get_workflow_by_review(review_id) or {}
+            baseline = dict(wf.get("mapping_at_review_open") or existing_mapping)
+
+            diff = compute_mapping_diff(baseline, mapping_result)
+            changes = [
+                MappingChange(
+                    source_column=source,
+                    from_target=old,
+                    to_target=new,
+                    changed_by=reviewer,
+                    changed_at=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
+                )
+                for source, old, new in diff
+            ]
+            append_mapping_changes(
+                review_id,
+                changes,
+                reviewer_note=reviewer_note.strip(),
+            )
+            record_mapping_snapshot(review_id, mapping_result, phase="final")
+
+            for source, old, new in diff:
+                append_log(
+                    level="info",
+                    action="MAPPING_CHANGED",
+                    actor=reviewer,
+                    partner_key=partner_key,
+                    upload_id=upload_id,
+                    review_id=review_id,
+                    message=f"'{source}' mapped {old} → {new}",
+                )
+
+            issues = detect_mapping_issues(source_columns, mapping_result)
+            for issue in issues:
+                append_log(
+                    level="issue",
+                    action="MAPPING_ISSUE",
+                    actor=reviewer,
+                    partner_key=partner_key,
+                    upload_id=upload_id,
+                    review_id=review_id,
+                    message=issue,
+                    meta={"mapping": mapping_result},
+                )
+
+            if not diff and not issues:
+                append_log(
+                    level="warning",
+                    action="MAPPING_SAVE",
+                    actor=reviewer,
+                    partner_key=partner_key,
+                    upload_id=upload_id,
+                    review_id=review_id,
+                    message="Save clicked but no column mapping changes detected.",
+                )
+
             with scoped_connection(passcode, force_demo=not use_sf) as conn:
                 save_global_template(
                     review_id=review_id,
@@ -170,9 +249,26 @@ def render(active_page: str = "review_detail") -> None:
                     reviewer=reviewer,
                     conn=conn,
                 )
+
+            append_log(
+                level="success",
+                action="MAPPING_SAVED",
+                actor=reviewer,
+                partner_key=partner_key,
+                upload_id=upload_id,
+                review_id=review_id,
+                message="Template saved to Global Memory; review marked Validated.",
+                detail=f"{len(diff)} column change(s); {len(issues)} issue(s) logged.",
+            )
+
             if reviewer_note.strip():
                 st.caption(f"Note: {reviewer_note.strip()}")
-            st.success("Template saved to Global Memory and review item marked Validated.")
+            if issues:
+                st.warning(
+                    "Mapping saved with issues — see **View Logs** on the supplier dashboard."
+                )
+            else:
+                st.success("Template saved to Global Memory and review item marked Validated.")
             st.session_state.navigate_to = "review_queue"
             st.rerun()
 

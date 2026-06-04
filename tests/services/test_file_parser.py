@@ -23,11 +23,11 @@ def test_parse_csv_semicolon_delimiter() -> None:
     assert result.separator == ";"
 
 
-def test_parse_empty_file_returns_no_lines() -> None:
+def test_parse_header_only_csv_returns_no_rows() -> None:
     result = parse_upload("empty.csv", b"amount,partner\n")
-    assert result.success is True
+    assert result.success is False
     assert result.row_count == 0
-    assert result.lines == []
+    assert "no data" in result.error.lower()
 
 
 def test_parse_rejects_oversized_file() -> None:

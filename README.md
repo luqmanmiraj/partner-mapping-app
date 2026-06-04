@@ -100,10 +100,16 @@ Required keys in `.env.migrate`:
 
 Optional: `SNOWFLAKE_DEST_ROLE`, `SNOWFLAKE_DEST_WAREHOUSE`, `SNOWFLAKE_DEST_PASSCODE` (MFA).
 
-Legacy standalone dashboard (Snowflake-focused UI):
+Legacy standalone dashboard (Snowflake-focused UI; no upload/review flows):
 
 ```bash
 streamlit run partner_dashboard.py
+```
+
+For partner mapping, uploads, review, and activity logs, use the main app:
+
+```bash
+streamlit run streamlit_app.py
 ```
 
 ## Project layout

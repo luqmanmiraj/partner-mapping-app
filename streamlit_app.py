@@ -20,8 +20,13 @@ from theme.sidenav import handle_sidenav_query, remap_active_page_for_declarant,
 from theme.styles import inject_styles
 from theme.top_header import render_top_header
 
+LOGS_PAGE = {
+    "logs": ("pages.portal.logs", "render"),
+}
+
 HUB_PAGES_COMMON = {
     "hub_dashboard": ("pages.portal.hub_dashboard", "render"),
+    "logs": ("pages.portal.logs", "render"),
     "my_company": ("pages.portal.my_company", "render"),
     "about": ("pages.portal.about", "render"),
     "services": ("pages.portal.services", "render"),
@@ -91,6 +96,10 @@ def _accessible_pages() -> dict[str, tuple[str, str]]:
         pages.update(REVIEWER_PAGES)
     if is_admin():
         pages.update(ADMIN_PAGES)
+
+    # Logs page + sidebar item are always available once the user has any app pages.
+    if pages:
+        pages.update(LOGS_PAGE)
 
     return pages
 

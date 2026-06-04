@@ -104,10 +104,11 @@ def render(active_page: str = "hub_dashboard") -> None:
         vm = load_hub_dashboard(session, conn)
 
     policy = vm.policy
-    render_page_header(session.display_name)
 
     if "hero" in policy.visible_sections:
         render_hero_banner(policy)
+
+    render_page_header(session.display_name)
 
     if "upcoming_features" in policy.visible_sections:
         render_upcoming_features(policy)

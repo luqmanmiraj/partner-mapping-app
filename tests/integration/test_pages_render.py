@@ -11,6 +11,7 @@ import pytest
 # (module_path, callable_name) — mirrors streamlit_app.py registry + stubs.
 PAGE_RENDERERS: list[tuple[str, str]] = [
     ("pages.portal.hub_dashboard", "render"),
+    ("pages.portal.logs", "render"),
     ("pages.portal.member_directory", "render"),
     ("pages.portal.my_company", "render"),
     ("pages.portal.about", "render"),
@@ -22,6 +23,7 @@ PAGE_RENDERERS: list[tuple[str, str]] = [
     ("pages.partner.upload", "render"),
     ("pages.partner.history", "render"),
     ("pages.partner.dashboard", "render"),
+    ("pages.partner.workflow_logs", "render"),
     ("pages.partner.corrective", "render"),
     ("pages.partner.deposit_detail", "render"),
     ("pages.internal.review_queue", "render"),

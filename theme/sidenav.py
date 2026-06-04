@@ -21,12 +21,14 @@ _SIDENAV_TOP_FIXED_HEIGHT = "160px"
 
 HUB_PORTAL_NAV_SUPPLIER = [
     ("Dashboard", "hub_dashboard", ""),
+    ("Logs", "logs", ""),
     ("Member Directory", "member_directory", ""),
     ("My Company", "my_company", ""),
 ]
 
 HUB_PORTAL_NAV_MEMBER = [
     ("Dashboard", "hub_dashboard", ""),
+    ("Logs", "logs", ""),
     ("Offers", "offers", ""),
     ("Supplier Portfolio", "supplier_portfolio", ""),
     ("My Company", "my_company", ""),
@@ -51,6 +53,7 @@ PARTNER_MAPPING_NAV = [
 
 REVIEWER_NAV = [
     ("Review Queue", "review_queue", ""),
+    ("Logs", "logs", ""),
     ("Granular Review", "review_detail", ""),
     ("Bulk Review", "bulk_review", ""),
     ("Overlap Investigation", "overlap", ""),
@@ -58,6 +61,7 @@ REVIEWER_NAV = [
 ]
 
 ADMIN_NAV = [
+    ("Logs", "logs", ""),
     ("Calibration", "admin_calibration", ""),
     ("Onboarding", "admin_onboarding", ""),
     ("Decommission", "admin_decommission", ""),
@@ -70,6 +74,7 @@ _LOGO_FILE = "side-nav-logo.jpg"
 
 _NAV_ICON_FILES: dict[str, str] = {
     "hub_dashboard": "dashboard-nav-icon.svg",
+    "logs": "logs-nav-icon.svg",
     "member_directory": "member-directory-nav-icon.svg",
     "offers": "offers-nav-icon.svg",
     "supplier_portfolio": "supplier-portfolio-nav-icon.svg",
@@ -110,6 +115,8 @@ _ALL_NAV_PAGE_IDS: set[str] = {
 
 _MEMBER_ONLY_PAGE_IDS = frozenset({"offers", "supplier_portfolio"})
 _SUPPLIER_ONLY_PAGE_IDS = frozenset({"member_directory"})
+# Sidebar labels for these pages are always shown (page body may still be empty).
+_ALWAYS_VISIBLE_NAV_IDS = frozenset({"logs"})
 
 
 def hub_portal_nav_for_session(session) -> list[tuple[str, str, str]]:
@@ -615,7 +622,9 @@ def _nav_section(
     active_page: str,
     accessible: set[str],
 ) -> None:
-    visible = [(label, page_id) for label, page_id, _ in items if page_id in accessible]
+    """Render nav rows. ``logs`` (and other always-visible ids) stay in the menu with no entries."""
+    allowed = set(accessible) | _ALWAYS_VISIBLE_NAV_IDS
+    visible = [(label, page_id) for label, page_id, _ in items if page_id in allowed]
     for label, page_id in visible:
         _render_nav_link(page_id, label, active_page)
 
@@ -674,7 +683,7 @@ def handle_sidenav_query(accessible_pages: set[str]) -> None:
 def render_sidenav(active_page: str, accessible_pages: set[str]) -> None:
     session = get_session()
     p = _PREFIX
-    accessible = accessible_pages
+    accessible = set(accessible_pages) | _ALWAYS_VISIBLE_NAV_IDS
 
     logo_uri = _logo_data_uri()
     logo_html = (

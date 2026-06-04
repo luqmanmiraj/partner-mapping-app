@@ -22,6 +22,14 @@ def test_hub_portal_nav_supplier() -> None:
     labels = [label for label, _, _ in hub_portal_nav_for_session(session)]
     assert "Member Directory" in labels
     assert "Offers" not in labels
+    assert "Logs" in labels
+    assert labels.index("Logs") == labels.index("Dashboard") + 1
+
+
+def test_hub_portal_nav_member_includes_logs() -> None:
+    session = SimpleNamespace(declarant_type="member")
+    labels = [label for label, _, _ in hub_portal_nav_for_session(session)]
+    assert "Logs" in labels
 
 
 def test_remap_active_page_for_declarant() -> None:

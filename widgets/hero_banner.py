@@ -126,9 +126,7 @@ def render_hero_banner(policy: HubDashboardPolicy) -> None:
 
     items_html = ""
     for bullet in policy.hero_bullets:
-        items_html += (
-            f"<li>{arrow}<span>{html.escape(bullet)}</span></li>"
-        )
+        items_html += f"<li>{arrow}<span>{html.escape(bullet)}</span></li>"
 
     render_st_html_page(
         hero_banner_styles(),
