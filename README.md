@@ -124,11 +124,26 @@ app/
 
 ## Running tests
 
-BRD service tests live in the parent repo. From **nexus** root with dev dependencies installed:
+From the app root with dev dependencies installed:
 
 ```bash
 pip install -r requirements-dev.txt
-pytest tests/test_brd_services.py -v
+pytest
+```
+
+| Layer | Path | Purpose |
+|-------|------|---------|
+| Unit | `tests/services`, `tests/widgets`, `tests/pages` | Single-module logic and HTML builders |
+| Integration | `tests/integration` | Upload pipeline, page `render` smoke tests |
+| Isolation | `tests/isolation` | Partner data boundaries, import boundaries, idempotent init |
+
+CI (`.github/workflows/ci.yml`) runs all three layers plus a **65%** coverage gate on every push and PR.
+
+```bash
+pytest tests/services tests/widgets tests/pages -v -m unit
+pytest tests/integration -v -m integration
+pytest tests/isolation -v -m isolation
+pytest --cov=services --cov=widgets --cov=pages --cov-report=term-missing --cov-fail-under=65
 ```
 
 ## Troubleshooting
