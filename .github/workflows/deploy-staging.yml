@@ -1,0 +1,1 @@
+# On merge to main: CI + SQL migrations to PM_STAGING + Streamlit STG + Lambda + smoke tests + Slack/Teams notify
