@@ -1,0 +1,2 @@
+# Every push & PR: ruff, black, mypy, unit tests, integration tests, isolation
+tests, dependency scan, coverage
