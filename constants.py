@@ -4,6 +4,8 @@ from __future__ import annotations
 
 MAX_UPLOAD_MB = 250
 MAX_UPLOAD_BYTES = MAX_UPLOAD_MB * 1024 * 1024
+# Cap rows processed in-session so large supplier templates (80k+ lines) stay responsive.
+MAX_PARSE_ROWS = 20_000
 
 
 def upload_size_error() -> str:

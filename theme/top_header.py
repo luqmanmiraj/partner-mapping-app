@@ -35,11 +35,13 @@ def top_header_styles() -> str:
             padding-top: 0 !important;
         }}
 
+        [data-testid="stMain"] .st-key-top_header,
+        [data-testid="stMain"] div[data-testid="stVerticalBlockBorderWrapper"].st-key-top_header,
         section.main .st-key-top_header,
         section.main div[data-testid="stVerticalBlockBorderWrapper"].st-key-top_header {{
             position: relative !important;
             padding: 0 !important;
-            margin: 0 0 1.5rem 0 !important;
+            margin: 0 !important;
             border: none !important;
             background: transparent !important;
             box-shadow: none !important;

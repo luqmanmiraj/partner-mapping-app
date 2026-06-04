@@ -18,11 +18,67 @@ from theme.tokens import (
 )
 
 
+def inject_main_layout_spacing() -> None:
+    """Remove extra gap above login, top header, and page content."""
+    from theme.html_utils import inject_parent_styles
+
+    inject_parent_styles(
+        """
+        header[data-testid="stHeader"] {
+            height: 0 !important;
+            min-height: 0 !important;
+            visibility: hidden !important;
+        }
+
+        [data-testid="stMain"] [data-testid="stMainBlockContainer"],
+        [data-testid="stMain"] [data-testid="block-container"],
+        section.main .block-container {
+            padding-top: 0 !important;
+            margin-top: 0 !important;
+        }
+
+        [data-testid="stMain"] [data-testid="stMainBlockContainer"] > div {
+            padding-top: 0 !important;
+            gap: 0 !important;
+        }
+
+        [data-testid="stMain"] [data-testid="stVerticalBlock"] {
+            gap: 0 !important;
+        }
+
+        [data-testid="stMain"] .st-key-top_header,
+        [data-testid="stMain"] div.st-key-top_header {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+        }
+
+        [data-testid="stMain"] .st-key-page_content {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+        }
+
+        [data-testid="stMain"] [data-testid="stElementContainer"]:has(iframe[height="0"]),
+        [data-testid="stMain"] [data-testid="stElementContainer"]:has(iframe[style*="height: 0px"]),
+        [data-testid="stMain"] [data-testid="stElementContainer"]:has(iframe[style*="height:0px"]) {
+            display: none !important;
+            height: 0 !important;
+            min-height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            border: none !important;
+        }
+        """,
+        style_id="nexus-main-layout-spacing",
+    )
+
+
 def inject_styles() -> None:
     from theme.html_utils import inject_parent_styles
     from theme.sidenav import inject_sidenav_styles
     from theme.top_header import inject_top_header_styles
 
+    inject_main_layout_spacing()
     inject_sidenav_styles()
     inject_top_header_styles()
     from theme.page_content import inject_page_content_styles

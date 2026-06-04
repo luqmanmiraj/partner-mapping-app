@@ -162,19 +162,21 @@ def render(active_page: str = "upload") -> None:
                 elif len(uploaded.getvalue()) > MAX_UPLOAD_BYTES:
                     st.error(upload_size_error())
                 else:
-                    result = upload_declaration(
-                        file_bytes=uploaded.getvalue(),
-                        filename=uploaded.name,
-                        period=period,
-                        currency=currency,
-                        comment=comment,
-                        partner_key=session.partner_key,
-                    )
+                    with st.spinner("Processing file — large templates may take a moment…"):
+                        result = upload_declaration(
+                            file_bytes=uploaded.getvalue(),
+                            filename=uploaded.name,
+                            period=period,
+                            currency=currency,
+                            comment=comment,
+                            partner_key=session.partner_key,
+                        )
                     if result.success:
                         st.success(result.message)
                         st.info(
                             f"Upload ID: **{result.upload_id}** — "
-                            "if no memory template exists, this file is now in Reviewer queue."
+                            "if no memory template exists, this file is now in the Reviewer queue. "
+                            "Open **Logs** in the sidebar (below Dashboard) to view the full trail."
                         )
                     else:
                         st.error(result.error)

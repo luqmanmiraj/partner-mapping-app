@@ -804,6 +804,7 @@ def main() -> None:
         render_sidebar_status(data)
 
     render_page_header()
+
     render_hero()
     render_upcoming_features()
 
