@@ -9,6 +9,21 @@ import os
 
 import streamlit as st
 
+from auth.hubspot_bridge import apply_jwt_to_session, mint_jwt_from_hubspot
+from services.hubspot_oauth_service import (
+    build_authorize_url,
+    new_state,
+    oauth_enabled,
+    persist_oauth_state,
+    process_oauth_callback,
+)
+from services.hubspot_session import (
+    complete_login,
+    get_profile,
+    is_authenticated,
+    save_oauth_result,
+    show_callback_screen,
+)
 from theme.html_utils import inject_parent_styles, render_html
 from theme.paths import image_path
 
@@ -39,13 +54,30 @@ def _logo_data_uri() -> str | None:
     return f"data:{mime};base64,{encoded}"
 
 
+def _ensure_oauth_state() -> str:
+    state = st.session_state.get("hubspot_oauth_state")
+    if not state:
+        state = new_state()
+        st.session_state.hubspot_oauth_state = state
+        persist_oauth_state(state)
+    return state
+
+
 def _sso_button_href() -> str:
-    """Link target for the SSO control (mock uses query param; live uses IdP URL)."""
+    """Link target for SSO control (HubSpot OAuth when configured, else mock/fallback)."""
+    if oauth_enabled():
+        return build_authorize_url(state=_ensure_oauth_state())
+
     mock_mode = os.environ.get("MOCK_SSO", "true").lower() == "true"
     sso_url = _sso_login_url()
     if mock_mode and "hubspot.com" in sso_url:
         return "?sso=1"
     return sso_url
+
+
+def _sso_link_opens_new_window(href: str) -> bool:
+    """External OAuth/SSO URLs must break out of st.html iframe."""
+    return href.startswith("http://") or href.startswith("https://")
 
 
 def _login_shell_css() -> str:
@@ -218,6 +250,12 @@ def _render_login_card(*, sso_href: str) -> None:
     else:
         logo_block = f'<p class="{p}__title" style="margin-bottom:40px;">NEXUS</p>'
 
+    link_target = (
+        ' target="_top" rel="noopener noreferrer"'
+        if _sso_link_opens_new_window(sso_href)
+        else ""
+    )
+
     render_html(
         f"""
         <div class="{p}">
@@ -225,7 +263,7 @@ def _render_login_card(*, sso_href: str) -> None:
                 {logo_block}
                 <h1 class="{p}__title">Connection</h1>
                 <p class="{p}__subtitle">Access your customer area.</p>
-                <a class="{p}__btn-sso" href="{sso_url}">Sign in with SSO</a>
+                <a class="{p}__btn-sso" href="{sso_url}"{link_target}>Sign in with SSO</a>
                 <p class="{p}__footer">
                     Don't have an account ?
                     <a class="{p}__footer-link" href="{create_url}"
@@ -237,21 +275,148 @@ def _render_login_card(*, sso_href: str) -> None:
     )
 
 
+def _inject_callback_button_styles() -> None:
+    inject_parent_styles(
+        """
+        [data-testid="stMain"] .st-key-hubspot_continue_row div[data-testid="stButton"] > button {
+            display: inline-block !important;
+            width: auto !important;
+            min-width: 180px !important;
+            padding: 0.55rem 1.5rem !important;
+            border-radius: 5px !important;
+            background: #000000 !important;
+            background-color: #000000 !important;
+            color: #ffffff !important;
+            border: 1px solid #000000 !important;
+            font-weight: 600 !important;
+        }
+        [data-testid="stMain"] .st-key-hubspot_continue_row div[data-testid="stButton"] > button:hover {
+            background: #1a1a1a !important;
+            background-color: #1a1a1a !important;
+            border-color: #1a1a1a !important;
+        }
+        [data-testid="stMain"] .st-key-hubspot_continue_row {
+            display: flex !important;
+            justify-content: center !important;
+            width: 100% !important;
+            margin-top: 0.5rem !important;
+        }
+        """,
+        style_id="nexus-hubspot-callback-continue",
+    )
+
+
+def _clear_oauth_query_params() -> None:
+    for key in ("code", "state"):
+        try:
+            del st.query_params[key]
+        except Exception:
+            pass
+
+
+def try_process_oauth_callback() -> bool:
+    """
+    Process HubSpot OAuth callback query params (?code=&state=).
+
+    Returns True when the callback confirmation screen should be shown.
+    """
+    if show_callback_screen():
+        return True
+
+    code = st.query_params.get("code")
+    if not code or not oauth_enabled():
+        return False
+
+    state = st.query_params.get("state")
+    try:
+        result = process_oauth_callback(str(code), str(state) if state else None)
+        profile = result["profile"]
+        access_token = result.get("access_token", "")
+
+        company_id = os.environ.get("HUBSPOT_COMPANY_ID", "")
+        if company_id:
+            minted = mint_jwt_from_hubspot(company_id)
+            if minted and minted.get("token"):
+                apply_jwt_to_session(minted["token"])
+
+        save_oauth_result(profile=profile, access_token=access_token)
+        _clear_oauth_query_params()
+        st.session_state.pop("hubspot_oauth_error", None)
+        return True
+    except Exception as exc:
+        st.session_state.hubspot_oauth_error = str(exc)
+        _clear_oauth_query_params()
+        return False
+
+
 def render() -> None:
     _inject_login_styles()
+
+    oauth_error = st.session_state.get("hubspot_oauth_error")
+    if oauth_error:
+        st.error(f"HubSpot login failed: {oauth_error}")
+
+    if show_callback_screen():
+        _render_hubspot_callback_result()
+        return
+
     _render_login_card(sso_href=_sso_button_href())
+
+
+def _render_hubspot_callback_result() -> None:
+    profile = get_profile()
+    email = html.escape(str(profile.get("user", "unknown")))
+    hub_id = html.escape(str(profile.get("hub_id", "")))
+    app_id = html.escape(str(profile.get("app_id", "")))
+    hub_domain = html.escape(str(profile.get("hub_domain", "")))
+    company_id = html.escape(str(profile.get("company_id", "")) or "—")
+
+    render_html(
+        f"""
+        <div class="{_PREFIX}">
+            <div class="{_PREFIX}__card" style="margin-top: 120px;">
+                <h1 class="{_PREFIX}__title">Signed in with HubSpot</h1>
+                <p class="{_PREFIX}__subtitle" style="margin-bottom: 20px;">
+                    Your account is connected. Review the details below, then continue.
+                </p>
+                <div style="text-align:left;max-width:440px;margin:0 auto 24px auto;color:#333;">
+                    <p><strong>User:</strong> {email}</p>
+                    <p><strong>Hub ID:</strong> {hub_id}</p>
+                    <p><strong>Hub domain:</strong> {hub_domain}</p>
+                    <p><strong>App ID:</strong> {app_id}</p>
+                    <p><strong>Company ID:</strong> {company_id}</p>
+                </div>
+            </div>
+        </div>
+        """
+    )
+
+    _inject_callback_button_styles()
+    with st.container(key="hubspot_continue_row"):
+        if st.button("Continue", type="primary", key="hubspot_continue"):
+            complete_login(dashboard_page="hub_dashboard")
+            st.rerun()
 
 
 def handle_sso_sign_in() -> bool:
     """Return True when user is authenticated (JWT, prior session, or SSO complete)."""
-    if st.session_state.get("authenticated"):
+    if is_authenticated():
         return True
 
     if st.query_params.get("jwt"):
         st.session_state.authenticated = True
         return True
 
+    if show_callback_screen():
+        return False
+
     if st.query_params.get("sso"):
+        if oauth_enabled():
+            try:
+                del st.query_params["sso"]
+            except Exception:
+                pass
+            return False
         st.session_state.sso_clicked = True
         try:
             del st.query_params["sso"]
@@ -264,7 +429,7 @@ def handle_sso_sign_in() -> bool:
     sso_url = _sso_login_url()
     mock_mode = os.environ.get("MOCK_SSO", "true").lower() == "true"
 
-    if mock_mode and "hubspot.com" in sso_url:
+    if mock_mode and "hubspot.com" in sso_url and not oauth_enabled():
         st.session_state.authenticated = True
         st.session_state.pop("sso_clicked", None)
         return True

@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
 from typing import Literal
 
 import streamlit as st
+from services.hubspot_auth_service import mint_jwt_for_company
 
 RoleType = Literal["partner", "reviewer", "admin"]
 
@@ -157,11 +157,15 @@ def _session_from_dev_mock() -> UserSession:
 
     company_id = st.session_state.get("hubspot_company_id", "11111111")
     record = MOCK_COMPANY_MAP.get(company_id, MOCK_COMPANY_MAP["11111111"])
+    display_name = record["display_name"]
+    profile = st.session_state.get("hubspot_oauth_profile")
+    if isinstance(profile, dict) and profile.get("user"):
+        display_name = str(profile["user"])
     return UserSession(
         role_type="partner",
         partner_key=record["partner_key"],
         declarant_type=record["type"],
-        display_name=record["display_name"],
+        display_name=display_name,
         snowflake_role=f"PM_PARTNER_{record['partner_key']}",
         default_currency=record.get("default_currency", "EUR"),
         is_active=record.get("is_active", True),
@@ -214,21 +218,8 @@ def is_admin() -> bool:
 
 def mint_dev_jwt(company_id: str) -> str | None:
     """Mint a dev JWT via hubspot-mint mock mode (optional)."""
-    mint_url = os.environ.get("HUBSPOT_MINT_URL", "")
-    if not mint_url:
-        return None
-    import json
-    import urllib.request
-
-    req = urllib.request.Request(
-        mint_url,
-        data=json.dumps({"hubspot_company_id": company_id}).encode(),
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
     try:
-        with urllib.request.urlopen(req, timeout=5) as resp:
-            body = json.loads(resp.read().decode())
-            return body.get("token")
+        body = mint_jwt_for_company(company_id, timeout=5)
+        return body.get("token") if body else None
     except Exception:
         return None

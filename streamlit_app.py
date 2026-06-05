@@ -6,14 +6,22 @@ import sys
 from pathlib import Path
 
 import streamlit as st
+from dotenv import load_dotenv
 
 APP_DIR = Path(__file__).resolve().parent
 if str(APP_DIR) not in sys.path:
     sys.path.insert(0, str(APP_DIR))
 
+load_dotenv(APP_DIR / ".env")
+
 from auth.hubspot_bridge import init_hubspot_auth
 from auth.session import get_session, init_session, is_partner, is_reviewer, is_admin
-from pages.auth.connection import handle_sso_sign_in, render as render_connection
+from pages.auth.connection import (
+    handle_sso_sign_in,
+    render as render_connection,
+    try_process_oauth_callback,
+)
+from services.hubspot_session import is_authenticated, show_callback_screen
 from theme.layout import render_dev_controls
 from theme.page_content import render_page_content
 from theme.sidenav import handle_sidenav_query, remap_active_page_for_declarant, render_sidenav
@@ -128,7 +136,13 @@ def main() -> None:
     if st.query_params.get("jwt"):
         st.session_state.authenticated = True
 
-    if not handle_sso_sign_in():
+    try_process_oauth_callback()
+
+    if show_callback_screen():
+        render_connection()
+        return
+
+    if not is_authenticated() and not handle_sso_sign_in():
         render_connection()
         return
 
