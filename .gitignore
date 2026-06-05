@@ -2,4 +2,7 @@
 .env
 .env.local
 .env.migrate
+.env.example
 **/.env.migrate
+.streamlit/hubspot_oauth_state.json
+.prototype/

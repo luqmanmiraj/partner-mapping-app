@@ -29,7 +29,8 @@ WIDGET_MODULES = [
 ]
 
 PAGE_MODULES = [
-    "pages.auth.connection",
+    # pages.auth.connection is covered by tests/pages/test_connection.py;
+    # reloading it here breaks monkeypatches on that module in the same pytest run.
     "pages.portal.hub_dashboard",
     "pages.portal.member_directory",
     "pages.partner.upload",

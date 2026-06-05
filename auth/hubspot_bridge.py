@@ -1,42 +1,27 @@
-"""HubSpot iframe JWT bridge — server-side token handling (BR-ISO-04)."""
+"""HubSpot iframe JWT bridge — uses HubSpot auth service layer."""
 
 from __future__ import annotations
 
-import json
 import os
-import urllib.request
 
 import streamlit as st
 
-from auth.jwt_utils import decode_jwt_unverified
+from services.hubspot_auth_service import (
+    extract_jwt_token,
+    mint_jwt_for_company,
+    token_is_not_expired,
+)
 
 
 def extract_jwt_from_request() -> str | None:
     """Read JWT from query params (HubSpot CMS server-side injection)."""
-    token = st.query_params.get("jwt")
-    if token:
-        return token
-    return st.session_state.get("jwt_token")
+    return extract_jwt_token(st.query_params, st.session_state)
 
 
 def mint_jwt_from_hubspot(company_id: str) -> dict | None:
     """Call hubspot-mint Lambda to obtain a scoped JWT."""
-    mint_url = os.environ.get(
-        "HUBSPOT_MINT_URL",
-        os.environ.get("VITE_HUBSPOT_MINT_URL", ""),
-    )
-    if not mint_url:
-        return None
-
-    req = urllib.request.Request(
-        mint_url,
-        data=json.dumps({"hubspot_company_id": company_id}).encode(),
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
     try:
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            return json.loads(resp.read().decode())
+        return mint_jwt_for_company(company_id, timeout=10)
     except Exception as exc:
         st.sidebar.error(f"JWT mint failed: {exc}")
         return None
@@ -45,10 +30,7 @@ def mint_jwt_from_hubspot(company_id: str) -> dict | None:
 def apply_jwt_to_session(token: str) -> bool:
     """Parse JWT claims and store in session. Returns False if token is expired."""
     try:
-        claims = decode_jwt_unverified(token)
-        import time
-
-        if claims.get("exp", 0) < time.time():
+        if not token_is_not_expired(token):
             st.error("Session expired. Please refresh the HubSpot page.")
             return False
         st.session_state.jwt_token = token
