@@ -134,8 +134,8 @@ _NAV_ICON_MARGIN_RIGHT = "12px"
 
 
 def _nav_icon_base_selector() -> str:
-    """All nav rows use st.container(key='nav_<page_id>')."""
-    return 'section[data-testid="stSidebar"] [class*="st-key-nav_"] button::before'
+    """All nav rows use st.button(key='navbtn_<page_id>')."""
+    return 'section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button::before'
 
 
 def _nav_icon_base_css() -> str:
@@ -167,7 +167,7 @@ def _nav_icon_mask_css_rules() -> str:
         uri = _file_data_uri(nav_icon_path(filename))
         if not uri:
             continue
-        selector = f'section[data-testid="stSidebar"] .st-key-nav_{page_id} button::before'
+        selector = f'section[data-testid="stSidebar"] .st-key-navbtn_{page_id} button::before'
         rules.append(
             f"""
             {selector} {{
@@ -458,7 +458,7 @@ def sidenav_styles() -> str:
         }}
 
         /* Nav rows: one Streamlit button per item (prototype .nav-link look) */
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] {{
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] {{
             width: 100% !important;
             padding: 0 !important;
             margin: 0 !important;
@@ -468,7 +468,7 @@ def sidenav_styles() -> str:
             gap: 0 !important;
         }}
 
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button {{
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button {{
             display: flex !important;
             align-items: center !important;
             justify-content: flex-start !important;
@@ -489,58 +489,58 @@ def sidenav_styles() -> str:
         }}
 
         /* Active item (prototype .nav-item.active .nav-link) — black icon + bold text */
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="primary"] {{
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="primary"] {{
             background-color: #f79400 !important;
             color: #000000 !important;
             font-weight: 700 !important;
         }}
 
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="primary"]::before {{
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="primary"]::before {{
             background-color: #000000 !important;
         }}
 
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="primary"] > span,
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="primary"] > div,
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="primary"] p {{
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="primary"] > span,
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="primary"] > div,
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="primary"] p {{
             color: #000000 !important;
             font-weight: 700 !important;
         }}
 
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="primary"]:hover {{
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="primary"]:hover {{
             background-color: #f79400 !important;
             color: #000000 !important;
             border: none !important;
             box-shadow: none !important;
         }}
 
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="primary"]:hover::before {{
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="primary"]:hover::before {{
             background-color: #000000 !important;
         }}
 
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="primary"]:hover > span,
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="primary"]:hover > div,
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="primary"]:hover p {{
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="primary"]:hover > span,
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="primary"]:hover > div,
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="primary"]:hover p {{
             color: #000000 !important;
         }}
 
         /* Hover for inactive links (prototype .nav-item:not(.active) .nav-link:hover) */
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="tertiary"]:hover,
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="secondary"]:hover {{
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="tertiary"]:hover,
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="secondary"]:hover {{
             background-color: #1a1a1a !important;
             color: #f79400 !important;
             border: none !important;
             box-shadow: none !important;
         }}
 
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="tertiary"]:hover::before,
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="secondary"]:hover::before {{
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="tertiary"]:hover::before,
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="secondary"]:hover::before {{
             background-color: #f79400 !important;
         }}
 
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="tertiary"]:focus,
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="tertiary"]:focus-visible,
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="secondary"]:focus,
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="secondary"]:focus-visible {{
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="tertiary"]:focus,
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="tertiary"]:focus-visible,
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="secondary"]:focus,
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="secondary"]:focus-visible {{
             background-color: #1a1a1a !important;
             color: #f79400 !important;
             border: none !important;
@@ -548,24 +548,24 @@ def sidenav_styles() -> str:
             outline: none !important;
         }}
 
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="tertiary"]:focus::before,
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="tertiary"]:focus-visible::before,
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="secondary"]:focus::before,
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="secondary"]:focus-visible::before {{
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="tertiary"]:focus::before,
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="tertiary"]:focus-visible::before,
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="secondary"]:focus::before,
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="secondary"]:focus-visible::before {{
             background-color: #f79400 !important;
         }}
 
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button > span,
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button > div {{
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button > span,
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button > div {{
             background: transparent !important;
             border: none !important;
             box-shadow: none !important;
         }}
 
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="tertiary"]:hover > span,
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="tertiary"]:hover > div,
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="secondary"]:hover > span,
-        section[data-testid="stSidebar"] [class*="st-key-nav_"] button[kind="secondary"]:hover > div {{
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="tertiary"]:hover > span,
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="tertiary"]:hover > div,
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="secondary"]:hover > span,
+        section[data-testid="stSidebar"] [class*="st-key-navbtn_"] button[kind="secondary"]:hover > div {{
             background: transparent !important;
             color: #f79400 !important;
         }}
@@ -601,16 +601,15 @@ def _logo_data_uri() -> str | None:
 def _render_nav_link(page_id: str, label: str, active_page: str) -> None:
     is_active = page_id == active_page
     btn_type = "primary" if is_active else "tertiary"
-    with st.container(key=f"nav_{page_id}"):
-        if st.button(
-            label,
-            key=f"navbtn_{page_id}",
-            type=btn_type,
-            width="stretch",
-        ):
-            if not is_active:
-                st.session_state.active_page = page_id
-                st.rerun()
+    if st.button(
+        label,
+        key=f"navbtn_{page_id}",
+        type=btn_type,
+        width="stretch",
+    ):
+        if not is_active:
+            st.session_state.active_page = page_id
+            st.rerun()
 
 
 def _nav_sections_for_session(session) -> list[tuple[str, list[tuple[str, str, str]]]]:

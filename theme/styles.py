@@ -88,7 +88,7 @@ def inject_styles() -> None:
         }}
 
         section[data-testid="stSidebar"]
-        div[data-testid="stVerticalBlockBorderWrapper"]:not([class*="st-key-nav_"]):not(
+        div[data-testid="stVerticalBlockBorderWrapper"]:not([class*="st-key-navbtn_"]):not(
             [class*="st-key-sidenav_"]
         )
         div[data-testid="stButton"]
@@ -105,7 +105,7 @@ def inject_styles() -> None:
         }}
 
         section[data-testid="stSidebar"]
-        div[data-testid="stVerticalBlockBorderWrapper"]:not([class*="st-key-nav_"]):not(
+        div[data-testid="stVerticalBlockBorderWrapper"]:not([class*="st-key-navbtn_"]):not(
             [class*="st-key-sidenav_"]
         )
         div[data-testid="stButton"]
