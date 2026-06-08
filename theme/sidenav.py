@@ -617,9 +617,13 @@ def _nav_section(
     items: list[tuple[str, str, str]],
     active_page: str,
     accessible: set[str],
+    rendered_ids: set[str],
 ) -> None:
     visible = [(label, page_id) for label, page_id, _ in items if page_id in accessible]
     for label, page_id in visible:
+        if page_id in rendered_ids:
+            continue
+        rendered_ids.add(page_id)
         _render_nav_link(page_id, label, active_page)
 
 
@@ -696,23 +700,30 @@ def render_sidenav(active_page: str, accessible_pages: set[str]) -> None:
 
     _bind_sidenav_top_fixed_shell()
 
+    rendered_nav_ids: set[str] = set()
+
     with st.container(key="sidenav_nav_body"):
         enterprise_label = session.display_name or "Enterprise"
         _section_heading(enterprise_label)
 
         if is_partner():
-            _nav_section(hub_portal_nav_for_session(session), active_page, accessible)
+            _nav_section(
+                hub_portal_nav_for_session(session),
+                active_page,
+                accessible,
+                rendered_nav_ids,
+            )
             _section_heading("NEXUS Automotive")
-            _nav_section(HUB_PORTAL_SECONDARY, active_page, accessible)
+            _nav_section(HUB_PORTAL_SECONDARY, active_page, accessible, rendered_nav_ids)
             _section_heading("Partner Mapping")
-            _nav_section(PARTNER_MAPPING_NAV, active_page, accessible)
-        elif is_reviewer() and not is_partner():
+            _nav_section(PARTNER_MAPPING_NAV, active_page, accessible, rendered_nav_ids)
+        elif is_reviewer() and not is_partner() and not is_admin():
             _section_heading("Internal Cockpit")
-            _nav_section(REVIEWER_NAV, active_page, accessible)
+            _nav_section(REVIEWER_NAV, active_page, accessible, rendered_nav_ids)
 
         if is_admin():
             _section_heading("Admin")
-            _nav_section(ADMIN_NAV, active_page, accessible)
+            _nav_section(ADMIN_NAV, active_page, accessible, rendered_nav_ids)
 
     render_html(
         f"""

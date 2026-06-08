@@ -72,6 +72,8 @@ def _import_callable(module_path: str, attr: str = "render"):
 
 
 def _default_page() -> str:
+    if is_admin():
+        return "admin_calibration"
     if is_reviewer() and not is_partner():
         return "review_queue"
     return "hub_dashboard"

@@ -176,11 +176,15 @@ def init_session() -> UserSession | None:
     init_brd_state()
 
     if "user_session" not in st.session_state:
-        claims = _parse_jwt_from_request()
-        if claims:
-            session = _session_from_jwt(claims)
-        else:
+        app_role = st.session_state.get("app_role", "partner")
+        if app_role in ("reviewer", "admin"):
             session = _session_from_dev_mock()
+        else:
+            claims = _parse_jwt_from_request()
+            if claims:
+                session = _session_from_jwt(claims)
+            else:
+                session = _session_from_dev_mock()
         st.session_state.user_session = session
 
     session: UserSession = st.session_state.user_session
