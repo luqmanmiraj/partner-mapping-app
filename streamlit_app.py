@@ -55,6 +55,7 @@ REVIEWER_PAGES = {
 }
 
 ADMIN_PAGES = {
+    "admin_pipeline": ("pages.admin.pipeline_monitor", "render"),
     "admin_calibration": ("pages.admin.stubs", "render_calibration"),
     "admin_onboarding": ("pages.admin.stubs", "render_onboarding"),
     "admin_decommission": ("pages.admin.stubs", "render_decommission"),
@@ -73,7 +74,7 @@ def _import_callable(module_path: str, attr: str = "render"):
 
 def _default_page() -> str:
     if is_admin():
-        return "admin_calibration"
+        return "admin_pipeline"
     if is_reviewer() and not is_partner():
         return "review_queue"
     return "hub_dashboard"
@@ -117,6 +118,10 @@ def main() -> None:
     )
     inject_styles()
     init_hubspot_auth()
+
+    from services.snowflake_init import init_snowflake_mode, render_snowflake_status, verify_snowflake_connection
+
+    init_snowflake_mode()
 
     if st.query_params.get("jwt"):
         st.session_state.authenticated = True
@@ -163,7 +168,15 @@ def main() -> None:
         render_sidenav(st.session_state.active_page, accessible)
         render_dev_controls()
 
+    if st.session_state.get("use_snowflake"):
+        passcode = st.session_state.get("passcode", "")
+        prev = st.session_state.get("_sf_verified_passcode", "")
+        if passcode != prev or "snowflake_verified" not in st.session_state:
+            st.session_state.snowflake_verified = verify_snowflake_connection(passcode)
+            st.session_state._sf_verified_passcode = passcode
+
     render_top_header(session.display_name)
+    render_snowflake_status()
 
     module_path, attr = pages[st.session_state.active_page]
     render_fn = _import_callable(module_path, attr)

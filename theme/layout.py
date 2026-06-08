@@ -33,18 +33,19 @@ def render_app_page_content(render_fn, *args, **kwargs) -> None:
 
 
 def render_dev_controls() -> tuple[bool, str]:
-    """Dev-only sidebar controls (hidden in the UI via sidenav CSS)."""
+    """Snowflake toggle + MFA passcode at the bottom of the sidebar."""
     with st.container(key="dev_controls"):
-        st.divider()
-        st.caption("Developer controls")
-        use_snowflake = st.toggle(
-            "Use Snowflake data",
-            value=st.session_state.get("use_snowflake", False),
-        )
+        st.markdown("**Snowflake**")
+        from snowflake_client import credentials_available
+
+        default_sf = st.session_state.get("use_snowflake", credentials_available())
+        use_snowflake = st.toggle("Use live Snowflake data", value=default_sf)
         passcode = st.text_input(
-            "TOTP passcode",
+            "MFA code (TOTP)",
             value=st.session_state.get("passcode", ""),
             type="password",
+            help="6-digit code from your authenticator app. Required once per session if MFA is enabled.",
+            placeholder="123456",
         )
     st.session_state.use_snowflake = use_snowflake
     st.session_state.passcode = passcode

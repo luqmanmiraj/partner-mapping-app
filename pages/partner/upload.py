@@ -172,6 +172,11 @@ def render(active_page: str = "upload") -> None:
                     )
                     if result.success:
                         st.success(result.message)
+                        if result.upload_id:
+                            st.info(
+                                f"Upload ID: **{result.upload_id}** — Admin can trace all BRD pipeline steps "
+                                f"under **Pipeline Monitor**."
+                            )
                         st.info(
                             f"Upload ID: **{result.upload_id}** — "
                             "if no memory template exists, this file is now in Reviewer queue."

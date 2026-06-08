@@ -1,124 +1,17 @@
-"""Snowflake-backed memory + review workflow with session fallback."""
+"""Snowflake memory + calibration — delegates to snowflake_store (migration 001 schema)."""
 
 from __future__ import annotations
 
-import hashlib
-import json
 import uuid
-from datetime import datetime, timezone
 from typing import Any
 
 import streamlit as st
 
-from auth.snowflake_session import schema_fqn
-
-APP_SCHEMA = "APP"
-_TABLES_READY_KEY = "snowflake_memory_tables_ready"
-
-
-def _now_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
-
-
-def _normalize_columns(columns: list[str]) -> list[str]:
-    clean = [str(c).strip() for c in columns if str(c).strip()]
-    return list(dict.fromkeys(clean))
-
-
-def _signature(columns: list[str]) -> str:
-    normalized = sorted(c.lower() for c in _normalize_columns(columns))
-    payload = "|".join(normalized).encode("utf-8")
-    return hashlib.sha256(payload).hexdigest()
-
-
-def _sql_str(value: str) -> str:
-    return value.replace("'", "''")
-
-
-def _init_fallback_state() -> None:
-    if "memory_review_entries" not in st.session_state:
-        st.session_state.memory_review_entries = {}
-    if "memory_global_templates" not in st.session_state:
-        st.session_state.memory_global_templates = {}
-    if "memory_local_templates" not in st.session_state:
-        st.session_state.memory_local_templates = {}
+from services import snowflake_store
 
 
 def snowflake_enabled() -> bool:
     return bool(st.session_state.get("use_snowflake", False))
-
-
-def _app_fqn(table: str) -> str:
-    return f"{schema_fqn(APP_SCHEMA)}.{table}"
-
-
-def ensure_memory_tables(conn) -> None:
-    if st.session_state.get(_TABLES_READY_KEY):
-        return
-
-    review = _app_fqn("REVIEW_ENTRY")
-    global_mem = _app_fqn("GLOBAL_MEMORY")
-    local_mem = _app_fqn("LOCAL_MEMORY")
-
-    statements = (
-        f"""
-        CREATE TABLE IF NOT EXISTS {review} (
-            REVIEW_ID VARCHAR PRIMARY KEY,
-            UPLOAD_ID VARCHAR NOT NULL,
-            PARTNER_KEY VARCHAR NOT NULL,
-            FILENAME VARCHAR,
-            PERIOD VARCHAR,
-            SOURCE_COLUMNS VARIANT,
-            SOURCE_SIGNATURE VARCHAR NOT NULL,
-            MAPPING VARIANT,
-            STATUS VARCHAR NOT NULL,
-            VALIDATION_SOURCE VARCHAR,
-            CREATED_AT TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
-            UPDATED_AT TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP()
-        )
-        """,
-        f"""
-        CREATE TABLE IF NOT EXISTS {global_mem} (
-            SOURCE_SIGNATURE VARCHAR PRIMARY KEY,
-            SOURCE_COLUMNS VARIANT,
-            MAPPING VARIANT NOT NULL,
-            CREATED_AT TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
-            UPDATED_AT TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
-            UPDATED_BY VARCHAR
-        )
-        """,
-        f"""
-        CREATE TABLE IF NOT EXISTS {local_mem} (
-            PARTNER_KEY VARCHAR NOT NULL,
-            SOURCE_SIGNATURE VARCHAR NOT NULL,
-            SOURCE_COLUMNS VARIANT,
-            MAPPING VARIANT NOT NULL,
-            UPDATED_AT TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
-            PRIMARY KEY (PARTNER_KEY, SOURCE_SIGNATURE)
-        )
-        """,
-    )
-
-    cur = conn.cursor()
-    try:
-        for stmt in statements:
-            cur.execute(stmt)
-    finally:
-        cur.close()
-    st.session_state[_TABLES_READY_KEY] = True
-
-
-def _parse_json_field(value: Any, default: Any) -> Any:
-    if value is None:
-        return default
-    if isinstance(value, (dict, list)):
-        return value
-    if isinstance(value, str):
-        try:
-            return json.loads(value)
-        except json.JSONDecodeError:
-            return default
-    return default
 
 
 def resolve_template(
@@ -126,73 +19,8 @@ def resolve_template(
     source_columns: list[str],
     conn=None,
 ) -> dict[str, Any] | None:
-    sig = _signature(source_columns)
-    normalized = _normalize_columns(source_columns)
-    now = _now_iso()
-
     if conn is not None:
-        ensure_memory_tables(conn)
-        local = _app_fqn("LOCAL_MEMORY")
-        global_mem = _app_fqn("GLOBAL_MEMORY")
-        cur = conn.cursor()
-        try:
-            cur.execute(
-                f"""
-                SELECT MAPPING, SOURCE_COLUMNS
-                FROM {local}
-                WHERE PARTNER_KEY = %s AND SOURCE_SIGNATURE = %s
-                LIMIT 1
-                """,
-                (partner_key, sig),
-            )
-            row = cur.fetchone()
-            if row:
-                return {
-                    "scope": "LOCAL",
-                    "mapping": _parse_json_field(row[0], {}),
-                    "source_columns": _parse_json_field(row[1], normalized),
-                    "matched_at": now,
-                }
-
-            cur.execute(
-                f"""
-                SELECT MAPPING, SOURCE_COLUMNS
-                FROM {global_mem}
-                WHERE SOURCE_SIGNATURE = %s
-                LIMIT 1
-                """,
-                (sig,),
-            )
-            row = cur.fetchone()
-            if row:
-                return {
-                    "scope": "GLOBAL",
-                    "mapping": _parse_json_field(row[0], {}),
-                    "source_columns": _parse_json_field(row[1], normalized),
-                    "matched_at": now,
-                }
-        finally:
-            cur.close()
-        return None
-
-    _init_fallback_state()
-    local_key = f"{partner_key}:{sig}"
-    local = st.session_state.memory_local_templates.get(local_key)
-    if local:
-        return {
-            "scope": "LOCAL",
-            "mapping": local.get("mapping", {}),
-            "source_columns": local.get("source_columns", normalized),
-            "matched_at": now,
-        }
-    global_template = st.session_state.memory_global_templates.get(sig)
-    if global_template:
-        return {
-            "scope": "GLOBAL",
-            "mapping": global_template.get("mapping", {}),
-            "source_columns": global_template.get("source_columns", normalized),
-            "matched_at": now,
-        }
+        return snowflake_store.resolve_column_template(conn, partner_key, source_columns)
     return None
 
 
@@ -208,63 +36,107 @@ def create_review_entry(
     mapping: dict[str, str] | None = None,
     conn=None,
 ) -> str:
-    normalized = _normalize_columns(source_columns)
-    sig = _signature(normalized)
-    review_id = f"REV-{uuid.uuid4().hex[:12].upper()}"
-    mapping_payload = mapping or {}
-    now = _now_iso()
+    """Persist review queue metadata in session; optional Snowflake calibration write."""
+    from datetime import datetime, timezone
 
-    if conn is not None:
-        ensure_memory_tables(conn)
-        table = _app_fqn("REVIEW_ENTRY")
-        cur = conn.cursor()
-        try:
-            cur.execute(
-                f"""
-                INSERT INTO {table} (
-                    REVIEW_ID, UPLOAD_ID, PARTNER_KEY, FILENAME, PERIOD,
-                    SOURCE_COLUMNS, SOURCE_SIGNATURE, MAPPING, STATUS,
-                    VALIDATION_SOURCE, CREATED_AT, UPDATED_AT
-                )
-                SELECT
-                    %s, %s, %s, %s, %s,
-                    PARSE_JSON(%s), %s, PARSE_JSON(%s), %s,
-                    %s, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
-                """,
-                (
-                    review_id,
-                    upload_id,
-                    partner_key,
-                    filename,
-                    period,
-                    json.dumps(normalized),
-                    sig,
-                    json.dumps(mapping_payload),
-                    status,
-                    validation_source,
-                ),
-            )
-        finally:
-            cur.close()
-        return review_id
+    from services.brd_state import init_brd_state
 
-    _init_fallback_state()
-    doc = {
+    if conn is not None and mapping:
+        snowflake_store.save_calibration_template(
+            conn,
+            partner_key=partner_key,
+            source_columns=source_columns,
+            column_mapping=mapping,
+            is_stable=status == "Validated",
+            actor=partner_key,
+        )
+
+    review_id = f"REV-{upload_id}"
+    init_brd_state()
+    st.session_state.review_entries[review_id] = {
         "_id": review_id,
         "upload_id": upload_id,
         "partner_key": partner_key,
         "filename": filename,
         "period": period,
-        "source_columns": normalized,
-        "source_signature": sig,
-        "mapping": mapping_payload,
+        "source_columns": list(source_columns),
+        "mapping": dict(mapping or {}),
         "status": status,
         "validation_source": validation_source,
-        "created_at": now,
-        "updated_at": now,
+        "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+        "pending_proposals": 0,
     }
-    st.session_state.memory_review_entries[review_id] = doc
     return review_id
+
+
+def _session_review_entries(
+    *,
+    status_filter: str = "All",
+    partner_filter: str = "All",
+) -> list[dict[str, Any]]:
+    from services.brd_state import get_deposit, init_brd_state, list_proposals
+
+    init_brd_state()
+    entries: dict[str, dict[str, Any]] = {}
+
+    for entry in st.session_state.review_entries.values():
+        entries[entry["upload_id"]] = dict(entry)
+
+    for dep in st.session_state.deposits.values():
+        if dep.in_review > 0 or dep.status == "In review":
+            rid = f"REV-{dep.upload_id}"
+            entries.setdefault(
+                dep.upload_id,
+                {
+                    "_id": rid,
+                    "upload_id": dep.upload_id,
+                    "partner_key": dep.partner_key,
+                    "filename": dep.filename,
+                    "period": dep.period,
+                    "source_columns": [],
+                    "mapping": {},
+                    "status": dep.status,
+                    "validation_source": "UPLOAD",
+                    "created_at": dep.submitted_at,
+                    "pending_proposals": dep.in_review,
+                },
+            )
+
+    pending = [p for p in list_proposals() if p.status == "Pending"]
+    for prop in pending:
+        base = entries.get(prop.upload_id)
+        if base:
+            base["pending_proposals"] = int(base.get("pending_proposals", 0)) + 1
+            if base["status"] not in ("Validated", "Rejected"):
+                base["status"] = "In review"
+        else:
+            entries[prop.upload_id] = {
+                "_id": f"REV-{prop.upload_id}",
+                "upload_id": prop.upload_id,
+                "partner_key": prop.partner_key,
+                "filename": "",
+                "period": "",
+                "source_columns": [],
+                "mapping": {},
+                "status": "In review",
+                "validation_source": "MAPPING_PROPOSAL",
+                "created_at": "",
+                "pending_proposals": 1,
+            }
+
+    items = list(entries.values())
+    if partner_filter != "All":
+        items = [e for e in items if e.get("partner_key") == partner_filter]
+    if status_filter != "All":
+        items = [e for e in items if e.get("status") == status_filter]
+    elif status_filter == "All":
+        items = [
+            e
+            for e in items
+            if e.get("status") in ("In review", "Pending processing")
+            or int(e.get("pending_proposals", 0)) > 0
+        ]
+    return sorted(items, key=lambda e: e.get("created_at", ""), reverse=True)
 
 
 def list_review_entries(
@@ -273,99 +145,148 @@ def list_review_entries(
     status_filter: str = "All",
     partner_filter: str = "All",
 ) -> list[dict[str, Any]]:
-    if conn is not None:
-        ensure_memory_tables(conn)
-        table = _app_fqn("REVIEW_ENTRY")
-        clauses: list[str] = []
-        if status_filter != "All":
-            clauses.append(f"STATUS = '{_sql_str(status_filter)}'")
-        if partner_filter != "All":
-            clauses.append(f"PARTNER_KEY = '{_sql_str(partner_filter)}'")
-        where = f"WHERE {' AND '.join(clauses)}" if clauses else ""
+    """Uploaded files waiting for review — Snowflake RAW_FILE + session fallback."""
+    session_items = _session_review_entries(
+        status_filter=status_filter, partner_filter=partner_filter
+    )
+    if conn is None:
+        return session_items
 
-        cur = conn.cursor()
-        try:
-            cur.execute(
-                f"""
-                SELECT REVIEW_ID, UPLOAD_ID, PARTNER_KEY, FILENAME, PERIOD,
-                       SOURCE_COLUMNS, MAPPING, STATUS, VALIDATION_SOURCE,
-                       CREATED_AT, UPDATED_AT
-                FROM {table}
-                {where}
-                ORDER BY CREATED_AT DESC
-                LIMIT 200
-                """
-            )
-            rows = cur.fetchall()
-        finally:
-            cur.close()
+    from auth.snowflake_session import schema_fqn
+    from snowflake_client import query_df
 
-        items: list[dict[str, Any]] = []
-        for row in rows:
-            items.append(
-                {
-                    "_id": row[0],
-                    "upload_id": row[1],
-                    "partner_key": row[2],
-                    "filename": row[3],
-                    "period": row[4],
-                    "source_columns": _parse_json_field(row[5], []),
-                    "mapping": _parse_json_field(row[6], {}),
-                    "status": row[7],
-                    "validation_source": row[8],
-                    "created_at": str(row[9] or ""),
-                    "updated_at": str(row[10] or ""),
-                }
-            )
-        return items
-
-    _init_fallback_state()
-    items = list(st.session_state.memory_review_entries.values())
-    if status_filter != "All":
-        items = [i for i in items if i.get("status") == status_filter]
+    clauses = ["(in_review_count > 0 OR status = 'In review')"]
     if partner_filter != "All":
-        items = [i for i in items if i.get("partner_key") == partner_filter]
-    return sorted(items, key=lambda i: i.get("created_at", ""), reverse=True)
+        safe = partner_filter.replace("'", "''")
+        clauses.append(f"partner_key = '{safe}'")
+    if status_filter != "All":
+        clauses.append(f"status = '{status_filter.replace(chr(39), chr(39)*2)}'")
+    where = " AND ".join(clauses)
+    try:
+        df = query_df(
+            conn,
+            f"""
+            SELECT upload_id, partner_key, filename, period_label, status,
+                   TO_VARCHAR(submitted_at, 'YYYY-MM-DD HH24:MI UTC') AS submitted_at,
+                   in_review_count
+            FROM {schema_fqn('STAGING')}.RAW_FILE
+            WHERE {where}
+            ORDER BY submitted_at DESC
+            LIMIT 100
+            """,
+        )
+    except Exception:
+        return session_items
+
+    by_upload = {e["upload_id"]: e for e in session_items}
+    for _, row in df.iterrows():
+        upload_id = str(row.get("UPLOAD_ID", row.get("upload_id", "")))
+        review_id = f"REV-{upload_id}"
+        existing = by_upload.get(upload_id, {})
+        by_upload[upload_id] = {
+            "_id": review_id,
+            "upload_id": upload_id,
+            "partner_key": str(row.get("PARTNER_KEY", row.get("partner_key", ""))),
+            "filename": str(row.get("FILENAME", row.get("filename", "")) or existing.get("filename", "")),
+            "period": str(row.get("PERIOD_LABEL", row.get("period_label", "")) or existing.get("period", "")),
+            "source_columns": existing.get("source_columns", []),
+            "mapping": existing.get("mapping", {}),
+            "status": str(row.get("STATUS", row.get("status", "In review"))),
+            "validation_source": existing.get("validation_source", "SNOWFLAKE"),
+            "created_at": str(row.get("SUBMITTED_AT", row.get("submitted_at", ""))),
+            "pending_proposals": int(row.get("IN_REVIEW_COUNT", row.get("in_review_count", 0)) or 0),
+        }
+
+    items = list(by_upload.values())
+    if status_filter == "All":
+        items = [
+            e
+            for e in items
+            if e.get("status") in ("In review", "Pending processing")
+            or int(e.get("pending_proposals", 0)) > 0
+        ]
+    return sorted(items, key=lambda e: e.get("created_at", ""), reverse=True)
 
 
 def get_review_entry(review_id: str, conn=None) -> dict[str, Any] | None:
-    if conn is not None:
-        ensure_memory_tables(conn)
-        table = _app_fqn("REVIEW_ENTRY")
-        cur = conn.cursor()
-        try:
-            cur.execute(
-                f"""
-                SELECT REVIEW_ID, UPLOAD_ID, PARTNER_KEY, FILENAME, PERIOD,
-                       SOURCE_COLUMNS, MAPPING, STATUS, VALIDATION_SOURCE,
-                       CREATED_AT, UPDATED_AT
-                FROM {table}
-                WHERE REVIEW_ID = %s
-                LIMIT 1
-                """,
-                (review_id,),
-            )
-            row = cur.fetchone()
-        finally:
-            cur.close()
-        if not row:
-            return None
+    from services.brd_state import get_proposal, init_brd_state
+
+    init_brd_state()
+    if review_id in st.session_state.review_entries:
+        return dict(st.session_state.review_entries[review_id])
+
+    upload_id = review_id.removeprefix("REV-")
+    session_key = f"REV-{upload_id}"
+    if session_key in st.session_state.review_entries:
+        return dict(st.session_state.review_entries[session_key])
+
+    p = get_proposal(review_id)
+    if p:
+        base = st.session_state.review_entries.get(f"REV-{p.upload_id}", {})
         return {
-            "_id": row[0],
-            "upload_id": row[1],
-            "partner_key": row[2],
-            "filename": row[3],
-            "period": row[4],
-            "source_columns": _parse_json_field(row[5], []),
-            "mapping": _parse_json_field(row[6], {}),
-            "status": row[7],
-            "validation_source": row[8],
-            "created_at": str(row[9] or ""),
-            "updated_at": str(row[10] or ""),
+            "_id": review_id,
+            "upload_id": p.upload_id,
+            "partner_key": p.partner_key,
+            "filename": base.get("filename", ""),
+            "period": base.get("period", ""),
+            "source_columns": base.get("source_columns", []),
+            "status": p.status,
+            "validation_source": "MAPPING_PROPOSAL",
+            "mapping": {p.dimension: p.proposed_target, **base.get("mapping", {})},
         }
 
-    _init_fallback_state()
-    return st.session_state.memory_review_entries.get(review_id)
+    if conn is not None:
+        row = snowflake_store.get_proposal(conn, review_id)
+        if row:
+            base = st.session_state.review_entries.get(f"REV-{row['upload_id']}", {})
+            return {
+                "_id": review_id,
+                "upload_id": row["upload_id"],
+                "partner_key": row["partner_key"],
+                "filename": base.get("filename", ""),
+                "period": base.get("period", ""),
+                "source_columns": base.get("source_columns", []),
+                "status": row["status"],
+                "validation_source": "MAPPING_PROPOSAL",
+                "mapping": {row["dimension"]: row["proposed_target"], **base.get("mapping", {})},
+            }
+        from auth.snowflake_session import schema_fqn
+        from snowflake_client import query_df
+
+        try:
+            safe_id = upload_id.replace("'", "''")
+            df = query_df(
+                conn,
+                f"""
+                SELECT upload_id, partner_key, filename, period_label, status
+                FROM {schema_fqn('STAGING')}.RAW_FILE
+                WHERE upload_id = '{safe_id}'
+                LIMIT 1
+                """,
+            )
+            if not df.empty:
+                row = df.iloc[0]
+                base = st.session_state.review_entries.get(session_key, {})
+                cols = base.get("source_columns", [])
+                if not cols:
+                    tmpl = snowflake_store.resolve_column_template(conn, str(row.get("PARTNER_KEY", row.get("partner_key", ""))), [])
+                    if tmpl and tmpl.get("mapping"):
+                        cols = list(tmpl["mapping"].keys())
+                return {
+                    "_id": session_key,
+                    "upload_id": upload_id,
+                    "partner_key": str(row.get("PARTNER_KEY", row.get("partner_key", ""))),
+                    "filename": str(row.get("FILENAME", row.get("filename", ""))),
+                    "period": str(row.get("PERIOD_LABEL", row.get("period_label", ""))),
+                    "source_columns": cols,
+                    "mapping": base.get("mapping", {}),
+                    "status": str(row.get("STATUS", row.get("status", "In review"))),
+                    "validation_source": base.get("validation_source", "SNOWFLAKE"),
+                }
+        except Exception:
+            pass
+
+    return None
 
 
 def save_global_template(
@@ -375,76 +296,20 @@ def save_global_template(
     reviewer: str = "reviewer",
     conn=None,
 ) -> None:
-    review = get_review_entry(review_id, conn=conn)
-    if not review:
+    if conn is None:
         return
-
-    source_columns = review.get("source_columns", [])
-    sig = _signature(source_columns)
-    normalized = _normalize_columns(source_columns)
-    now = _now_iso()
-
-    if conn is not None:
-        ensure_memory_tables(conn)
-        global_mem = _app_fqn("GLOBAL_MEMORY")
-        review_table = _app_fqn("REVIEW_ENTRY")
-        cur = conn.cursor()
-        try:
-            cur.execute(
-                f"""
-                MERGE INTO {global_mem} AS target
-                USING (
-                    SELECT
-                        %s AS SOURCE_SIGNATURE,
-                        PARSE_JSON(%s) AS SOURCE_COLUMNS,
-                        PARSE_JSON(%s) AS MAPPING,
-                        %s AS UPDATED_BY
-                ) AS source
-                ON target.SOURCE_SIGNATURE = source.SOURCE_SIGNATURE
-                WHEN MATCHED THEN UPDATE SET
-                    SOURCE_COLUMNS = source.SOURCE_COLUMNS,
-                    MAPPING = source.MAPPING,
-                    UPDATED_AT = CURRENT_TIMESTAMP(),
-                    UPDATED_BY = source.UPDATED_BY
-                WHEN NOT MATCHED THEN INSERT (
-                    SOURCE_SIGNATURE, SOURCE_COLUMNS, MAPPING,
-                    CREATED_AT, UPDATED_AT, UPDATED_BY
-                ) VALUES (
-                    source.SOURCE_SIGNATURE, source.SOURCE_COLUMNS, source.MAPPING,
-                    CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), source.UPDATED_BY
-                )
-                """,
-                (
-                    sig,
-                    json.dumps(normalized),
-                    json.dumps(mapping),
-                    reviewer,
-                ),
-            )
-            cur.execute(
-                f"""
-                UPDATE {review_table}
-                SET MAPPING = PARSE_JSON(%s),
-                    STATUS = 'Validated',
-                    VALIDATION_SOURCE = 'GLOBAL_MEMORY',
-                    UPDATED_AT = CURRENT_TIMESTAMP()
-                WHERE REVIEW_ID = %s
-                """,
-                (json.dumps(mapping), review_id),
-            )
-        finally:
-            cur.close()
+    p = snowflake_store.get_proposal(conn, review_id)
+    if not p:
         return
-
-    _init_fallback_state()
-    st.session_state.memory_global_templates[sig] = {
-        "source_columns": normalized,
-        "mapping": mapping,
-        "updated_at": now,
-    }
-    if review_id in st.session_state.memory_review_entries:
-        entry = st.session_state.memory_review_entries[review_id]
-        entry["mapping"] = mapping
-        entry["status"] = "Validated"
-        entry["validation_source"] = "GLOBAL_MEMORY"
-        entry["updated_at"] = now
+    for dim, target in mapping.items():
+        snowflake_store.save_value_memory(
+            conn,
+            partner_key=p["partner_key"],
+            dimension=dim,
+            source_value=p["source_value"],
+            target_value=target,
+            scope="GLOBAL",
+        )
+    snowflake_store.update_proposal(
+        conn, review_id, status="Validated", memory_scope="GLOBAL", reviewer_comment="Global template saved"
+    )

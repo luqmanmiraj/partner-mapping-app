@@ -13,16 +13,22 @@ from snowflake.connector.errors import DatabaseError
 APP_ROOT = Path(__file__).resolve().parent
 
 
-def _resolve_migrate_dir() -> Path:
-    """Prefer app-local scripts/, then parent monorepo layout."""
-    candidates = (
-        APP_ROOT / "scripts" / "snowflake_migrate",
+def _migrate_dir_candidates() -> tuple[Path, ...]:
+    return (
         APP_ROOT.parent / "scripts" / "snowflake_migrate",
+        APP_ROOT / "scripts" / "snowflake_migrate",
     )
-    for path in candidates:
+
+
+def _resolve_migrate_dir() -> Path:
+    """Prefer the migrate folder that has credentials, then monorepo layout."""
+    with_env = [p for p in _migrate_dir_candidates() if (p / ".env.migrate").exists()]
+    if with_env:
+        return with_env[0]
+    for path in _migrate_dir_candidates():
         if (path / "migrate_ref.py").exists():
             return path
-    return candidates[0]
+    return _migrate_dir_candidates()[0]
 
 
 MIGRATE_DIR = _resolve_migrate_dir()
@@ -37,11 +43,21 @@ from migrate_ref import (  # noqa: E402
 )
 from dotenv import load_dotenv
 
-_ENV_CANDIDATES = (
-    MIGRATE_DIR / ".env.migrate",
-    APP_ROOT / ".env.migrate",
-)
+_ENV_CANDIDATES = tuple(
+    p / ".env.migrate"
+    for p in _migrate_dir_candidates()
+) + (APP_ROOT / ".env.migrate",)
 ENV_PATH = next((p for p in _ENV_CANDIDATES if p.exists()), _ENV_CANDIDATES[0])
+
+
+def credentials_available() -> bool:
+    """True when destination Snowflake credentials are configured."""
+    if not ENV_PATH.exists():
+        return False
+    load_dotenv(ENV_PATH, interpolate=False, override=True)
+    import os
+
+    return all(os.environ.get(k) for k in ("SNOWFLAKE_DEST_ACCOUNT", "SNOWFLAKE_DEST_USER", "SNOWFLAKE_DEST_PASSWORD"))
 
 
 class SnowflakeConnectionError(Exception):
@@ -76,10 +92,16 @@ def load_dest_config(*, passcode: str = "") -> dict[str, str]:
 
     import os
 
+    def _strip_quotes(value: str) -> str:
+        v = value.strip()
+        if len(v) >= 2 and v[0] == v[-1] and v[0] in ("'", '"'):
+            return v[1:-1]
+        return v
+
     return {
         "dest_account": normalize_account(os.environ["SNOWFLAKE_DEST_ACCOUNT"]),
         "dest_user": os.environ["SNOWFLAKE_DEST_USER"].strip(),
-        "dest_password": os.environ["SNOWFLAKE_DEST_PASSWORD"],
+        "dest_password": _strip_quotes(os.environ["SNOWFLAKE_DEST_PASSWORD"]),
         "dest_role": os.environ.get("SNOWFLAKE_DEST_ROLE", "ACCOUNTADMIN"),
         "dest_warehouse": os.environ.get("SNOWFLAKE_DEST_WAREHOUSE", "PM_WH"),
         "dest_passcode": passcode or os.environ.get("SNOWFLAKE_DEST_PASSCODE", ""),

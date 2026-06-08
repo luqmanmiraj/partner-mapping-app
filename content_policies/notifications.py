@@ -14,6 +14,10 @@ def apply_notification_policy(session: UserSession | None = None) -> list[Notifi
     Base list from session state; role-specific items appended on first load.
     """
     session = session or get_session()
+    if session.role_type == "partner" and session.partner_key:
+        from services.notification_service import sync_notifications_from_db
+
+        sync_notifications_from_db(session.partner_key)
     items = get_notifications()
 
     if st.session_state.get("_notification_policy_applied"):

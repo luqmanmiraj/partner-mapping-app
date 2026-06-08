@@ -5,15 +5,28 @@ from __future__ import annotations
 import streamlit as st
 
 from auth.session import get_session
+from auth.snowflake_session import scoped_connection
 from services.admin_service import (
     activate_partner,
     calibrate_partner,
     deactivate_partner,
+    list_partner_keys,
     update_system_config,
 )
 from services.brd_state import get_config, init_brd_state
-from services.closure_service import close_quarter
+from services.closure_service import close_quarter, list_post_billing_mods
 from theme.components import render_data_table, render_page_header, render_section_header
+
+
+def _partner_options() -> list[str]:
+    use_sf = st.session_state.get("use_snowflake", False)
+    passcode = st.session_state.get("passcode", "")
+    with scoped_connection(passcode, force_demo=not use_sf) as conn:
+        if conn is not None:
+            keys = list_partner_keys(conn)
+            if keys:
+                return keys
+    return ["MEYLE", "HELLA", "TMD", "NISSENS", "BREMBO", "MEMBER_DE_001"]
 
 
 def render_calibration(active_page: str = "admin_calibration") -> None:
@@ -39,14 +52,14 @@ def render_onboarding(active_page: str = "admin_onboarding") -> None:
 
 def render_decommission(active_page: str = "admin_decommission") -> None:
     render_page_header("Admin", subtitle="Partner decommissioning")
-    partner_key = st.selectbox("Partner", ["MEYLE", "HELLA", "TMD", "MEMBER_DE_001"])
+    partner_key = st.selectbox("Partner", _partner_options())
     if st.button("Deactivate partner"):
         st.warning(deactivate_partner(partner_key))
 
 
 def render_closure(active_page: str = "admin_closure") -> None:
     render_page_header("Admin", subtitle="Quarterly accounting closure")
-    partner = st.selectbox("Partner", ["MEYLE", "HELLA", "TMD", "MEMBER_DE_001"])
+    partner = st.selectbox("Partner", _partner_options())
     quarter = st.selectbox("Quarter", ["Q1 2026", "Q4 2025"])
     confirm = st.checkbox("I confirm this action is irreversible")
     if st.button("Close quarter", type="primary") and confirm:
@@ -67,9 +80,15 @@ def render_system_config(active_page: str = "admin_config") -> None:
 def render_post_closure_audit(active_page: str = "admin_audit") -> None:
     render_page_header("Admin", subtitle="Post-closure audit")
     init_brd_state()
-    if st.session_state.post_billing_mods:
+    use_sf = st.session_state.get("use_snowflake", False)
+    passcode = st.session_state.get("passcode", "")
+    mods = st.session_state.post_billing_mods
+    with scoped_connection(passcode, force_demo=not use_sf) as conn:
+        if conn is not None:
+            mods = list_post_billing_mods(conn) or mods
+    if mods:
         render_data_table(
-            __import__("pandas").DataFrame(st.session_state.post_billing_mods),
+            __import__("pandas").DataFrame(mods),
             columns=["partner_key", "period", "reason", "author", "timestamp"],
         )
     else:

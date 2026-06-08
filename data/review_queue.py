@@ -70,8 +70,22 @@ def load_review_queue(conn=None, **filters) -> pd.DataFrame:
 
 def load_review_detail(proposal_id: str, conn=None) -> dict:
     from services.brd_state import get_proposal, init_brd_state
+    from services import snowflake_store
 
     init_brd_state()
+    if conn is not None:
+        row = snowflake_store.get_proposal(conn, proposal_id)
+        if row:
+            return {
+                "proposal_id": row["proposal_id"],
+                "partner": row["partner_key"],
+                "dimension": row["dimension"],
+                "source_value": row["source_value"],
+                "proposed_target": row["proposed_target"],
+                "confidence": row["confidence_score"],
+                "context": {"Upload ID": row["upload_id"], "Status": row["status"]},
+                "tags": row.get("tags") or [],
+            }
     p = get_proposal(proposal_id)
     if p:
         return {

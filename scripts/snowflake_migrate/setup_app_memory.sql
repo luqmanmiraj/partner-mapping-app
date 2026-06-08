@@ -1,5 +1,5 @@
--- Partner Mapping upload/review memory tables (APP schema)
--- Run once in your Snowflake destination account.
+-- DEPRECATED — use snowflake/migrations/001 and 004 instead.
+-- Legacy column-mapping REVIEW_ENTRY tables; do not apply on new environments.
 
 USE DATABASE PM_PROD;
 USE SCHEMA APP;

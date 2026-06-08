@@ -1,4 +1,4 @@
-"""NEXUS Partner Dashboard — Streamlit prototype matching the maquette design."""
+"""DEPRECATED — use streamlit_app.py (hub portal). Legacy Snowflake dashboard prototype."""
 
 from __future__ import annotations
 

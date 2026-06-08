@@ -59,6 +59,7 @@ REVIEWER_NAV = [
 ]
 
 ADMIN_NAV = [
+    ("Pipeline Monitor", "admin_pipeline", ""),
     ("Calibration", "admin_calibration", ""),
     ("Onboarding", "admin_onboarding", ""),
     ("Decommission", "admin_decommission", ""),
@@ -570,9 +571,15 @@ def sidenav_styles() -> str:
             color: #f79400 !important;
         }}
 
-        /* Developer controls + TOTP passcode (sidebar cleanup) */
+        /* Snowflake / developer controls — bottom of sidebar */
         section[data-testid="stSidebar"] .st-key-dev_controls {{
-            display: none !important;
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+        }}
+        section[data-testid="stSidebar"] .st-key-dev_controls label,
+        section[data-testid="stSidebar"] .st-key-dev_controls p {{
+            color: rgba(255, 255, 255, 0.85) !important;
         }}
 
         {_nav_icon_css_rules()}

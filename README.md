@@ -77,28 +77,29 @@ streamlit run streamlit_app.py
 
 Do not commit passwords or API keys. Use your shell environment or a local `.env` file that is gitignored.
 
-## Optional: Snowflake
+## Snowflake (destination account)
 
-Some hub / dashboard paths read from Snowflake via `snowflake_client.py`. Credentials are loaded from:
+The app connects to your **destination** Snowflake account only (data should already be in `PM_PROD`). Credentials:
 
 ```text
 ../scripts/snowflake_migrate/.env.migrate
 ```
 
-From the **nexus** repo root:
+Required in `.env.migrate`:
 
-```bash
-cp scripts/snowflake_migrate/.env.migrate.example scripts/snowflake_migrate/.env.migrate
-# Edit .env.migrate with SNOWFLAKE_DEST_* values (never commit this file)
-```
-
-Required keys in `.env.migrate`:
-
-- `SNOWFLAKE_DEST_ACCOUNT`
+- `SNOWFLAKE_DEST_ACCOUNT` — e.g. `LQJRWQQ-IU64800`
 - `SNOWFLAKE_DEST_USER`
 - `SNOWFLAKE_DEST_PASSWORD`
+- `SNOWFLAKE_DEST_PASSCODE` — if MFA/TOTP is enabled (or enter passcode in sidebar)
 
-Optional: `SNOWFLAKE_DEST_ROLE`, `SNOWFLAKE_DEST_WAREHOUSE`, `SNOWFLAKE_DEST_PASSCODE` (MFA).
+Test connection from repo root:
+
+```bash
+export SNOWFLAKE_DEST_PASSCODE=123456   # if MFA enabled
+python scripts/test_dest_connection.py
+```
+
+Snowflake mode is **on by default** when destination credentials exist. See [`../SNOWFLAKE_TESTING_GUIDE.md`](../SNOWFLAKE_TESTING_GUIDE.md).
 
 Legacy standalone dashboard (Snowflake-focused UI):
 

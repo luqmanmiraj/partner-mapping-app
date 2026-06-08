@@ -31,6 +31,10 @@ def upload_declaration(
     if api_url:
         return UploadResult(success=False, error="UPLOAD_API_URL set — wire Lambda ingestion (not yet connected).")
 
+    import streamlit as st
+    from auth.session import get_session
+
+    session = get_session()
     ok, upload_id, msg = process_upload(
         file_bytes=file_bytes,
         filename=filename,
@@ -38,6 +42,7 @@ def upload_declaration(
         currency=currency,
         comment=comment,
         partner_key=partner_key,
+        declarant_type=getattr(session, "declarant_type", "supplier") or "supplier",
         is_corrective=is_corrective,
         supersedes_upload_id=supersedes_upload_id,
     )

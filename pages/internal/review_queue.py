@@ -105,10 +105,11 @@ def render(active_page: str = "review_queue") -> None:
     with st.container(key="review_queue_shell"):
         render_page_header(subtitle="Uploaded files waiting for manual mapping")
 
+        use_sf = st.session_state.get("use_snowflake", False)
         if snowflake_enabled():
-            st.caption("Storage: Snowflake APP schema")
+            st.caption("Storage: Snowflake + in-session cache (same browser tab)")
         else:
-            st.caption("Storage: in-session fallback (enable **Use Snowflake data** in sidebar)")
+            st.caption("Storage: in-session (enable **Use live Snowflake data** in sidebar for persistence)")
 
         col1, col2, col3 = st.columns([1, 1, 0.5], vertical_alignment="bottom")
         with st.container(key="review_queue_toolbar"):
@@ -121,7 +122,6 @@ def render(active_page: str = "review_queue") -> None:
                 if st.button("Refresh", use_container_width=True):
                     st.rerun()
 
-        use_sf = st.session_state.get("use_snowflake", False)
         passcode = st.session_state.get("passcode", "")
 
         with scoped_connection(passcode, force_demo=not use_sf) as conn:
@@ -130,11 +130,25 @@ def render(active_page: str = "review_queue") -> None:
                 status_filter=status,
                 partner_filter=partner,
             )
+            sf_connected = conn is not None
 
         render_section_header("Review Queue", subtitle=f"{len(entries)} files ready for review")
 
+        if use_sf and not sf_connected:
+            st.warning(
+                "Snowflake is enabled but not connected. Enter your **MFA code (TOTP)** in the sidebar, "
+                "or uploads from this tab still appear from session cache if you uploaded as a partner here."
+            )
+
         if not entries:
-            render_empty_state("No files in queue", "Try changing filters or refreshing the queue.")
+            hints = [
+                "Set **Partner** filter to **All** or **HELLA**.",
+                "Set **Status** to **All** or **In review**.",
+                "Upload as HELLA first, then switch persona to **Reviewer** (same browser tab).",
+            ]
+            if use_sf and not sf_connected:
+                hints.insert(0, "Enter MFA in the sidebar to load items from Snowflake.")
+            render_empty_state("No files in queue", " ".join(hints))
             return
 
         with st.container(key="review_queue_cards"):
@@ -158,6 +172,9 @@ def render(active_page: str = "review_queue") -> None:
                             st.write(f"**Partner:** {partner_key}")
                             st.write(f"**Status:** {status_value}")
                             st.write(f"**Period:** {period}")
+                            pending = entry.get("pending_proposals", 0)
+                            if pending:
+                                st.write(f"**Pending mappings:** {pending}")
                             st.write(f"**Columns:** {len(source_columns)}")
 
                             action_col1, action_col2 = st.columns(2)

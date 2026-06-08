@@ -1,4 +1,4 @@
-"""BRD Steps 2–7 — mapping, validation, currency, notifications (demo)."""
+"""BRD Steps 1–7 — full pipeline via pipeline_engine."""
 
 from __future__ import annotations
 
@@ -9,19 +9,11 @@ import streamlit as st
 
 from auth.snowflake_session import scoped_connection
 from data.notification_fixtures import NotificationItem, get_notifications
-from services.brd_state import (
-    DepositRecord,
-    audit,
-    init_brd_state,
-    save_deposit,
-)
+from services.brd_state import DepositRecord, audit, init_brd_state, save_deposit
 from services.file_parser import parse_upload
-from services.memory_store import create_review_entry, resolve_template
-
-def _mock_eur(amount: float, currency: str) -> tuple[float, bool]:
-    rates = {"EUR": 1.0, "USD": 0.92, "GBP": 1.17, "PLN": 0.23, "CHF": 1.05}
-    rate = rates.get(currency, 1.0)
-    return round(amount * rate, 2), currency != "EUR"
+from services.memory_store import create_review_entry
+from services.pipeline_engine import run_pipeline
+from services.pipeline_log import PipelineLogger
 
 
 def process_upload(
@@ -32,67 +24,86 @@ def process_upload(
     currency: str,
     comment: str,
     partner_key: str,
+    declarant_type: str = "supplier",
     is_corrective: bool = False,
     supersedes_upload_id: str = "",
 ) -> tuple[bool, str, str]:
     """Returns (success, upload_id, message)."""
     init_brd_state()
-
-    parsed = parse_upload(filename, file_bytes)
-    if not parsed.success:
-        audit(partner_key, "UPLOAD_REJECTED", parsed.error)
-        return False, "", parsed.error
-
-    if not parsed.lines:
-        return False, "", "File contains no data lines."
-
     upload_id = f"DEP-{uuid.uuid4().hex[:8].upper()}"
-    auto, review, rejected = 0, 0, 0
-    reasons: list[str] = []
-    local_total = 0.0
-
-    for row in parsed.lines[:5000]:
-        amount_raw = next((v for k, v in row.items() if k.lower() in ("amount", "total", "turnover", "value")), "0")
-        try:
-            amount = float(str(amount_raw).replace(",", "").replace("€", "").strip() or 0)
-        except ValueError:
-            amount = 0.0
-        if amount < 0:
-            pass  # BR-DECL-07 negative amounts valid
-        local_total += amount
-
-    source_columns = list(parsed.lines[0].keys())
-
     use_sf = st.session_state.get("use_snowflake", False)
     passcode = st.session_state.get("passcode", "")
-    with scoped_connection(passcode, force_demo=not use_sf) as conn:
-        resolved = resolve_template(partner_key, source_columns, conn=conn)
-        if resolved:
-            status = "Validated"
-            auto = parsed.row_count
-            review = 0
-            validation_source = str(resolved.get("scope", "GLOBAL"))
-            mapping = dict(resolved.get("mapping", {}))
-        else:
-            status = "In review"
-            auto = 0
-            review = parsed.row_count
-            validation_source = "NONE"
-            mapping = {}
 
-        create_review_entry(
+    with scoped_connection(passcode, force_demo=not use_sf) as conn:
+        plog = PipelineLogger(upload_id=upload_id, partner_key=partner_key, conn=conn)
+
+        plog.log(1, "Parsing", "started", f"File received: {filename} ({len(file_bytes):,} bytes)")
+        parsed = parse_upload(filename, file_bytes)
+        if not parsed.success:
+            plog.log(1, "Parsing", "failed", parsed.error)
+            audit(partner_key, "UPLOAD_REJECTED", parsed.error)
+            return False, "", parsed.error
+        if not parsed.lines:
+            plog.log(1, "Parsing", "failed", "File contains no data lines.")
+            return False, "", "File contains no data lines."
+
+        enc = getattr(parsed, "encoding", "utf-8")
+        sep = getattr(parsed, "separator", ",")
+        cols = list(parsed.lines[0].keys())
+        plog.log(
+            1,
+            "Parsing",
+            "completed",
+            f"encoding={enc}, separator={sep!r}, rows={parsed.row_count}, columns={cols}",
+            snowflake_target="STAGING.PARSED_LINE",
+        )
+
+        from services.brd_state import get_config
+
+        threshold = get_config()["confidence_threshold"]
+        result = run_pipeline(
+            conn,
+            upload_id=upload_id,
+            partner_key=partner_key,
+            declarant_type=declarant_type,
+            filename=filename,
+            file_bytes=file_bytes,
+            period=period,
+            currency=currency,
+            comment=comment,
+            parsed=parsed,
+            threshold=threshold,
+            is_corrective=is_corrective,
+            supersedes_upload_id=supersedes_upload_id,
+            plog=plog,
+        )
+
+        review_id = create_review_entry(
             upload_id=upload_id,
             partner_key=partner_key,
             filename=filename,
             period=period,
-            source_columns=source_columns,
-            status=status,
-            validation_source=validation_source,
-            mapping=mapping,
+            source_columns=cols,
+            status=result.status,
+            validation_source=result.validation_source,
+            mapping=result.column_mapping,
             conn=conn,
         )
+        init_brd_state()
+        if review_id in st.session_state.review_entries:
+            st.session_state.review_entries[review_id]["pending_proposals"] = result.in_review
 
-    eur_total, pending_rate = _mock_eur(local_total, currency)
+        get_notifications().insert(
+            0,
+            NotificationItem(
+                id=f"n-{upload_id}",
+                category="Declaration",
+                message=f"Processing complete for {period}: {result.status}.",
+                date="Today",
+                notification_type="deposit",
+                is_read=False,
+            ),
+        )
 
     if is_corrective and supersedes_upload_id:
         from services.brd_state import get_deposit
@@ -107,7 +118,9 @@ def process_upload(
     from services.closure_service import record_post_billing_mod
 
     if is_corrective and is_period_closed(partner_key, period):
-        record_post_billing_mod(partner_key, period, comment or "Corrective deposit on closed period", actor=partner_key)
+        record_post_billing_mod(
+            partner_key, period, comment or "Corrective deposit on closed period", actor=partner_key
+        )
 
     dep = DepositRecord(
         upload_id=upload_id,
@@ -116,41 +129,42 @@ def process_upload(
         currency=currency,
         filename=filename,
         comment=comment,
-        status=status,
-        auto_validated=auto,
-        in_review=review,
-        rejected=rejected,
-        rejection_reasons=reasons,
-        local_total=local_total,
-        eur_total=eur_total,
-        pending_final_rate=pending_rate,
+        status=result.status,
+        auto_validated=result.auto_validated,
+        in_review=result.in_review,
+        rejected=result.rejected,
+        rejection_reasons=result.rejection_reasons,
+        local_total=result.local_total,
+        eur_total=result.eur_total,
+        pending_final_rate=result.pending_final_rate,
         submitted_at=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
         is_corrective=is_corrective,
         supersedes_upload_id=supersedes_upload_id,
-        line_count=parsed.row_count,
-        reconciled_csv="line,amount_eur,status\n" + "\n".join(
-            f"{i},{local_total/max(parsed.row_count,1):.2f},validated" for i in range(min(5, parsed.row_count))
+        line_count=len(result.line_results),
+        reconciled_csv="line,amount_eur,status\n"
+        + "\n".join(
+            f"{lr.line_number},{lr.amount_eur:.2f},"
+            f"{'validated' if lr.fully_validated else 'in_review'}"
+            for lr in result.line_results[:20]
         ),
     )
     save_deposit(dep)
     audit(
         partner_key,
         "UPLOAD_PROCESSED",
-        f"{upload_id} status={status} validation={validation_source} lines={parsed.row_count}",
+        f"{upload_id} status={result.status} auto={result.auto_validated} review={result.in_review}",
     )
+    st.session_state.last_pipeline_upload_id = upload_id
 
-    get_notifications().insert(
-        0,
-        NotificationItem(
-            id=f"n-{upload_id}",
-            category="Declaration",
-            message=f"Processing complete for {period}: {status}.",
-            date="Today",
-            notification_type="deposit",
-            is_read=False,
-        ),
+    if result.status == "Validated":
+        return (
+            True,
+            upload_id,
+            f"Validated ({result.auto_validated} lines) → APP.VALIDATED_LINE + OUTPUT.BUSINESS_VIEW. "
+            f"Trace in Admin → Pipeline Monitor.",
+        )
+    return (
+        True,
+        upload_id,
+        f"In review ({result.in_review} lines) → APP.MAPPING_PROPOSAL. Trace in Admin → Pipeline Monitor.",
     )
-
-    if status == "Validated":
-        return True, upload_id, "File validated using memory template and stored."
-    return True, upload_id, "File uploaded and routed to reviewer for manual mapping."

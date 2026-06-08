@@ -82,8 +82,21 @@ def render(active_page: str = "my_company") -> None:
     _inject_supplier_company_page_styles()
     inject_all_company_page_styles()
 
+    overview = dict(OVERVIEW)
+    use_sf = st.session_state.get("use_snowflake", False)
+    passcode = st.session_state.get("passcode", "")
+    from auth.snowflake_session import scoped_connection
+    from data.portal_loaders import load_my_company
+
+    with scoped_connection(passcode, force_demo=not use_sf) as conn:
+        if conn is not None:
+            profile = load_my_company(conn, session.partner_key, session.declarant_type)
+            if profile:
+                overview["title"] = profile.get("name", overview.get("title", ""))
+                overview["subtitle"] = profile.get("tagline", overview.get("subtitle", ""))
+
     with st.container(key="supplier_company_page"):
-        render_company_overview(OVERVIEW)
+        render_company_overview(overview)
 
         news_data = {
             "featured": NEWS_FEATURED,

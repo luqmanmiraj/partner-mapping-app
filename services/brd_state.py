@@ -95,6 +95,7 @@ def init_brd_state() -> None:
     st.session_state.brd_initialized = True
     st.session_state.deposits: dict[str, DepositRecord] = {}
     st.session_state.proposals: dict[str, MappingProposal] = {}
+    st.session_state.review_entries: dict[str, dict[str, Any]] = {}
     st.session_state.local_memory: dict[str, dict[str, str]] = {}
     st.session_state.global_memory: dict[str, str] = {}
     st.session_state.closed_periods: set[tuple[str, str]] = set()
@@ -112,8 +113,9 @@ def init_brd_state() -> None:
         "TMD": PartnerRecord("TMD", "supplier", "33333333", True, "EUR"),
         "MEMBER_DE_001": PartnerRecord("MEMBER_DE_001", "member", "66666601", True, "EUR"),
     }
-    _seed_demo_deposits()
-    _seed_demo_proposals()
+    if not st.session_state.get("use_snowflake", False):
+        _seed_demo_deposits()
+        _seed_demo_proposals()
 
 
 def _seed_demo_proposals() -> None:
@@ -178,6 +180,14 @@ def get_partner(partner_key: str) -> PartnerRecord | None:
 
 
 def partner_is_active(partner_key: str) -> bool:
+    if st.session_state.get("use_snowflake", False):
+        from auth.snowflake_session import scoped_connection
+        from services import snowflake_store
+
+        passcode = st.session_state.get("passcode", "")
+        with scoped_connection(passcode, force_demo=False) as conn:
+            if conn is not None:
+                return snowflake_store.partner_is_active_sf(conn, partner_key)
     p = get_partner(partner_key)
     return p.is_active if p else True
 
@@ -230,4 +240,13 @@ def save_proposal(p: MappingProposal) -> None:
 
 def get_config() -> dict:
     init_brd_state()
+    if st.session_state.get("use_snowflake", False):
+        from auth.snowflake_session import scoped_connection
+        from services import snowflake_store
+
+        passcode = st.session_state.get("passcode", "")
+        with scoped_connection(passcode, force_demo=False) as conn:
+            if conn is not None:
+                cfg = snowflake_store.get_system_config(conn)
+                st.session_state.system_config.update(cfg)
     return st.session_state.system_config

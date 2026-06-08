@@ -40,7 +40,8 @@ def render(active_page: str = "discrepancy") -> None:
         pair = st.selectbox("Tag pair", matrix.index.tolist(), format_func=lambda i: matrix.loc[i, "Pair"])
         tag = st.selectbox("Apply tag", ["Acceptable", "Investigation pending", "Resolved"])
         if st.button("Save tag"):
-            from services.brd_state import audit
+            from services.review_service import save_qa_tag
 
-            audit("reviewer", "DISCREPANCY_TAG", f"{matrix.loc[pair, 'Pair']}: {tag}")
-            st.success(f"Tagged {matrix.loc[pair, 'Pair']} as {tag}")
+            pair_label = str(matrix.loc[pair, "Pair"])
+            save_qa_tag(pair_label, "discrepancy", tag, tag, actor="reviewer")
+            st.success(f"Tagged {pair_label} as {tag}")

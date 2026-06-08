@@ -29,7 +29,7 @@ def render(active_page: str = "overlap") -> None:
             horizontal=True,
         )
         if st.button("Save resolution"):
-            from services.brd_state import audit
+            from services.review_service import save_qa_tag
 
-            audit("reviewer", "OVERLAP_RESOLUTION", f"{case_id}: {action}")
+            save_qa_tag(case_id, "overlap", action, action, actor="reviewer")
             st.success(f"Case {case_id}: {action}")
