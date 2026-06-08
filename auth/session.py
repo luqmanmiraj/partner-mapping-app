@@ -209,7 +209,7 @@ def is_partner() -> bool:
 
 
 def is_reviewer() -> bool:
-    return get_session().role_type in ("reviewer", "admin")
+    return get_session().role_type == "reviewer"
 
 
 def is_admin() -> bool:

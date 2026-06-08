@@ -606,25 +606,44 @@ def _render_nav_link(page_id: str, label: str, active_page: str) -> None:
             label,
             key=f"navbtn_{page_id}",
             type=btn_type,
-            use_container_width=True,
+            width="stretch",
         ):
             if not is_active:
                 st.session_state.active_page = page_id
                 st.rerun()
 
 
-def _nav_section(
-    items: list[tuple[str, str, str]],
+def _nav_sections_for_session(session) -> list[tuple[str, list[tuple[str, str, str]]]]:
+    """Sidebar sections for the current persona (headings + nav rows)."""
+    sections: list[tuple[str, list[tuple[str, str, str]]]] = []
+    if is_partner():
+        sections.append((session.display_name or "Enterprise", hub_portal_nav_for_session(session)))
+        sections.append(("NEXUS Automotive", HUB_PORTAL_SECONDARY))
+        sections.append(("Partner Mapping", PARTNER_MAPPING_NAV))
+    elif is_reviewer():
+        sections.append(("Internal Cockpit", REVIEWER_NAV))
+    if is_admin():
+        sections.append(("Admin", ADMIN_NAV))
+    return sections
+
+
+def _render_nav_sections(
+    sections: list[tuple[str, list[tuple[str, str, str]]]],
     active_page: str,
     accessible: set[str],
-    rendered_ids: set[str],
 ) -> None:
-    visible = [(label, page_id) for label, page_id, _ in items if page_id in accessible]
-    for label, page_id in visible:
-        if page_id in rendered_ids:
+    """Render nav links once per page_id across all sections."""
+    rendered_ids: set[str] = set()
+    for heading, items in sections:
+        visible = [(label, page_id) for label, page_id, _ in items if page_id in accessible]
+        if not visible:
             continue
-        rendered_ids.add(page_id)
-        _render_nav_link(page_id, label, active_page)
+        _section_heading(heading)
+        for label, page_id in visible:
+            if page_id in rendered_ids:
+                continue
+            rendered_ids.add(page_id)
+            _render_nav_link(page_id, label, active_page)
 
 
 def _section_heading(title: str) -> None:
@@ -700,30 +719,8 @@ def render_sidenav(active_page: str, accessible_pages: set[str]) -> None:
 
     _bind_sidenav_top_fixed_shell()
 
-    rendered_nav_ids: set[str] = set()
-
     with st.container(key="sidenav_nav_body"):
-        enterprise_label = session.display_name or "Enterprise"
-        _section_heading(enterprise_label)
-
-        if is_partner():
-            _nav_section(
-                hub_portal_nav_for_session(session),
-                active_page,
-                accessible,
-                rendered_nav_ids,
-            )
-            _section_heading("NEXUS Automotive")
-            _nav_section(HUB_PORTAL_SECONDARY, active_page, accessible, rendered_nav_ids)
-            _section_heading("Partner Mapping")
-            _nav_section(PARTNER_MAPPING_NAV, active_page, accessible, rendered_nav_ids)
-        elif is_reviewer() and not is_partner() and not is_admin():
-            _section_heading("Internal Cockpit")
-            _nav_section(REVIEWER_NAV, active_page, accessible, rendered_nav_ids)
-
-        if is_admin():
-            _section_heading("Admin")
-            _nav_section(ADMIN_NAV, active_page, accessible, rendered_nav_ids)
+        _render_nav_sections(_nav_sections_for_session(session), active_page, accessible)
 
     render_html(
         f"""
